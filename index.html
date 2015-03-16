@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+<head> 
+<style type="text/css"> 
+body {background:#6495ed;}
+#div1 { width:512px; height:384px; position:relative; margin:30px auto 0px;background:#e0ffff;} 
+#div1 img{width:512px; height:384px;} 
+#div1 span { width:128px; height:128px; background:purple; left:0px;top:0px; position:absolute; display:block; filter:alpha(opacity:50); opacity:0.5;z-index:1;} 
+.show { width:100%; height:100%; background:red; position:absolute;  filter:alpha(opacity:10); opacity:0.1; left:0px; top:0px; } 
+#div2 {width:256px; height:256px; position:relative; display:block; overflow:hidden; margin:0px auto 0px; background:#b0c4de} 
+#img1 { position:absolute;} 
+</style> 
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
+    <title>Java Homework</title> 
+<script type="text/javascript"> 
+    window.onload=function () {  
+        var oDiv=document.getElementById('div1'); 
+        var oShow=oDiv.getElementsByTagName('div')[0]; 
+        var oSpan=oDiv.getElementsByTagName('span')[0]; 
+        var oImg=document.getElementById('img1'); 
+        var drag = false;
+        var oSpanX,oSpanY;
+        var x0, y0;
+        /*oShow.onmouseover=function() { 
+            console.log("onmouseover: ") ;
+            oSpan.style.display='block'; 
+            oImg.parentNode.style.display='block'; 
+        }; 
+        oShow.onmouseout=function() { 
+            console.log("onmouseout: ") ;
+            oSpan.style.display='none'; 
+            oImg.parentNode.style.display='none'; 
+        };*/
+
+        oSpan.onmousedown=function(ev) {
+            
+            var oEvent= ev|| event;
+            //console.log("onmousedown: "+oEvent) ;
+            x0 = oEvent.clientX;
+            y0 = oEvent.clientY;
+            oSpanX = oSpan.offsetLeft;
+            oSpanY = oSpan.offsetTop;
+            console.log(oSpanX) ;
+            drag = true; 
+        } ;
+        window.onmouseup=function() {
+            //console.log("onmouseup: ") ;
+            drag = false;
+        };
+        window.onmousemove=function(ev) { 
+            //console.log("onmousemove: drag is  "+drag) ;
+            if(drag){
+                var oEvent=ev||event;
+               // console.log("onmousemove: "+oEvent) ;
+                var x= oSpanX + (oEvent.clientX-x0);
+                var y= oSpanY + (oEvent.clientY-y0);
+                if(x<0) { 
+                    x=0; 
+                }else if(x>oShow.offsetWidth-oSpan.offsetWidth) { 
+                    x=oShow.offsetWidth-oSpan.offsetWidth; 
+                } 
+                if(y<0){ 
+                    y=0; 
+                }else if(y>oShow.offsetHeight-oSpan.offsetHeight){ 
+                    y=oShow.offsetHeight-oSpan.offsetHeight 
+                } 
+
+                oSpan.style.left=x+'px'; 
+                oSpan.style.top=y+'px'; 
+                var percentX=x/(oShow.offsetWidth-oSpan.offsetWidth); 
+                var percentY=y/(oShow.offsetHeight-oSpan.offsetHeight); 
+                var oImgparent=oImg.parentNode; 
+                oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
+                oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
+            } 
+            
+        }; 
+        /*oShow.onmousemove=function(ev) { 
+            var oEvent=ev||event; 
+            var x=oEvent.clientX-oDiv.offsetLeft-oSpan.offsetWidth/2; 
+            var y=oEvent.clientY-oDiv.offsetTop-oSpan.offsetHeight/2; 
+
+            if(x<0) { 
+                x=0; 
+            }else if(x>oShow.offsetWidth-oSpan.offsetWidth) { 
+                x=oShow.offsetWidth-oSpan.offsetWidth; 
+            } 
+            if(y<0){ 
+                y=0; 
+            }else if(y>oShow.offsetHeight-oSpan.offsetHeight){ 
+                y=oShow.offsetHeight-oSpan.offsetHeight 
+            } 
+
+            oSpan.style.left=x+'px'; 
+            oSpan.style.top=y+'px'; 
+            var percentX=x/(oShow.offsetWidth-oSpan.offsetWidth); 
+            var percentY=y/(oShow.offsetHeight-oSpan.offsetHeight); 
+            var oImgparent=oImg.parentNode; 
+            oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
+            oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
+        }; */
+    }; 
+</script> 
+</head> 
+<body> 
+    <div id="div1"> 
+        <img src="grape2.jpg" /> 
+        <span></span> 
+        <div class="show"></div> 
+    </div> 
+    <br>
+    <div id="div2"> 
+        <img id="img1" src="grape2.jpg" /> 
+    </div> 
+</body> 
+</html>
