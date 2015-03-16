@@ -7,7 +7,7 @@ body {background:#6495ed;}
 #div1 img{width:512px; height:384px;} 
 #div1 span { width:128px; height:128px; background:purple; left:0px;top:0px; position:absolute; display:block; filter:alpha(opacity:50); opacity:0.5;z-index:1;} 
 .show { width:100%; height:100%; background:red; position:absolute;  filter:alpha(opacity:10); opacity:0.1; left:0px; top:0px; } 
-#div2 {width:256px; height:256px; position:relative; display:block; overflow:hidden; margin:0px auto 0px; background:#b0c4de} 
+#div2 {width:256px; height:256px; position:absolute; display:none; overflow:hidden; margin:0px auto 0px; background:#b0c4de} 
 #img1 { position:absolute;} 
 </style> 
     <meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
@@ -40,12 +40,15 @@ body {background:#6495ed;}
             y0 = oEvent.clientY;
             oSpanX = oSpan.offsetLeft;
             oSpanY = oSpan.offsetTop;
-            console.log(oSpanX) ;
             drag = true; 
+            oImg.parentNode.style.display='block'; 
+            updateMagBlock(oSpanX,oSpanY);
+
         } ;
         window.onmouseup=function() {
             //console.log("onmouseup: ") ;
             drag = false;
+            oImg.parentNode.style.display='none'; 
         };
         window.onmousemove=function(ev) { 
             //console.log("onmousemove: drag is  "+drag) ;
@@ -67,11 +70,7 @@ body {background:#6495ed;}
 
                 oSpan.style.left=x+'px'; 
                 oSpan.style.top=y+'px'; 
-                var percentX=x/(oShow.offsetWidth-oSpan.offsetWidth); 
-                var percentY=y/(oShow.offsetHeight-oSpan.offsetHeight); 
-                var oImgparent=oImg.parentNode; 
-                oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
-                oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
+                updateMagBlock(x,y);
             } 
             
         }; 
@@ -99,6 +98,26 @@ body {background:#6495ed;}
             oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
             oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
         }; */
+        var getAbsPos = function(o) {
+            var pos = {x:0, y:0};
+            while (o!=null){
+                pos.x += o.offsetLeft;
+                pos.y += o.offsetTop;
+                o = o.offsetParent; //若區塊外還有父元素，就繼續往外推
+            }
+            return pos;
+        }
+        var updateMagBlock = function(x,y){
+            var percentX=x/(oShow.offsetWidth-oSpan.offsetWidth); 
+            var percentY=y/(oShow.offsetHeight-oSpan.offsetHeight); 
+            var oImgparent=oImg.parentNode; 
+            var x_magnifier = x+ getAbsPos(oDiv).x -(oImgparent.offsetWidth - oSpan.offsetWidth)/2;
+            var y_magnifier = y + oSpan.offsetHeight + 100;
+            oImgparent.style.left = x_magnifier+'px';
+            oImgparent.style.top = y_magnifier+'px';
+            oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
+            oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
+       }
     }; 
 </script> 
 </head> 
