@@ -5,22 +5,33 @@
 body {background:#6495ed;}
 #div1 { width:512px; height:384px; position:relative; margin:30px auto 0px;background:#e0ffff;} 
 #div1 img{width:512px; height:384px;} 
-#div1 span { width:128px; height:128px; background:purple; left:0px;top:0px; position:absolute; display:block; filter:alpha(opacity:50); opacity:0.5;z-index:1;} 
+#node1{ width:64px; height:64px; background:purple; left:0px;top:0px; position:absolute; display:block; filter:alpha(opacity:50); opacity:0.5;z-index:1;} 
+#node2{ width:64px; height:64px; background:red; left:0px;top:64px; position:absolute; display:block; filter:alpha(opacity:50); opacity:0.5;z-index:1;} 
+#node3{ width:64px; height:64px; background:blue; left:0px;top:128px; position:absolute; display:block; filter:alpha(opacity:50); opacity:0.5;z-index:1;} 
 .show { width:100%; height:100%; background:red; position:absolute;  filter:alpha(opacity:10); opacity:0.1; left:0px; top:0px; } 
-#div2 {width:256px; height:256px; position:absolute; display:none; overflow:hidden; margin:0px auto 0px; background:#b0c4de} 
+#div2 {width:128px; height:128px; position:absolute; display:none; overflow:hidden; background:#b0c4de;left:0px; top:0px; z-index:2;} 
 #img1 { position:absolute;} 
 </style> 
     <meta http-equiv="Content-Type" content="text/html; charset=gb2312" /> 
     <title>Java Homework</title> 
 <script type="text/javascript"> 
+    var oImg;
+    var oSpanX,oSpanY;
+    var oShow;
+    var oSpan;
+    var oDiv;
+    var oCurrSpan;
+    var x0, y0;
+    var drag = false;
+    
     window.onload=function () {  
-        var oDiv=document.getElementById('div1'); 
-        var oShow=oDiv.getElementsByTagName('div')[0]; 
-        var oSpan=oDiv.getElementsByTagName('span')[0]; 
-        var oImg=document.getElementById('img1'); 
-        var drag = false;
-        var oSpanX,oSpanY;
-        var x0, y0;
+        oDiv=document.getElementById('div1'); 
+        oShow=oDiv.getElementsByTagName('div')[0]; 
+        oSpan=oDiv.getElementsByTagName('span')[0]; 
+        oImg=document.getElementById('img1'); 
+       
+      
+        
         /*oShow.onmouseover=function() { 
             console.log("onmouseover: ") ;
             oSpan.style.display='block'; 
@@ -32,7 +43,7 @@ body {background:#6495ed;}
             oImg.parentNode.style.display='none'; 
         };*/
 
-        oSpan.onmousedown=function(ev) {
+        /*oSpan.onmousedown=function(ev) {
             
             var oEvent= ev|| event;
             //console.log("onmousedown: "+oEvent) ;
@@ -43,8 +54,8 @@ body {background:#6495ed;}
             drag = true; 
             oImg.parentNode.style.display='block'; 
             updateMagBlock(oSpanX,oSpanY);
-
-        } ;
+           
+        } ;*/
         window.onmouseup=function() {
             //console.log("onmouseup: ") ;
             drag = false;
@@ -59,17 +70,17 @@ body {background:#6495ed;}
                 var y= oSpanY + (oEvent.clientY-y0);
                 if(x<0) { 
                     x=0; 
-                }else if(x>oShow.offsetWidth-oSpan.offsetWidth) { 
-                    x=oShow.offsetWidth-oSpan.offsetWidth; 
+                }else if(x>oShow.offsetWidth-oCurrSpan.offsetWidth) { 
+                    x=oShow.offsetWidth-oCurrSpan.offsetWidth; 
                 } 
                 if(y<0){ 
                     y=0; 
-                }else if(y>oShow.offsetHeight-oSpan.offsetHeight){ 
-                    y=oShow.offsetHeight-oSpan.offsetHeight 
+                }else if(y>oShow.offsetHeight-oCurrSpan.offsetHeight){ 
+                    y=oShow.offsetHeight-oCurrSpan.offsetHeight 
                 } 
 
-                oSpan.style.left=x+'px'; 
-                oSpan.style.top=y+'px'; 
+                oCurrSpan.style.left=x+'px'; 
+                oCurrSpan.style.top=y+'px'; 
                 updateMagBlock(x,y);
             } 
             
@@ -98,33 +109,51 @@ body {background:#6495ed;}
             oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
             oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
         }; */
-        var getAbsPos = function(o) {
-            var pos = {x:0, y:0};
-            while (o!=null){
-                pos.x += o.offsetLeft;
-                pos.y += o.offsetTop;
-                o = o.offsetParent; //若區塊外還有父元素，就繼續往外推
-            }
-            return pos;
-        }
-        var updateMagBlock = function(x,y){
-            var percentX=x/(oShow.offsetWidth-oSpan.offsetWidth); 
-            var percentY=y/(oShow.offsetHeight-oSpan.offsetHeight); 
-            var oImgparent=oImg.parentNode; 
-            var x_magnifier = x+ getAbsPos(oDiv).x -(oImgparent.offsetWidth - oSpan.offsetWidth)/2;
-            var y_magnifier = y + oSpan.offsetHeight + 100;
-            oImgparent.style.left = x_magnifier+'px';
-            oImgparent.style.top = y_magnifier+'px';
-            oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
-            oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
-       }
     }; 
+    function mouseDown(ev,item) {
+            
+        var oEvent=  ev|| event;;
+        console.log("onmousedown: item "+item) ;
+        x0 = oEvent.clientX;
+        y0 = oEvent.clientY;
+        oSpanX = item.offsetLeft;
+        oSpanY = item.offsetTop;
+        drag = true; 
+        oImg.parentNode.style.display='block'; 
+
+        updateMagBlock(oSpanX,oSpanY);
+        oCurrSpan = item;
+           
+    }
+    var updateMagBlock = function(x,y){
+        var percentX=x/(oShow.offsetWidth-oSpan.offsetWidth); 
+        var percentY=y/(oShow.offsetHeight-oSpan.offsetHeight); 
+        var oImgparent=oImg.parentNode; 
+        //console.log("width is "+(oImgparent.offsetWidth - oSpan.offsetWidth)/2);
+        var x_magnifier = x+ getAbsPos(oDiv).x -(oImgparent.offsetWidth - oSpan.offsetWidth)/2;
+        var y_magnifier = y + oSpan.offsetHeight + 50;
+        oImgparent.style.left = x_magnifier+'px';
+        oImgparent.style.top = y_magnifier+'px';
+        oImg.style.left=-percentX*(oImg.offsetWidth-oImgparent.offsetWidth)+'px'; 
+        oImg.style.top=-percentY*(oImg.offsetHeight-oImgparent.offsetHeight)+'px'; 
+    }
+    var getAbsPos = function(o) {
+        var pos = {x:0, y:0};
+        while (o!=null){
+            pos.x += o.offsetLeft;
+            pos.y += o.offsetTop;
+            o = o.offsetParent; //若區塊外還有父元素，就繼續往外推
+        }
+        return pos;
+    }
 </script> 
 </head> 
 <body> 
     <div id="div1"> 
         <img src="grape2.jpg" /> 
-        <span></span> 
+        <span id="node1" onmousedown="mouseDown(event,this)" ></span> 
+        <span id="node2"onmousedown="mouseDown(event,this)" ></span> 
+        <span id="node3"onmousedown="mouseDown(event,this)" ></span> 
         <div class="show"></div> 
     </div> 
     <br>
