@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企業收購新聞英語分析</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .grammar-tag {
+            font-size: 0.75rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.1rem;
+            vertical-align: middle;
+        }
+
+        /* Color System */
+        .tag-s { background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; } /* Subject - Blue */
+        .tag-v { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; } /* Verb - Red */
+        .tag-o { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; } /* Object - Green */
+        .tag-comp { background-color: #ffedd5; color: #9a3412; border: 1px solid #fdba74; } /* Complement - Orange */
+        .tag-adv { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; } /* Adverb/Adj - Yellow */
+        .tag-prep { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; } /* Prep - Purple */
+        .tag-appos { background-color: #ccfbf1; color: #0f766e; border: 1px solid #5eead4; } /* Appositive - Teal */
+        .tag-implicit { background-color: #e5e7eb; color: #4b5563; border: 1px dashed #9ca3af; } /* Implicit words - Gray Dashed */
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 0.3rem;
+            margin-bottom: 0.6rem;
+            position: relative;
+        }
+        
+        .highlight-box {
+            transition: all 0.3s ease;
+        }
+        .highlight-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Grammar Highlight Note */
+        .grammar-note {
+            background-color: #fffbeb; /* amber-50 */
+            border-left: 4px solid #f59e0b; /* amber-500 */
+            color: #92400e; /* amber-800 */
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* TOEIC Level Badges */
+        .level-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .level-foundation { background-color: #dcfce7; color: #166534; } /* Green 350+ */
+        .level-intermediate { background-color: #dbeafe; color: #1e40af; } /* Blue 550+ */
+        .level-advanced { background-color: #ffedd5; color: #9a3412; } /* Orange 750+ */
+        .level-expert { background-color: #fee2e2; color: #991b1b; } /* Red 860+ */
+
+        .audio-btn {
+            cursor: pointer;
+            transition: transform 0.1s;
+            min-width: 44px; /* Mobile optimized touch target */
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .audio-btn:active {
+            transform: scale(0.95);
+            background-color: #e0e7ff;
+        }
+
+    </style>
+</head>
+<body class="p-3 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-indigo-600 p-4 md:p-6 text-white">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold mb-1 flex items-center">
+                        <i class="fas fa-newspaper mr-2"></i>
+                        <span>企業收購新聞英語分析</span>
+                    </h1>
+                    <p class="text-indigo-100 text-xs md:text-sm">Business News Analysis: Salinas Acquisition</p>
+                </div>
+                <div class="self-start md:self-auto">
+                    <span class="bg-indigo-500 text-xs py-1 px-3 rounded-full whitespace-nowrap">TOEIC Reading Part 7</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: Original Text -->
+        <div class="bg-white p-4 md:p-6 border-b border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-file-alt mr-2 text-indigo-500"></i> 原文閱讀 (Original Text)
+            </h2>
+            <div class="bg-gray-50 rounded-lg p-4 md:p-5 border border-gray-200 relative">
+                <button onclick="playAudio('On Monday, Salinas Products, a large food distributor based in Mexico City, announced its plans to acquire the Pablo’s restaurant chain. Pablo Benavidez, the chain’s owner, had been considering holding an auction for ownership of the chain. He ultimately made the decision to sell to Salinas without seeking other offers. According to inside sources, Salinas has agreed to keep the restaurant’s name as part of the deal. Mr. Benavidez started the business 40 years ago right after finishing school. He opened a small food stand in his hometown of Cancún. Following that, he opened restaurants in Puerto Vallarta and Veracruz, and there are now over 50 Pablo’s restaurants nationwide.')" class="audio-btn absolute top-2 right-2 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-200">
+                    <i class="fas fa-volume-up text-lg"></i>
+                </button>
+                <p class="text-gray-800 text-base md:text-lg leading-loose md:leading-relaxed pr-10">
+                    On Monday, Salinas Products, a large food distributor based in Mexico City, announced its plans to acquire the Pablo’s restaurant chain. Pablo Benavidez, the chain’s owner, had been considering holding an auction for ownership of the chain. He ultimately made the decision to sell to Salinas without seeking other offers. According to inside sources, Salinas has agreed to keep the restaurant’s name as part of the deal. Mr. Benavidez started the business 40 years ago right after finishing school. He opened a small food stand in his hometown of Cancún. Following that, he opened restaurants in Puerto Vallarta and Veracruz, and there are now over 50 Pablo’s restaurants nationwide.
+                </p>
+            </div>
+        </div>
+
+        <!-- Legend (圖例) -->
+        <div class="bg-gray-50 border-b border-gray-200 p-3">
+            <div class="flex flex-wrap gap-2 text-xs md:text-sm justify-start md:justify-center">
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-blue-100 border border-blue-300 mr-1"></span> S (主詞)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-red-100 border border-red-300 mr-1"></span> V (動詞)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-green-100 border border-green-300 mr-1"></span> O (受詞)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-orange-100 border border-orange-300 mr-1"></span> C (補語)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-teal-100 border border-teal-300 mr-1"></span> 同位語</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-yellow-100 border border-yellow-300 mr-1"></span> 修飾語 (分詞/形容詞)</span>
+            </div>
+        </div>
+
+        <div class="p-4 md:p-6 space-y-6">
+
+            <!-- Sentence 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('On Monday, Salinas Products, a large food distributor based in Mexico City, announced its plans to acquire the Pablo’s restaurant chain.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        On Monday,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Salinas Products,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-teal-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-teal-600 font-bold mb-1">Appositive (同位語)</span>
+                        a large food distributor
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Participle Phr (Adj)</span>
+                        based in Mexico City,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        announced
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        its plans to acquire the Pablo’s restaurant chain.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>週一，總部位於墨西哥城的大型食品經銷商 Salinas Products，宣布了收購 Pablo's 連鎖餐廳的計畫。</p>
+                </div>
+                <!-- Grammar Highlight -->
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：同位語與分詞構句</strong>
+                    <p>這句有兩個補充說明結構：(1) <strong>同位語</strong> "a large food distributor..." 用來指稱 Salinas Products 的身分；(2) <strong>過去分詞片語</strong> "based in Mexico City" 用來修飾 distributor，省略了關代與 Be 動詞 (which is based in...)。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Pablo Benavidez, the chain’s owner, had been considering holding an auction for ownership of the chain.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Pablo Benavidez,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-teal-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-teal-600 font-bold mb-1">Appositive (同位語)</span>
+                        the chain’s owner,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        had been considering
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O (Gerund Phr)</span>
+                        holding an auction for ownership of the chain.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>Pablo Benavidez (即該連鎖店的老闆) 之前一直在考慮舉行拍賣來出售該連鎖店的所有權。</p>
+                </div>
+                 <!-- Grammar Highlight -->
+                 <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：過去完成進行式</strong>
+                    <p>使用 "had been considering" (had been V-ing) 強調在「過去某時間點（宣布收購）之前」，他已經持續考慮這件事一段時間了。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 3 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('He ultimately made the decision to sell to Salinas without seeking other offers.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        He
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Adv</span>
+                        ultimately
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        made
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        the decision
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Inf Phr (Adj)</span>
+                        to sell to Salinas
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        without seeking other offers.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>他最終決定賣給 Salinas，而沒有尋求其他報價。</p>
+                </div>
+                <!-- Grammar Highlight -->
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：不定詞當形容詞</strong>
+                    <p>"to sell to Salinas" 是不定詞片語當形容詞用，修飾前面的名詞 "decision"（決定要做什麼）。另外 "without" 是介系詞，後面必須接動名詞 (V-ing) "seeking"。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 4 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('According to inside sources, Salinas has agreed to keep the restaurant’s name as part of the deal.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        According to inside sources,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Salinas
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        has agreed
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O (Inf Phr)</span>
+                        to keep the restaurant’s name
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        as part of the deal.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>據內部消息人士透露，Salinas 已同意保留餐廳名稱作為交易的一部分。</p>
+                </div>
+                <!-- Grammar Highlight -->
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：同意做某事 (agree to V)</strong>
+                    <p>動詞 "agree" 後面如果要接動作，習慣使用不定詞 "to V" (to keep)。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 5 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Mr. Benavidez started the business 40 years ago right after finishing school.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Mr. Benavidez
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        started
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        the business
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Adv (Time)</span>
+                        40 years ago
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        right after finishing school.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>Benavidez 先生在 40 年前畢業後就創辦了這家公司。</p>
+                </div>
+                <!-- Grammar Highlight -->
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：時間副詞的堆疊</strong>
+                    <p>這句話有兩個時間副詞片語："40 years ago" 與 "right after..."。在英文中，時間通常放在句尾。"Right" 在這裡是副詞，用來強調 "after" (就在...之後)。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 6 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('He opened a small food stand in his hometown of Cancún.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        He
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        opened
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        a small food stand
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        in his hometown of Cancún.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>他在家鄉坎昆開了一個小吃攤。</p>
+                </div>
+                 <!-- Grammar Highlight -->
+                 <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：介系詞 of 表示「...的」或「即為」</strong>
+                    <p>"hometown of Cancún" 中的 of 有點類似同位語的功能，表示「坎昆這個家鄉」(the hometown which is Cancún)。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 7 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Following that, he opened restaurants in Puerto Vallarta and Veracruz, and there are now over 50 Pablo’s restaurants nationwide.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Participle Phr (Adv)</span>
+                        Following that,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        he
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        opened
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        restaurants
+                    </span>
+                    <span class="text-gray-400">... and</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S (虛主詞)</span>
+                        there
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        are
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">S (真主詞)</span>
+                        now over 50 Pablo’s restaurants
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Adv</span>
+                        nationwide.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>隨後，他在巴亞爾塔港和韋拉克魯斯開設了餐廳，現在全國有超過 50 家 Pablo's 餐廳。</p>
+                </div>
+                 <!-- Grammar Highlight -->
+                 <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：現在分詞作轉折詞 & 虛主詞</strong>
+                    <p>(1) "Following that" 雖然結構上是分詞片語（隨後、接著），但在新聞英文中常當作時間轉折詞使用。(2) "There are..." 是虛主詞句型，動詞 "are" 由後面的複數真主詞 "restaurants" 決定。</p>
+                </div>
+            </div>
+
+
+            <!-- Vocabulary Section -->
+            <div class="mt-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">TOEIC Vocabulary & Phrases</h2>
+                    </div>
+                    <!-- Level Legend -->
+                    <div class="text-xs hidden sm:flex gap-2">
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-1"></span>350+</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-blue-600 mr-1"></span>550+</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-orange-500 mr-1"></span>750+</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-600 mr-1"></span>860+</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- Vocab Card: acquire -->
+                    <div class="border-l-4 border-orange-500 bg-white shadow-sm p-4 rounded hover:bg-orange-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-advanced">TOEIC 750+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                acquire <span class="text-sm font-normal text-gray-500 ml-1">/əˈkwaɪr/</span>
+                                <button onclick="playAudio('acquire')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">vt.</span>
+                        <p class="text-gray-600 font-medium">收購；獲得</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">The company plans to acquire a smaller competitor. <br>(該公司計畫收購一家規模較小的競爭對手。)</p>
+                    </div>
+
+                    <!-- Vocab Card: distributor -->
+                    <div class="border-l-4 border-blue-500 bg-white shadow-sm p-4 rounded hover:bg-blue-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-intermediate">TOEIC 600+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                distributor <span class="text-sm font-normal text-gray-500 ml-1">/dɪˈstrɪbjətɚ/</span>
+                                <button onclick="playAudio('distributor')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">n.</span>
+                        <p class="text-gray-600 font-medium">經銷商；分銷商</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">They are the sole distributor of this product in Asia. <br>(他們是該產品在亞洲的獨家經銷商。)</p>
+                    </div>
+
+                    <!-- Vocab Card: auction -->
+                    <div class="border-l-4 border-blue-500 bg-white shadow-sm p-4 rounded hover:bg-blue-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-intermediate">TOEIC 550+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                auction <span class="text-sm font-normal text-gray-500 ml-1">/ˈɔkʃən/</span>
+                                <button onclick="playAudio('auction')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">n./vt.</span>
+                        <p class="text-gray-600 font-medium">拍賣</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">The house was sold at auction. <br>(這棟房子在拍賣會上賣出了。)</p>
+                    </div>
+
+                    <!-- Vocab Card: ultimately -->
+                    <div class="border-l-4 border-blue-500 bg-white shadow-sm p-4 rounded hover:bg-blue-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-intermediate">TOEIC 650+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                ultimately <span class="text-sm font-normal text-gray-500 ml-1">/ˈʌltəmɪtli/</span>
+                                <button onclick="playAudio('ultimately')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">adv.</span>
+                        <p class="text-gray-600 font-medium">最終；終究</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">Ultimately, the decision is yours. <br>(最終決定權在你手中。)</p>
+                    </div>
+
+                    <!-- Vocab Card: seek -->
+                    <div class="border-l-4 border-green-500 bg-white shadow-sm p-4 rounded hover:bg-green-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-foundation">TOEIC 450+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                seek <span class="text-sm font-normal text-gray-500 ml-1">/sik/</span>
+                                <button onclick="playAudio('seek')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">vt.</span>
+                        <p class="text-gray-600 font-medium">尋求；尋找</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">They are seeking advice from experts. <br>(他們正在尋求專家的建議。)</p>
+                    </div>
+
+                    <!-- Vocab Card: nationwide -->
+                    <div class="border-l-4 border-green-500 bg-white shadow-sm p-4 rounded hover:bg-green-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-foundation">TOEIC 400+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                nationwide <span class="text-sm font-normal text-gray-500 ml-1">/ˌneʃənˈwaɪd/</span>
+                                <button onclick="playAudio('nationwide')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">adv./adj.</span>
+                        <p class="text-gray-600 font-medium">在全國範圍內；全國性的</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">The company has stores nationwide. <br>(該公司在全國各地都有分店。)</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-gray-100 p-4 text-center text-gray-500 text-sm border-t">
+            Generated from user image for educational purposes.
+        </div>
+    </div>
+
+    <script>
+        function playAudio(text) {
+            // Check if browser supports speech synthesis
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech to avoid overlap
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // Set to US English
+                utterance.rate = 0.9; // Slightly slower for clarity
+                utterance.pitch = 1;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('您的瀏覽器不支援語音播放功能。');
+            }
+        }
+    </script>
+</body>
+</html>
