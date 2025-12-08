@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖書館公告英語分析 (完整版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .grammar-tag {
+            font-size: 0.75rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 0.1rem;
+            vertical-align: middle;
+        }
+
+        /* Color System */
+        .tag-s { background-color: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; } /* Subject - Blue */
+        .tag-v { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; } /* Verb - Red */
+        .tag-o { background-color: #dcfce7; color: #166534; border: 1px solid #86efac; } /* Object - Green */
+        .tag-comp { background-color: #ffedd5; color: #9a3412; border: 1px solid #fdba74; } /* Complement - Orange */
+        .tag-adv { background-color: #fef9c3; color: #854d0e; border: 1px solid #fde047; } /* Adverb/Adj - Yellow */
+        .tag-prep { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; } /* Prep - Purple */
+        .tag-appos { background-color: #ccfbf1; color: #0f766e; border: 1px solid #5eead4; } /* Appositive - Teal */
+        .tag-implicit { background-color: #e5e7eb; color: #4b5563; border: 1px dashed #9ca3af; } /* Implicit words - Gray Dashed */
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 0.3rem;
+            margin-bottom: 0.6rem;
+            position: relative;
+        }
+        
+        .highlight-box {
+            transition: all 0.3s ease;
+        }
+        .highlight-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Grammar Highlight Note */
+        .grammar-note {
+            background-color: #fffbeb; /* amber-50 */
+            border-left: 4px solid #f59e0b; /* amber-500 */
+            color: #92400e; /* amber-800 */
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* TOEIC Level Badges */
+        .level-badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .level-foundation { background-color: #dcfce7; color: #166534; } /* Green 350+ */
+        .level-intermediate { background-color: #dbeafe; color: #1e40af; } /* Blue 550+ */
+        .level-advanced { background-color: #ffedd5; color: #9a3412; } /* Orange 750+ */
+        .level-expert { background-color: #fee2e2; color: #991b1b; } /* Red 860+ */
+
+        .audio-btn {
+            cursor: pointer;
+            transition: transform 0.1s;
+            min-width: 44px; 
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .audio-btn:active {
+            transform: scale(0.95);
+            background-color: #e0e7ff;
+        }
+
+    </style>
+</head>
+<body class="p-3 md:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="bg-indigo-600 p-4 md:p-6 text-white">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold mb-1 flex items-center">
+                        <i class="fas fa-bullhorn mr-2"></i>
+                        <span>圖書館公告英語分析</span>
+                    </h1>
+                    <p class="text-indigo-100 text-xs md:text-sm">Mooringtown Library Notice Analysis</p>
+                </div>
+                <div class="self-start md:self-auto">
+                    <span class="bg-indigo-500 text-xs py-1 px-3 rounded-full whitespace-nowrap">TOEIC Reading Part 7</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: Original Text -->
+        <div class="bg-white p-4 md:p-6 border-b border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-3 flex items-center">
+                <i class="fas fa-file-alt mr-2 text-indigo-500"></i> 原文閱讀 (Original Text)
+            </h2>
+            <div class="bg-gray-50 rounded-lg p-4 md:p-5 border border-gray-200 relative">
+                <button onclick="playAudio('Mooringtown Library is pleased to invite local community groups to use the free advertising space on its new notice board, located outside the front entrance of the library. Space on the board is available for up to four weeks at a time. Notices must be approved in advance at the library’s front desk and must meet the following requirements. All content must be suitable for public display. The notice must be written or printed on standard-quality paper with dimensions of either 8.5 in x 11 in or 5.5 in x 8.5 in. The desired start and end date for display should be written in the front bottom right corner. The name and telephone number of the person posting the notice must be clearly marked on the back. Any notices that do not meet these requirements will not be considered and will be discarded. Submissions are now being accepted at the Mooringtown Library front desk. Please have the actual notice, in the format in which you would like it to appear, with you when you arrive. Within one business day, you will receive a call confirming that your notice has been added to the board.')" class="audio-btn absolute top-2 right-2 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-200">
+                    <i class="fas fa-volume-up text-lg"></i>
+                </button>
+                <p class="text-gray-800 text-base md:text-lg leading-loose md:leading-relaxed pr-10">
+                    <strong>Notice Board Space Available to Community Groups</strong><br><br>
+                    Mooringtown Library is pleased to invite local community groups to use the free advertising space on its new notice board, located outside the front entrance of the library. Space on the board is available for up to four weeks at a time.
+                    <br><br>
+                    Notices must be approved in advance at the library’s front desk and must meet the following requirements. All content must be suitable for public display. The notice must be written or printed on standard-quality paper with dimensions of either 8.5 in x 11 in or 5.5 in x 8.5 in. The desired start and end date for display should be written in the front bottom right corner. <span class="bg-green-100 px-1 border-b-2 border-green-500">[1] The name and telephone number of the person posting the notice must be clearly marked on the back.</span> Any notices that do not meet these requirements will not be considered and will be discarded.
+                    <br><br>
+                    [3] —. <strong>Submissions are now being accepted at the Mooringtown Library front desk. Please have the actual notice, in the format in which you would like it to appear, with you when you arrive. Within one business day, you will receive a call confirming that your notice has been added to the board.</strong> — [4] —.
+                </p>
+            </div>
+        </div>
+
+        <!-- Legend (圖例) -->
+        <div class="bg-gray-50 border-b border-gray-200 p-3">
+            <div class="flex flex-wrap gap-2 text-xs md:text-sm justify-start md:justify-center">
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-blue-100 border border-blue-300 mr-1"></span> S (主詞)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-red-100 border border-red-300 mr-1"></span> V (動詞)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-green-100 border border-green-300 mr-1"></span> O (受詞)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-orange-100 border border-orange-300 mr-1"></span> C (補語)</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-yellow-100 border border-yellow-300 mr-1"></span> 修飾語</span>
+                <span class="flex items-center px-1"><span class="w-2 h-2 md:w-3 md:h-3 rounded bg-purple-100 border border-purple-300 mr-1"></span> 介系詞</span>
+            </div>
+        </div>
+
+        <div class="p-4 md:p-6 space-y-6">
+
+            <!-- Sentence 1-7 (Existing code omitted for brevity but maintained in full file) -->
+            <!-- ... existing code for Sentence 1 to 7 ... -->
+            
+            <!-- Sentence 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Mooringtown Library is pleased to invite local community groups to use the free advertising space on its new notice board, located outside the front entrance of the library.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Mooringtown Library
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        is
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-orange-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-orange-600 font-bold mb-1">C (Adj)</span>
+                        pleased
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Inf Phr (Adv)</span>
+                        to invite local community groups
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Inf Phr (Adv)</span>
+                        to use the free advertising space
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        on its new notice board,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Participle Phr (Adj)</span>
+                        located outside the front entrance of the library.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>Mooringtown 圖書館很高興邀請當地社區團體，使用位於圖書館正門外新佈告欄上的免費廣告空間。</p>
+                </div>
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：分詞片語修飾地點</strong>
+                    <p>"located outside..." 是一個過去分詞片語，當形容詞使用，修飾前面的名詞 "notice board"。原句是 "which is located outside..." (省略了關代 which 與 be 動詞 is)。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Space on the board is available for up to four weeks at a time.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Space
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        on the board
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        is
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-orange-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-orange-600 font-bold mb-1">C (Adj)</span>
+                        available
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        for up to four weeks
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        at a time.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>佈告欄上的空間一次最多可使用四週。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 3 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Notices must be approved in advance at the library’s front desk and must meet the following requirements.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Notices
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Passive)</span>
+                        must be approved
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Adv (修飾 approved)</span>
+                        in advance
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        at the library’s front desk
+                    </span>
+                    <span class="text-gray-400">and</span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        must meet
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        the following requirements.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>公告必須事先在圖書館前台獲得批准，並符合以下要求。</p>
+                </div>
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：被動語態 (must be V-pp)</strong>
+                    <p>這裡使用 "must be approved" (必須被批准)，強調「規定」而非誰去批准。這是公告類文章非常常見的語氣。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 4 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('All content must be suitable for public display.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        All content
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        must be
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-orange-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-orange-600 font-bold mb-1">C (Adj)</span>
+                        suitable
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        for public display.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>所有內容必須適合公開展示。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 5 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('The desired start and end date for display should be written in the front bottom right corner.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        The desired start and end date
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        for display
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Passive)</span>
+                        should be written
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        in the front bottom right corner.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>預計展示的開始與結束日期，應寫在正面右下角。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 6 (Inserted Sentence) -->
+            <div class="highlight-box border-l-4 border-green-500 bg-green-50 rounded-lg p-4 md:p-5 relative group">
+                <div class="absolute top-2 left-2 text-xs font-bold text-green-600 bg-green-200 px-2 py-1 rounded">插入句 (Answer)</div>
+                <button onclick="playAudio('The name and telephone number of the person posting the notice must be clearly marked on the back.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-green-600 hover:text-green-800 bg-white rounded-full shadow-sm border border-green-200">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 mt-6 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        The name and telephone number
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        of the person
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Participle Phr (Adj)</span>
+                        posting the notice
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Passive)</span>
+                        must be clearly marked
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        on the back.
+                    </span>
+                </div>
+                <div class="flex items-start bg-white p-3 rounded text-sm md:text-base text-gray-700 border border-green-200">
+                    <i class="fas fa-language text-green-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>張貼公告者的姓名與電話號碼，必須清楚標示於背面。</p>
+                </div>
+                <div class="grammar-note border-green-500 bg-green-50 text-green-800">
+                    <strong class="block mb-1"><i class="fas fa-check-circle mr-1"></i> 解題關鍵</strong>
+                    <p>這句話補充了另一個「標示位置」的規定。前一句講 "front" (正面)，這句講 "back" (背面)，邏輯連貫，因此是最佳插入點 [1]。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 7 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Any notices that do not meet these requirements will not be considered and will be discarded.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Any notices
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Adj Clause (修飾 notices)</span>
+                        that do not meet these requirements
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Passive)</span>
+                        will not be considered
+                    </span>
+                    <span class="text-gray-400">and</span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Passive)</span>
+                        will be discarded.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>任何不符合這些要求的公告將不予考慮並將被丟棄。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 8 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Submissions are now being accepted at the Mooringtown Library front desk.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        Submissions
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Passive Progressive)</span>
+                        are now being accepted
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        at the Mooringtown Library front desk.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>Mooringtown 圖書館前台現在正接受提交（公告申請）。</p>
+                </div>
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：被動進行式 (be being V-pp)</strong>
+                    <p>使用 "are being accepted" 強調目前「正在進行中」的動作，表示現在就可以去提交了。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 9 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Please have the actual notice, in the format in which you would like it to appear, with you when you arrive.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V (Imp)</span>
+                        Please have
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        the actual notice
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Prep Phr (修飾 notice)</span>
+                        in the format in which you would like it to appear,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr (修飾 have)</span>
+                        with you
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Adv Clause</span>
+                        when you arrive.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>請在抵達時隨身攜帶實際的公告（以您希望呈現的格式）。</p>
+                </div>
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：介系詞片語插入 & 關係子句</strong>
+                    <p>(1) "in the format..." 是一個插入的介系詞片語，修飾 notice。(2) "in which" 引導形容詞子句，修飾 format，意為「在您希望它呈現的那個格式中」。</p>
+                </div>
+            </div>
+
+            <!-- Sentence 10 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-4 md:p-5 relative group">
+                <button onclick="playAudio('Within one business day, you will receive a call confirming that your notice has been added to the board.')" class="audio-btn absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100">
+                    <i class="fas fa-volume-up text-base md:text-lg"></i>
+                </button>
+                <div class="mb-3 text-base md:text-lg leading-loose md:leading-relaxed text-gray-800 pr-10 md:pr-12">
+                    <span class="sentence-chunk border-b-2 border-purple-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-purple-600 font-bold mb-1">Prep Phr</span>
+                        Within one business day,
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-blue-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-blue-600 font-bold mb-1">S</span>
+                        you
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-red-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-red-600 font-bold mb-1">V</span>
+                        will receive
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-green-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-green-600 font-bold mb-1">O</span>
+                        a call
+                    </span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400 pb-1">
+                        <span class="block text-[10px] md:text-xs text-yellow-600 font-bold mb-1">Participle Phr (修飾 call)</span>
+                        confirming that your notice has been added to the board.
+                    </span>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-sm md:text-base text-gray-700">
+                    <i class="fas fa-language text-indigo-500 mt-1 mr-2 flex-shrink-0"></i>
+                    <p>在一個工作日內，您將收到一通電話，確認您的公告已張貼至佈告欄。</p>
+                </div>
+                <div class="grammar-note">
+                    <strong class="block mb-1"><i class="fas fa-lightbulb mr-1"></i> 文法亮點：現在分詞片語修飾名詞</strong>
+                    <p>"confirming that..." 是現在分詞片語，當形容詞用，修飾前面的名詞 "call" (一通確認...的電話)。</p>
+                </div>
+            </div>
+
+            <!-- Vocabulary Section -->
+            <div class="mt-8">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center">
+                        <div class="bg-indigo-600 text-white rounded-full w-8 h-8 flex items-center justify-center mr-2">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-800">TOEIC Vocabulary & Phrases</h2>
+                    </div>
+                    <!-- Level Legend -->
+                    <div class="text-xs hidden sm:flex gap-2">
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-1"></span>350+</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-blue-600 mr-1"></span>550+</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-orange-500 mr-1"></span>750+</span>
+                        <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-red-600 mr-1"></span>860+</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- Vocab Card: in advance -->
+                    <div class="border-l-4 border-blue-500 bg-white shadow-sm p-4 rounded hover:bg-blue-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-intermediate">TOEIC 600+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                in advance <span class="text-sm font-normal text-gray-500 ml-1">/ɪn ədˈvæns/</span>
+                                <button onclick="playAudio('in advance')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">phr.</span>
+                        <p class="text-gray-600 font-medium">事先；預先</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">You must pay for the tickets in advance. <br>(你必須事先支付票款。)</p>
+                    </div>
+
+                    <!-- Vocab Card: discard -->
+                    <div class="border-l-4 border-blue-500 bg-white shadow-sm p-4 rounded hover:bg-blue-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-intermediate">TOEIC 650+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                discard <span class="text-sm font-normal text-gray-500 ml-1">/dɪsˈkɑrd/</span>
+                                <button onclick="playAudio('discard')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">vt.</span>
+                        <p class="text-gray-600 font-medium">丟棄；拋棄</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">Please discard your trash in the bin. <br>(請將垃圾丟入垃圾桶。)</p>
+                    </div>
+
+                    <!-- Vocab Card: dimension -->
+                    <div class="border-l-4 border-orange-500 bg-white shadow-sm p-4 rounded hover:bg-orange-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-advanced">TOEIC 750+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                dimension <span class="text-sm font-normal text-gray-500 ml-1">/dɪˈmɛnʃən/</span>
+                                <button onclick="playAudio('dimension')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">n.</span>
+                        <p class="text-gray-600 font-medium">尺寸；面積；維度</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">We need to measure the dimensions of the room. <br>(我們需要測量房間的尺寸。)</p>
+                    </div>
+
+                    <!-- Vocab Card: suitable -->
+                    <div class="border-l-4 border-green-500 bg-white shadow-sm p-4 rounded hover:bg-green-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-foundation">TOEIC 450+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                suitable <span class="text-sm font-normal text-gray-500 ml-1">/ˈsutəbəl/</span>
+                                <button onclick="playAudio('suitable')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">adj.</span>
+                        <p class="text-gray-600 font-medium">適合的；適當的</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">This movie is not suitable for children. <br>(這部電影不適合兒童觀看。)</p>
+                    </div>
+
+                    <!-- Vocab Card: submission -->
+                    <div class="border-l-4 border-blue-500 bg-white shadow-sm p-4 rounded hover:bg-blue-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-intermediate">TOEIC 600+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                submission <span class="text-sm font-normal text-gray-500 ml-1">/səbˈmɪʃən/</span>
+                                <button onclick="playAudio('submission')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">n.</span>
+                        <p class="text-gray-600 font-medium">提交；呈遞</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">The deadline for submission is Friday. <br>(提交截止日期是星期五。)</p>
+                    </div>
+
+                    <!-- Vocab Card: format -->
+                    <div class="border-l-4 border-green-500 bg-white shadow-sm p-4 rounded hover:bg-green-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-foundation">TOEIC 400+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                format <span class="text-sm font-normal text-gray-500 ml-1">/ˈfɔrmæt/</span>
+                                <button onclick="playAudio('format')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">n.</span>
+                        <p class="text-gray-600 font-medium">格式；版式</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">Please save the file in PDF format. <br>(請將檔案儲存為 PDF 格式。)</p>
+                    </div>
+
+                    <!-- Vocab Card: confirm -->
+                    <div class="border-l-4 border-green-500 bg-white shadow-sm p-4 rounded hover:bg-green-50 transition relative">
+                        <div class="absolute top-3 right-3 level-badge level-foundation">TOEIC 350+</div>
+                        <div class="flex justify-between items-start pr-16">
+                            <h3 class="font-bold text-lg text-gray-800 flex items-center">
+                                confirm <span class="text-sm font-normal text-gray-500 ml-1">/kənˈfɝm/</span>
+                                <button onclick="playAudio('confirm')" class="audio-btn ml-2 text-indigo-400 hover:text-indigo-600"><i class="fas fa-volume-up text-sm"></i></button>
+                            </h3>
+                        </div>
+                        <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600 mb-2 inline-block">vt.</span>
+                        <p class="text-gray-600 font-medium">確認；證實</p>
+                        <p class="text-sm text-gray-500 mt-2 italic">Please confirm your reservation by email. <br>(請透過電子郵件確認您的預訂。)</p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-gray-100 p-4 text-center text-gray-500 text-sm border-t">
+            Generated from user image for educational purposes.
+        </div>
+    </div>
+
+    <script>
+        function playAudio(text) {
+            // Check if browser supports speech synthesis
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech to avoid overlap
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // Set to US English
+                utterance.rate = 0.9; // Slightly slower for clarity
+                utterance.pitch = 1;
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('您的瀏覽器不支援語音播放功能。');
+            }
+        }
+    </script>
+</body>
+</html>
