@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Hiring Trends - Interactive Lecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: { 600: '#0d9488' },
+                        orange: { 500: '#f97316', 600: '#ea580c' }
+                    },
+                    lineHeight: {
+                        'loose': '2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .highlight-box {
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .highlight-box:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 6px;
+            margin-bottom: 8px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Grammar Tags */
+        .tag-s { color: #2563eb; font-weight: 700; } /* Blue */
+        .tag-v { color: #dc2626; font-weight: 700; } /* Red */
+        .tag-o { color: #16a34a; font-weight: 700; } /* Green */
+        .tag-c { color: #ea580c; font-weight: 700; } /* Orange */
+        .tag-appos { color: #0d9488; font-weight: 700; } /* Teal */
+        .tag-mod { color: #ca8a04; font-weight: 700; } /* Yellow-Dark */
+        .tag-prep { color: #9333ea; font-weight: 700; } /* Purple */
+        
+        .grammar-note {
+            background-color: #fef9c3;
+            border-left: 4px solid #facc15;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+        }
+        
+        .grammar-note ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 4px;
+        }
+        
+        .grammar-note li {
+            margin-bottom: 4px;
+        }
+
+        .audio-btn {
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom style for the small inline button */
+        .audio-btn-small {
+            width: 32px;
+            height: 32px;
+            font-size: 0.875rem; /* text-sm */
+            display: inline-flex;
+            vertical-align: middle;
+            margin-left: 8px;
+            margin-bottom: 8px; /* Align with chunks */
+        }
+        
+        /* Larger button for other sections */
+        .audio-btn-large {
+            width: 44px;
+            height: 44px;
+        }
+        
+        /* Table Styles */
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #d1d5db;
+            padding: 8px;
+        }
+        .comparison-table th {
+            background-color: #e5e7eb;
+            text-align: left;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Modern Talent Acquisition</h1>
+        <p class="text-lg text-gray-600">互動式英語解析講義</p>
+    </header>
+
+    <!-- SECTION 1: Original Text -->
+    <section class="mb-12">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-indigo-600 pl-3">1. 原文閱讀 (Original Text)</h2>
+            <button onclick="playAll()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center shadow-lg">
+                <i class="fas fa-play-circle mr-2"></i> 朗讀全文
+            </button>
+        </div>
+
+        <!-- Text Content -->
+        <div class="bg-white border-2 border-gray-300 rounded-lg shadow-sm mb-6 overflow-hidden p-6 md:p-8">
+            <p class="text-lg text-gray-800 mb-6 leading-relaxed text-justify">
+                In today's competitive job market, the traditional focus on monetary compensation alone does not fully encapsulate what potential employees seek. More and more, individuals are gravitating towards opportunities that cater to the comprehensive needs of their families, align with their personal values, and enhance their future skill sets. It's no longer just about securing employment, let alone a sizable paycheck. As a Hiring Manager, I must adopt a broader perspective to understand these nuanced needs, engaging in open dialogues about work–life balance, ethical company practices, and professional growth opportunities. This holistic approach to talent acquisition will not only enhance the quality of our hires but will also reinforce our reputation as an employer who truly understands and values their workforce.
+            </p>
+
+            <!-- Table Content -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse comparison-table text-sm md:text-base">
+                    <thead>
+                        <tr>
+                            <th>Criteria</th>
+                            <th>Traditional Methods</th>
+                            <th>Future-Oriented Methods</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold">Primary Focus</td>
+                            <td>Salary and benefits</td>
+                            <td>Comprehensive needs including work-life balance</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Value Alignment</td>
+                            <td>Not a key factor</td>
+                            <td>Crucial for attracting talent</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Skill Development</td>
+                            <td>Limited opportunities</td>
+                            <td>Emphasizes continuous learning and future skill building</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Family Needs</td>
+                            <td>Not typically prioritized</td>
+                            <td>Key consideration in talent attraction</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Employer-Employee Dialogue</td>
+                            <td>Limited to performance and job-specific discussions</td>
+                            <td>Open dialogue about needs, values, and future growth</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Reputation Management</td>
+                            <td>Primarily focused on business success and financial standing</td>
+                            <td>Broadened to include employer-employee relationship</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Sentence Analysis -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-500 pl-3 mb-6">2. 全篇句型結構分析 (Sentence Structure)</h2>
+
+        <div class="space-y-8">
+            <!-- Sentence 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adv)</span>In today's competitive job market,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>the traditional focus on monetary compensation alone</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>does not fully encapsulate</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Noun Clause)</span>what potential employees seek.</span>
+                    <button onclick="playAudio('In today\'s competitive job market, the traditional focus on monetary compensation alone does not fully encapsulate what potential employees seek.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>在現今競爭激烈的就業市場中，傳統上僅專注於金錢報酬，已無法完全涵蓋潛在員工所追求的事物。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>主詞核心</strong>：Focus (單數)，因此動詞使用 does not。</li>
+                        <li><strong>名詞子句</strong>："what potential employees seek" 作為 encapsulate 的受詞，what 意為「...的事物」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>More and more,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>individuals</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>are gravitating</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>towards opportunities</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause</span>that cater to the comprehensive needs of their families,</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause</span>align with their personal values,</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause</span>enhance their future skill sets.</span>
+                    <button onclick="playAudio('More and more, individuals are gravitating towards opportunities that cater to the comprehensive needs of their families, align with their personal values, and enhance their future skill sets.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>越來越多的個人傾向於那些能滿足家庭全面需求、符合個人價值觀，並能提升未來技能組合的機會。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>關係子句平行結構</strong>：that 引導的三個動詞片語 cater..., align..., and enhance... 共同修飾 opportunities。</li>
+                        <li><strong>Gravitate towards</strong>：動詞片語，意指「被吸引向...」、「傾向於...」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 3 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>It</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>'s (is)</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>no longer</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C / Prep Phr</span>just about securing employment,</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>let alone a sizable paycheck.</span>
+                    <button onclick="playAudio('It\'s no longer just about securing employment, let alone a sizable paycheck.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>這不再只是關於獲得一份工作，更不用說一份豐厚的薪水了。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>Let alone</strong>：連接詞片語，意為「更不用說」、「何況」。通常接在否定句之後。</li>
+                        <li><strong>Securing</strong>：動名詞 (V-ing)，作介系詞 about 的受詞。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 4 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Intro)</span>As a Hiring Manager,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>I</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>must adopt</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>a broader perspective</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Inf - Purpose)</span>to understand these nuanced needs,</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Participle Phr (Method)</span>engaging in open dialogues about work–life balance, ethical company practices, and professional growth opportunities.</span>
+                    <button onclick="playAudio('As a Hiring Manager, I must adopt a broader perspective to understand these nuanced needs, engaging in open dialogues about work–life balance, ethical company practices, and professional growth opportunities.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>身為一名招聘經理，我必須採取更寬廣的視角來理解這些細微的需求，並針對工作與生活平衡、公司道德規範及專業成長機會進行開放式的對話。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>不定詞表目的</strong>：to understand... 表示採取更寬廣視角的「目的」。</li>
+                        <li><strong>分詞構句</strong>：engaging in... 補充說明主詞 "I" 如何採取行動，表示伴隨的狀態或方式。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 5 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>This holistic approach to talent acquisition</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>will not only enhance</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>the quality of our hires</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V (Conj)</span>but will also reinforce</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>our reputation</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Role)</span>as an employer</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause</span>who truly understands and values their workforce.</span>
+                    <button onclick="playAudio('This holistic approach to talent acquisition will not only enhance the quality of our hires but will also reinforce our reputation as an employer who truly understands and values their workforce.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>這種全面的人才招聘方法，不僅能提升我們聘僱人員的素質，也能強化我們作為真正理解並重視員工的雇主聲譽。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>對等連接詞</strong>：not only... but also... 連接兩個動詞片語 (enhance... 和 reinforce...)。</li>
+                        <li><strong>關係子句</strong>：who truly understands... 修飾先行詞 employer。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Table Sentence 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group mt-10">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 bg-gray-100 p-2 rounded">表格重點句型分析 (Table Highlights)</h3>
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Future-oriented methods</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>emphasize</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Gerund)</span>continuous learning</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Gerund Phr)</span>future skill building.</span>
+                    <button onclick="playAudio('Future-oriented methods emphasize continuous learning and future skill building.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>未來導向的方法強調持續學習與未來技能的建立。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>動名詞當受詞</strong>：learning 和 building 都是動名詞，作為 emphasize 的受詞。</li>
+                        <li><strong>平行結構</strong>：and 連接兩個名詞性質的詞組。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Table Sentence 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Reputation management</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V (Passive)</span>is broadened</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Inf - Purpose)</span>to include</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>the employer-employee relationship.</span>
+                    <button onclick="playAudio('Reputation management is broadened to include the employer-employee relationship.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>聲譽管理的範圍被擴大，以包含雇主與員工的關係。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>被動語態</strong>：is broadened (被擴大)。</li>
+                        <li><strong>不定詞表目的/結果</strong>：to include 說明擴大之後的包含範圍。</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: TOEIC Vocabulary -->
+    <section>
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-green-500 pl-3 mb-6">3. TOEIC 核心單字與片語 (Vocabulary & Phrases)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Word 1 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                 <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 850+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">1. encapsulate</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ɪnˈkæpsəˌleɪt/</span>
+                    <button onclick="playAudio('encapsulate')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">概括，包含，封裝</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The report encapsulates the main problems we face.</p>
+                <p class="text-gray-500 text-sm">(這份報告概括了我們面臨的主要問題。)</p>
+            </div>
+
+             <!-- Word 2 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 800+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">2. gravitate</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈgrævɪˌteɪt/</span>
+                    <button onclick="playAudio('gravitate')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vi.</span>
+                    <span class="text-gray-700 font-medium">被吸引，傾向於 (+ towards)</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Most visitors gravitate towards the beach.</p>
+                <p class="text-gray-500 text-sm">(大多數遊客都會被海灘吸引。)</p>
+            </div>
+
+            <!-- Word 3 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">3. comprehensive</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌkɑmprɪˈhɛnsɪv/</span>
+                    <button onclick="playAudio('comprehensive')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">全面的，綜合的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The company offers comprehensive health insurance.</p>
+                <p class="text-gray-500 text-sm">(這家公司提供全面的健康保險。)</p>
+            </div>
+
+             <!-- Word 4 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">4. nuanced</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈnuɑnst/</span>
+                    <button onclick="playAudio('nuanced')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">微妙的，細微差別的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">She gave a nuanced performance in the play.</p>
+                <p class="text-gray-500 text-sm">(她在劇中做出了細膩微妙的表演。)</p>
+            </div>
+
+            <!-- Word 5 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 800+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">5. holistic</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/hoʊˈlɪstɪk/</span>
+                    <button onclick="playAudio('holistic')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">整體的，全面的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We need to take a holistic approach to solve this issue.</p>
+                <p class="text-gray-500 text-sm">(我們需要採取整體的方法來解決這個問題。)</p>
+            </div>
+
+            <!-- Word 6 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 650+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">6. acquisition</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌækwəˈzɪʃən/</span>
+                    <button onclick="playAudio('acquisition')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">獲得，收購；(人才) 招聘</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Talent acquisition is a key function of HR.</p>
+                <p class="text-gray-500 text-sm">(人才招聘是人力資源部門的關鍵職能。)</p>
+            </div>
+
+            <!-- Word 7 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">7. reinforce</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌriɪnˈfɔrs/</span>
+                    <button onclick="playAudio('reinforce')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">加強，強化</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The manager's feedback reinforced the team's confidence.</p>
+                <p class="text-gray-500 text-sm">(經理的回饋增強了團隊的信心。)</p>
+            </div>
+
+            <!-- Word 8 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">8. reputation</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌrɛpjəˈteɪʃən/</span>
+                    <button onclick="playAudio('reputation')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">名聲，聲譽</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The firm has an excellent reputation.</p>
+                <p class="text-gray-500 text-sm">(這家公司擁有極佳的聲譽。)</p>
+            </div>
+
+            <!-- Word 9 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">9. cater</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈkeɪtɚ/</span>
+                    <button onclick="playAudio('cater')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vi.</span>
+                    <span class="text-gray-700 font-medium">迎合，滿足 (+ to)</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We cater to the needs of all our customers.</p>
+                <p class="text-gray-500 text-sm">(我們迎合所有客戶的需求。)</p>
+            </div>
+
+            <!-- Word 10 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">10. align</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/əˈlaɪn/</span>
+                    <button onclick="playAudio('align')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vi.</span>
+                    <span class="text-gray-700 font-medium">結盟，一致 (+ with)</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">His values align with the company's mission.</p>
+                <p class="text-gray-500 text-sm">(他的價值觀與公司的使命一致。)</p>
+            </div>
+
+            <!-- Word 11 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">11. engage in</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ɪnˈgeɪʤ ɪn/</span>
+                    <button onclick="playAudio('engage in')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">phr.</span>
+                    <span class="text-gray-700 font-medium">參加，從事，忙於</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">He is currently engaged in a serious project.</p>
+                <p class="text-gray-500 text-sm">(他目前正忙於一個重要的專案。)</p>
+            </div>
+
+            <!-- Word 12 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">12. perspective</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/pɚˈspɛktɪv/</span>
+                    <button onclick="playAudio('perspective')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">觀點，視角</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Try to look at the problem from a different perspective.</p>
+                <p class="text-gray-500 text-sm">(試著從不同的角度看問題。)</p>
+            </div>
+
+            <!-- Word 13 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">13. ethical</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈɛθɪkəl/</span>
+                    <button onclick="playAudio('ethical')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">道德的，倫理的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The company follows strict ethical standards.</p>
+                <p class="text-gray-500 text-sm">(這家公司遵循嚴格的道德標準。)</p>
+            </div>
+
+            <!-- Word 14 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-red-100 text-red-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">14. crucial</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈkruʃəl/</span>
+                    <button onclick="playAudio('crucial')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">決定性的，至關重要的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Teamwork is crucial for the success of this project.</p>
+                <p class="text-gray-500 text-sm">(團隊合作對這個專案的成功至關重要。)</p>
+            </div>
+
+            <!-- Word 15 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">15. compensation</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌkɑmpənˈseɪʃən/</span>
+                    <button onclick="playAudio('compensation')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">補償，薪資報酬</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Employees receive fair compensation for their work.</p>
+                <p class="text-gray-500 text-sm">(員工因其工作獲得公平的報酬。)</p>
+            </div>
+
+            <!-- Word 16 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 400+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">16. prioritize</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/praɪˈɔrɪˌtaɪz/</span>
+                    <button onclick="playAudio('prioritize')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">按優先順序處理，重視</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">You must learn to prioritize your tasks.</p>
+                <p class="text-gray-500 text-sm">(你必須學會按優先順序處理你的任務。)</p>
+            </div>
+
+            <!-- Word 17 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">17. dialogue</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈdaɪəˌlɔg/</span>
+                    <button onclick="playAudio('dialogue')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">對話，交流</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The two countries engaged in a constructive dialogue.</p>
+                <p class="text-gray-500 text-sm">(兩國進行了建設性的對話。)</p>
+            </div>
+
+            <!-- Word 18 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">18. continuous</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/kənˈtɪnjuəs/</span>
+                    <button onclick="playAudio('continuous')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">連續的，持續的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Continuous improvement is essential for success.</p>
+                <p class="text-gray-500 text-sm">(持續改進是成功的關鍵。)</p>
+            </div>
+
+            <!-- Word 19 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">19. emphasize</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈɛmfəˌsaɪz/</span>
+                    <button onclick="playAudio('emphasize')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">強調，著重</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The report emphasizes the importance of safety.</p>
+                <p class="text-gray-500 text-sm">(這份報告強調了安全的重要性。)</p>
+            </div>
+
+            <!-- Word 20 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 650+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">20. broaden</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈbrɔdən/</span>
+                    <button onclick="playAudio('broaden')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">擴大，變寬</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Travel broadens the mind.</p>
+                <p class="text-gray-500 text-sm">(旅行能開闊心胸。)</p>
+            </div>
+
+            <!-- Word 21 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 700+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">21. sizable</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈsaɪzəbəl/</span>
+                    <button onclick="playAudio('sizable')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">相當大的，巨大的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">He made a sizable donation to the charity.</p>
+                <p class="text-gray-500 text-sm">(他向慈善機構捐贈了一筆數目可觀的款項。)</p>
+            </div>
+
+            <!-- Word 22 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">22. monetary</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈmɑnəˌtɛri/</span>
+                    <button onclick="playAudio('monetary')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">金錢的，貨幣的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The painting has little monetary value.</p>
+                <p class="text-gray-500 text-sm">(這幅畫沒什麼金錢價值。)</p>
+            </div>
+
+            <!-- Word 23 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">23. workforce</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈwɜrkˌfɔrs/</span>
+                    <button onclick="playAudio('workforce')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">勞動力，全體員工</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We have a highly skilled workforce.</p>
+                <p class="text-gray-500 text-sm">(我們擁有一支技術精湛的員工隊伍。)</p>
+            </div>
+
+            <!-- Word 24 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 700+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">24. secure</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/sɪˈkjʊr/</span>
+                    <button onclick="playAudio('secure')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">獲得，保衛</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">She managed to secure a good job.</p>
+                <p class="text-gray-500 text-sm">(她設法獲得了一份好工作。)</p>
+            </div>
+
+            <!-- Word 25 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">25. standing</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈstændɪŋ/</span>
+                    <button onclick="playAudio('standing')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">地位，身分，信用</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The company has a good financial standing.</p>
+                <p class="text-gray-500 text-sm">(該公司財務狀況良好。)</p>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-500 text-sm pb-8">
+        <p>Generated by AI Teaching Assistant &copy; 2024</p>
+    </footer>
+
+    <script>
+        // Web Speech API Implementation
+        function playAudio(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; // Slightly slower for teaching
+                
+                // Try to select a better voice
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => voice.name.includes('Google US English') || voice.name.includes('Samantha'));
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+
+        function playAll() {
+            const fullText = `
+                Modern Talent Acquisition.
+                In today's competitive job market, the traditional focus on monetary compensation alone does not fully encapsulate what potential employees seek. More and more, individuals are gravitating towards opportunities that cater to the comprehensive needs of their families, align with their personal values, and enhance their future skill sets. It's no longer just about securing employment, let alone a sizable paycheck. As a Hiring Manager, I must adopt a broader perspective to understand these nuanced needs, engaging in open dialogues about work–life balance, ethical company practices, and professional growth opportunities. This holistic approach to talent acquisition will not only enhance the quality of our hires but will also reinforce our reputation as an employer who truly understands and values their workforce.
+            `;
+            playAudio(fullText);
+        }
+    </script>
+</body>
+</html>
