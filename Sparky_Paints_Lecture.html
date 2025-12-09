@@ -15,7 +15,11 @@
                         orange: { 500: '#f97316', 600: '#ea580c' }
                     },
                     lineHeight: {
-                        'loose': '2.5', /* Increased line height for labels */
+                        'loose': '2.8', /* 稍微增加行高，讓標籤有足夠呼吸空間 */
+                        'relaxed': '1.8', /* 一般閱讀文字的舒適行高 */
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
                     }
                 }
             }
@@ -26,74 +30,103 @@
         
         body {
             font-family: 'Roboto', 'Noto Sans TC', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f8fafc; /* 更柔和的背景色 */
+            color: #334155;
+        }
+
+        /* 區塊卡片樣式 */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .highlight-box {
             background-color: #ffffff;
-            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
         }
         
         .highlight-box:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
 
         .sentence-chunk {
             display: inline-block;
-            margin-right: 8px;
-            margin-bottom: 12px;
-            padding: 2px 4px;
-            border-radius: 4px;
+            margin-right: 10px; /* 增加單字間距 */
+            margin-bottom: 8px;
+            padding: 0 2px;
             position: relative;
             vertical-align: bottom;
         }
 
-        /* Grammar Tags Styling Rules:
-           - Text color is always dark gray (#374151)
-           - Font weight is normal (400)
-           - Decoration comes from border-bottom and the label color
-        */
-        .tag-s { color: #374151; font-weight: 400; border-bottom: 2px solid #93c5fd; } /* Blue underline */
-        .tag-v { color: #374151; font-weight: 400; border-bottom: 2px solid #fca5a5; } /* Red underline */
-        .tag-o { color: #374151; font-weight: 400; border-bottom: 2px solid #86efac; } /* Green underline */
-        .tag-c { color: #374151; font-weight: 400; border-bottom: 2px solid #fdba74; } /* Orange underline */
-        .tag-appos { color: #374151; font-weight: 400; border-bottom: 2px solid #5eead4; } /* Teal underline */
-        .tag-mod { color: #374151; font-weight: 400; border-bottom: 2px solid #fde047; } /* Yellow-Dark underline */
-        .tag-prep { color: #374151; font-weight: 400; border-bottom: 2px solid #d8b4fe; } /* Purple underline */
-        .tag-conj { color: #374151; font-weight: 400; border-bottom: 2px solid #e5e7eb; } /* Gray underline */
+        /* Grammar Tags Styling */
+        /* Text is dark gray, normal weight for comfort */
+        .tag-s { color: #1e293b; border-bottom: 3px solid #93c5fd; } 
+        .tag-v { color: #1e293b; border-bottom: 3px solid #fca5a5; } 
+        .tag-o { color: #1e293b; border-bottom: 3px solid #86efac; } 
+        .tag-c { color: #1e293b; border-bottom: 3px solid #fdba74; } 
+        .tag-appos { color: #1e293b; border-bottom: 3px solid #5eead4; } 
+        .tag-mod { color: #1e293b; border-bottom: 3px solid #fde047; } 
+        .tag-prep { color: #1e293b; border-bottom: 3px solid #d8b4fe; } 
+        .tag-conj { color: #1e293b; border-bottom: 3px solid #e5e7eb; } 
 
-        /* Label styling */
+        /* Label Styling - 精緻化 */
         .tag-label {
             display: block;
-            font-size: 0.75rem;
-            margin-bottom: 3px;
-            font-weight: 700;
-            line-height: 1.2;
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-weight: 600; /* 稍微減輕字重 */
+            line-height: 1;
             white-space: nowrap; 
+            letter-spacing: 0.025em;
         }
 
+        /* Grammar Note Styling - 更柔和 */
         .grammar-note {
-            background-color: #fef9c3;
-            border-left: 4px solid #facc15;
-            padding: 12px;
+            background-color: #fffbeb; /* 柔和黃 */
+            border-left: 4px solid #f59e0b;
+            padding: 12px 16px;
             margin-top: 12px;
-            border-radius: 0 4px 4px 0;
+            border-radius: 0 8px 8px 0;
             font-size: 0.95rem;
             color: #4b5563;
+            line-height: 1.6;
         }
         
         .grammar-note ul {
             list-style-type: disc;
             margin-left: 20px;
-            margin-top: 4px;
+            margin-top: 6px;
         }
         
         .grammar-note li {
             margin-bottom: 4px;
         }
 
+        /* Translation Box Styling */
+        .translation-box {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #475569;
+            font-size: 1rem;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.6;
+        }
+
         .audio-btn {
-            transition: transform 0.1s;
+            transition: transform 0.1s, background-color 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -106,198 +139,218 @@
 
         /* Small inline audio button */
         .audio-btn-small {
-            width: 28px;
-            height: 28px;
-            font-size: 0.8rem; 
+            width: 26px;
+            height: 26px;
+            font-size: 0.75rem; 
             display: inline-flex;
             vertical-align: middle;
-            margin-left: 4px;
-            border: 1px solid #e5e7eb;
-            background-color: #f9fafb;
-            color: #6b7280;
+            margin-left: 6px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            color: #64748b;
             border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         
         .audio-btn-small:hover {
             color: #4f46e5;
-            border-color: #c7d2fe;
+            border-color: #818cf8;
             background-color: #eef2ff;
         }
         
+        /* Larger button for vocab cards */
         .audio-btn-large {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #eff6ff;
+            color: #4f46e5;
+        }
+        .audio-btn-large:hover {
+            background-color: #e0e7ff;
         }
 
         .email-header-row {
             display: flex;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 8px 0;
-            font-size: 0.9rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 10px 0;
+            font-size: 0.95rem;
         }
         .email-label {
-            width: 70px;
-            font-weight: bold;
-            color: #4b5563;
+            width: 80px;
+            font-weight: 600;
+            color: #64748b;
             flex-shrink: 0;
         }
     </style>
 </head>
-<body class="p-4 md:p-8 max-w-4xl mx-auto">
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
 
     <!-- Header -->
-    <header class="mb-8 text-center">
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Sparky Paints, Inc.</h1>
-        <p class="text-lg text-gray-600">互動式英語解析講義</p>
+    <header class="mb-10 text-center">
+        <h1 class="text-4xl font-bold text-slate-800 mb-3 tracking-tight">Sparky Paints, Inc.</h1>
+        <p class="text-xl text-slate-500 font-medium">互動式英語解析講義</p>
     </header>
 
     <!-- SECTION 1: Original Text -->
-    <section class="mb-12">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-indigo-600 pl-3">1. 原文閱讀 (Original Text)</h2>
-            <button onclick="playAll()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center shadow-lg transition duration-200">
-                <i class="fas fa-play-circle mr-2"></i> 朗讀全文
+    <section class="section-card">
+        <div class="bg-indigo-600 p-4 flex items-center justify-between">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-book-open mr-3 opacity-80"></i> 1. 原文閱讀 (Original Text)
+            </h2>
+            <button onclick="playAll()" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center backdrop-blur-sm border border-white/30">
+                <i class="fas fa-play mr-2 text-xs"></i> 朗讀全文
             </button>
         </div>
 
-        <!-- Webpage Simulation -->
-        <div class="bg-white border-2 border-gray-300 rounded-t-lg shadow-sm mb-6 overflow-hidden relative">
+        <!-- Webpage Content -->
+        <div class="p-6 md:p-10">
             <!-- Content Top -->
-            <div class="p-6 md:p-8 border-b-2 border-gray-200">
-                <div class="text-center mb-6">
-                    <h1 class="text-3xl font-serif font-bold text-gray-900 inline-block border-b-4 border-black pb-1">Sparky Paints, Inc. <i class="fas fa-paint-roller text-2xl ml-2"></i></h1>
+            <div class="mb-8 border-b border-gray-200 pb-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-serif font-bold text-gray-900 inline-block border-b-4 border-black pb-2">Sparky Paints, Inc. <i class="fas fa-paint-roller text-2xl ml-2 text-gray-700"></i></h1>
                 </div>
 
-                <p class="text-lg text-gray-800 mb-4 leading-relaxed text-justify">
+                <p class="text-lg text-gray-700 mb-6 leading-relaxed text-justify">
                     Sparky Paints, Inc., makes it easy to select the right colors for your home. Browse through hundreds of colors on our Web site, www.sparkypaints.com. Select your top colors, and we'll send free samples right to your door. Our color samples are three times larger than typical samples found in home-improvement stores and come with self-adhesive backing, allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home. When you're ready to begin painting, simply select your chosen colors online, and we'll ship the paint of your choice to arrive at your home within 3-5 business days, or within 2 business days for an additional expedited shipping fee.
                 </p>
                 
-                <p class="text-sm text-gray-600 italic mt-4">
-                    *Actual colors may differ slightly from what appears on your monitor. For this reason, we recommend ordering several samples in similar shades.
+                <p class="text-sm text-gray-500 italic bg-gray-50 p-3 rounded-lg border border-gray-100">
+                    <i class="fas fa-info-circle mr-1"></i> *Actual colors may differ slightly from what appears on your monitor. For this reason, we recommend ordering several samples in similar shades.
                 </p>
             </div>
             
             <!-- Browser Bar & Cart -->
-            <div class="bg-gray-100 border-y border-gray-300 p-2 flex items-center">
-                <div class="bg-white border border-gray-300 rounded px-3 py-1 text-sm text-gray-600 flex-grow truncate mx-2 overflow-hidden">
+            <div class="bg-gray-100 border border-gray-300 rounded-t-lg p-2 flex items-center mt-8">
+                <div class="flex gap-1.5 mr-3">
+                    <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                </div>
+                <div class="bg-white border border-gray-300 rounded px-3 py-1.5 text-sm text-gray-500 flex-grow truncate mx-2 shadow-sm font-mono">
                     http://www.sparkypaints.com/shoppingcart
                 </div>
-                <i class="fas fa-arrow-right text-gray-400"></i>
             </div>
 
             <!-- Shopping Cart Table -->
-            <div class="p-4 md:p-8 bg-gray-50">
-                <div class="text-center mb-4">
-                    <h2 class="text-2xl font-serif font-bold text-gray-900">Sparky Paints, Inc. <i class="fas fa-paint-roller text-lg ml-1"></i></h2>
-                    <i class="fas fa-shopping-cart text-2xl float-right mr-4 text-gray-700"></i>
+            <div class="p-6 bg-gray-50 border-x border-b border-gray-300 rounded-b-lg">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-serif font-bold text-gray-800">Sparky Paints, Inc. <i class="fas fa-paint-roller text-lg ml-1"></i></h2>
                 </div>
 
-                <div class="bg-white border border-gray-800 shadow-sm">
-                    <div class="flex flex-col md:flex-row justify-between border-b border-gray-800 p-2 font-bold bg-gray-100 text-sm md:text-base">
+                <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+                    <div class="flex flex-col md:flex-row justify-between bg-gray-100 p-3 font-bold text-gray-700 text-sm md:text-base border-b border-gray-200">
                         <span>Order Summary #3397</span>
                         <span>Customer: Arun Phan</span>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[500px]">
+                        <table class="w-full text-left min-w-[500px]">
                             <thead>
-                                <tr class="border-b border-gray-800 bg-gray-50">
-                                    <th class="p-2 border-r border-gray-800 w-1/2">Item</th>
-                                    <th class="p-2 border-r border-gray-800 text-center">Size</th>
-                                    <th class="p-2 border-r border-gray-800 text-center">Quantity</th>
-                                    <th class="p-2 text-right">Price</th>
+                                <tr class="border-b border-gray-100 bg-gray-50/50 text-gray-600 text-sm">
+                                    <th class="p-3 w-1/2">Item</th>
+                                    <th class="p-3 text-center">Size</th>
+                                    <th class="p-3 text-center">Quantity</th>
+                                    <th class="p-3 text-right">Price</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm">
-                                <tr class="border-b border-gray-800">
-                                    <td class="p-2 border-r border-gray-800">Caspian Blue<br><span class="text-gray-500">SP 237</span></td>
-                                    <td class="p-2 border-r border-gray-800 text-center">n/a</td>
-                                    <td class="p-2 border-r border-gray-800 text-center">1</td>
-                                    <td class="p-2 text-right">$0.00</td>
+                            <tbody class="text-sm text-gray-700">
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                                    <td class="p-3 font-medium">Caspian Blue<br><span class="text-xs text-gray-400">SP 237</span></td>
+                                    <td class="p-3 text-center text-gray-500">n/a</td>
+                                    <td class="p-3 text-center">1</td>
+                                    <td class="p-3 text-right">$0.00</td>
                                 </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="p-2 border-r border-gray-800">Deep Sea Blue<br><span class="text-gray-500">SP 298</span></td>
-                                    <td class="p-2 border-r border-gray-800 text-center">n/a</td>
-                                    <td class="p-2 border-r border-gray-800 text-center">1</td>
-                                    <td class="p-2 text-right">$0.00</td>
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                                    <td class="p-3 font-medium">Deep Sea Blue<br><span class="text-xs text-gray-400">SP 298</span></td>
+                                    <td class="p-3 text-center text-gray-500">n/a</td>
+                                    <td class="p-3 text-center">1</td>
+                                    <td class="p-3 text-right">$0.00</td>
                                 </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="p-2 border-r border-gray-800">Stormy Blue<br><span class="text-gray-500">SP 722</span></td>
-                                    <td class="p-2 border-r border-gray-800 text-center">n/a</td>
-                                    <td class="p-2 border-r border-gray-800 text-center">1</td>
-                                    <td class="p-2 text-right">$0.00</td>
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                                    <td class="p-3 font-medium">Stormy Blue<br><span class="text-xs text-gray-400">SP 722</span></td>
+                                    <td class="p-3 text-center text-gray-500">n/a</td>
+                                    <td class="p-3 text-center">1</td>
+                                    <td class="p-3 text-right">$0.00</td>
                                 </tr>
-                                <tr class="border-b border-gray-800">
-                                    <td class="p-2 border-r border-gray-800">Misty Gray<br><span class="text-gray-500">SP 944</span></td>
-                                    <td class="p-2 border-r border-gray-800 text-center">Gallon</td>
-                                    <td class="p-2 border-r border-gray-800 text-center">2</td>
-                                    <td class="p-2 text-right">$50.00</td>
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                                    <td class="p-3 font-medium">Misty Gray<br><span class="text-xs text-gray-400">SP 944</span></td>
+                                    <td class="p-3 text-center text-gray-500">Gallon</td>
+                                    <td class="p-3 text-center">2</td>
+                                    <td class="p-3 text-right">$50.00</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div class="p-2 text-right text-sm">
-                        <div class="flex justify-end gap-4"><span class="text-gray-600">Tax (8 percent)</span> <span>$4.00</span></div>
-                        <div class="flex justify-end gap-4"><span class="text-gray-600">Expedited shipping</span> <span>$18.99</span></div>
-                        <div class="flex justify-end gap-4 font-bold text-lg mt-1 border-t border-gray-300 pt-1"><span>Total</span> <span>$72.99</span></div>
+                    <div class="p-4 bg-gray-50/50 border-t border-gray-100 text-sm">
+                        <div class="flex justify-end gap-8 mb-1"><span class="text-gray-500">Tax (8 percent)</span> <span class="font-medium">$4.00</span></div>
+                        <div class="flex justify-end gap-8 mb-2"><span class="text-gray-500">Expedited shipping</span> <span class="font-medium">$18.99</span></div>
+                        <div class="flex justify-end gap-8 font-bold text-lg text-gray-800 pt-2 border-t border-gray-200"><span>Total</span> <span>$72.99</span></div>
                     </div>
                 </div>
-                <div class="text-right mt-4">
-                    <button class="bg-white border border-gray-800 rounded-full px-4 py-1 font-bold text-sm shadow-sm hover:bg-gray-100 transition">Proceed to Checkout</button>
+                <div class="text-right mt-6">
+                    <button class="bg-gray-900 text-white rounded-lg px-6 py-2 font-medium text-sm shadow-md hover:bg-gray-800 transition transform hover:-translate-y-0.5">Proceed to Checkout <i class="fas fa-arrow-right ml-1"></i></button>
                 </div>
             </div>
-        </div>
 
-        <!-- Email Simulation -->
-        <div class="bg-white border-2 border-gray-400 rounded-lg shadow-md overflow-hidden mt-8">
-            <div class="bg-gray-200 p-4 border-b border-gray-400">
-                <div class="bg-white border border-gray-400 rounded p-4 shadow-inner">
-                    <div class="email-header-row">
-                        <span class="email-label">From:</span>
-                        <span class="text-gray-800 font-medium select-all">Arun Phan &lt;arun.phan@tnet.com&gt;</span>
-                    </div>
-                    <div class="email-header-row">
-                        <span class="email-label">To:</span>
-                        <span class="text-gray-800 font-medium select-all">Customer Support &lt;support@sparkypaints.com&gt;</span>
-                    </div>
-                    <div class="email-header-row">
-                        <span class="email-label">Date:</span>
-                        <span class="text-gray-800">March 12</span>
-                    </div>
-                    <div class="email-header-row border-none">
-                        <span class="email-label">Subject:</span>
-                        <span class="text-gray-800 font-bold">Order #3397</span>
+            <!-- Email Simulation -->
+            <div class="border border-gray-200 rounded-lg shadow-sm overflow-hidden mt-10">
+                <div class="bg-gray-50 p-4 border-b border-gray-200">
+                    <div class="bg-white border border-gray-200 rounded-lg px-6 py-4 shadow-sm">
+                        <div class="email-header-row">
+                            <span class="email-label">From:</span>
+                            <span class="text-gray-800 font-medium select-all">Arun Phan &lt;arun.phan@tnet.com&gt;</span>
+                        </div>
+                        <div class="email-header-row">
+                            <span class="email-label">To:</span>
+                            <span class="text-gray-800 font-medium select-all">Customer Support &lt;support@sparkypaints.com&gt;</span>
+                        </div>
+                        <div class="email-header-row">
+                            <span class="email-label">Date:</span>
+                            <span class="text-gray-800">March 12</span>
+                        </div>
+                        <div class="email-header-row border-none pb-0">
+                            <span class="email-label">Subject:</span>
+                            <span class="text-gray-900 font-bold bg-yellow-50 px-2 rounded">Order #3397</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="p-6 md:p-8 text-lg text-gray-800 leading-relaxed font-serif">
-                <p class="mb-4">Hello,</p>
-                <p class="mb-4">
-                    Thanks for sending my order #3397—it arrived this morning. Unfortunately, the paint was not the one I had asked for. I had selected color SP 944 but received SP 945 (Ocean Waves). They appear right next to each other on your Web site, so the two may have been confused at your end. Could you send me the correct paint, along with additional samples that are close in color to SP 722? That sample worked well in my house; the others looked too green on my walls.
-                </p>
-                <p class="mb-2">Thank you,</p>
-                <p class="font-bold">Arun Phan</p>
+                <div class="p-8 text-lg text-gray-700 leading-relaxed font-serif bg-white">
+                    <p class="mb-4">Hello,</p>
+                    <p class="mb-4">
+                        Thanks for sending my order #3397—it arrived this morning. Unfortunately, the paint was not the one I had asked for. I had selected color SP 944 but received SP 945 (Ocean Waves). They appear right next to each other on your Web site, so the two may have been confused at your end. Could you send me the correct paint, along with additional samples that are close in color to SP 722? That sample worked well in my house; the others looked too green on my walls.
+                    </p>
+                    <p class="mb-2">Thank you,</p>
+                    <p class="font-bold text-gray-900">Arun Phan</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- SECTION 2: Sentence Analysis -->
-    <section class="mb-12">
-        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-500 pl-3 mb-6">2. 全篇句型結構分析 (Sentence Structure)</h2>
+    <section class="section-card">
+        <div class="bg-rose-500 p-4">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-project-diagram mr-3 opacity-80"></i> 2. 全篇句型結構分析 (Sentence Structure)
+            </h2>
+        </div>
 
-        <div class="space-y-8">
+        <div class="p-6 md:p-10 space-y-12">
             <!-- Ad Paragraph 1 -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">Sparky Paints, Inc.,</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">makes</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O (虛受詞)</span><span class="tag-o">it</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-orange-600">C (補語)</span><span class="tag-c">easy</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O (真受詞)</span><span class="tag-o">to select the right colors for your home.</span></span>
-                    <button onclick="playAudio('Sparky Paints, Inc., makes it easy to select the right colors for your home.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Sparky Paints, Inc., makes it easy to select the right colors for your home.')" class="audio-btn audio-btn-small" title="播放句子"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>Sparky Paints 公司讓為您的住家挑選合適的顏色變得容易。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>Sparky Paints 公司讓為您的住家挑選合適的顏色變得容易。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>虛受詞句型</strong>：make + it (虛受詞) + Adj (補語) + to V (真受詞)。真正的受詞是後面的不定詞片語。</li>
                     </ul>
@@ -305,16 +358,19 @@
             </div>
 
             <!-- Ad Paragraph 2 -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">Browse</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 Browse)</span><span class="tag-prep">through hundreds of colors</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 Browse)</span><span class="tag-prep">on our Web site, www.sparkypaints.com.</span></span>
-                    <button onclick="playAudio('Browse through hundreds of colors on our Web site, www.sparkypaints.com.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Browse through hundreds of colors on our Web site, www.sparkypaints.com.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>請在我們的網站 www.sparkypaints.com 瀏覽數百種顏色。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>請在我們的網站 www.sparkypaints.com 瀏覽數百種顏色。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>祈使句</strong>：省略主詞 You，以原形動詞 Browse 開頭。</li>
                     </ul>
@@ -322,8 +378,8 @@
             </div>
 
             <!-- Ad Paragraph 3 -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">Select</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O</span><span class="tag-o">your top colors,</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-gray-500">Conj</span><span class="tag-conj">and</span></span>
@@ -331,11 +387,14 @@
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">'ll send</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O</span><span class="tag-o">free samples</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Adv + Prep Phr (修飾 send)</span><span class="tag-prep">right to your door.</span></span>
-                    <button onclick="playAudio('Select your top colors, and we\'ll send free samples right to your door.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Select your top colors, and we\'ll send free samples right to your door.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>挑選您最喜愛的顏色，我們將把免費樣品直接送到您家門口。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>挑選您最喜愛的顏色，我們將把免費樣品直接送到您家門口。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>祈使句 + and + 未來式</strong>：表示「只要做...，就會...」。</li>
                         <li><strong>Right 用法</strong>：在此作為副詞，強調「直接」送到。</li>
@@ -344,8 +403,8 @@
             </div>
 
             <!-- Ad Paragraph 4 (Long Sentence) -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">Our color samples</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V1</span><span class="tag-v">are</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-orange-600">C (補語)</span><span class="tag-c">three times larger</span></span>
@@ -353,12 +412,15 @@
                     <span class="sentence-chunk"><span class="tag-label text-gray-500">Conj</span><span class="tag-conj">and</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V2</span><span class="tag-v">come</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 come)</span><span class="tag-prep">with self-adhesive backing,</span></span>
-                    <span class="sentence-chunk"><span class="tag-label text-yellow-600">Participle Phr (修飾前句/表示結果)</span><span class="tag-mod">allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home.</span></span>
-                    <button onclick="playAudio('Our color samples are three times larger than typical samples found in home-improvement stores and come with self-adhesive backing, allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <span class="sentence-chunk"><span class="tag-label text-yellow-600">Participle Phr (修飾前句)</span><span class="tag-mod">allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home.</span></span>
+                    <button onclick="playAudio('Our color samples are three times larger than typical samples found in home-improvement stores and come with self-adhesive backing, allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我們的顏色樣品比居家修繕店常見的樣品大三倍，並附有背膠，讓您可以將其黏貼在牆上，輕鬆看出顏色在您家中的搭配效果。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我們的顏色樣品比居家修繕店常見的樣品大三倍，並附有背膠，讓您可以將其黏貼在牆上，輕鬆看出顏色在您家中的搭配效果。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>倍數比較級</strong>：A is [number] times larger than B。</li>
                         <li><strong>分詞構句</strong>："allowing..." 表示前面動作帶來的結果或功能，原句可能是 "...which allows you to..."。</li>
@@ -368,8 +430,8 @@
             </div>
 
             <!-- Ad Paragraph 5 -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adv Clause (修飾 select)</span><span class="tag-mod">When you're ready to begin painting,</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adv (修飾 select)</span><span class="tag-mod">simply</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">select</span></span>
@@ -383,11 +445,14 @@
                     <span class="sentence-chunk"><span class="tag-label text-gray-500">Conj</span><span class="tag-conj">or</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 arrive)</span><span class="tag-prep">within 2 business days</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 ship/arrive)</span><span class="tag-prep">for an additional expedited shipping fee.</span></span>
-                    <button onclick="playAudio('When you\'re ready to begin painting, simply select your chosen colors online, and we\'ll ship the paint of your choice to arrive at your home within 3-5 business days, or within 2 business days for an additional expedited shipping fee.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('When you\'re ready to begin painting, simply select your chosen colors online, and we\'ll ship the paint of your choice to arrive at your home within 3-5 business days, or within 2 business days for an additional expedited shipping fee.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>當您準備好開始粉刷時，只需在線上選擇您選定的顏色，我們就會寄送您選擇的油漆，在 3-5 個工作天內送達您府上，或支付額外急件運費在 2 個工作天內送達。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>當您準備好開始粉刷時，只需在線上選擇您選定的顏色，我們就會寄送您選擇的油漆，在 3-5 個工作天內送達您府上，或支付額外急件運費在 2 個工作天內送達。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>時間連接詞 When</strong>：引導時間副詞子句。</li>
                         <li><strong>不定詞結果用法</strong>："to arrive..." 表示 ship 這個動作之後發生的結果。</li>
@@ -397,34 +462,40 @@
             </div>
 
             <!-- Disclaimer -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">Actual colors</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">may differ</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adv (修飾 differ)</span><span class="tag-mod">slightly</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 differ)</span><span class="tag-prep">from what appears on your monitor.</span></span>
-                    <button onclick="playAudio('Actual colors may differ slightly from what appears on your monitor.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Actual colors may differ slightly from what appears on your monitor.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>實際顏色可能與您螢幕上顯示的略有差異。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>實際顏色可能與您螢幕上顯示的略有差異。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>名詞子句</strong>："what appears on your monitor" 作為介系詞 "from" 的受詞。</li>
                     </ul>
                 </div>
             </div>
 
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
-                <div class="mb-4 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 recommend)</span><span class="tag-prep">For this reason,</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">we</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">recommend</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O (動名詞)</span><span class="tag-o">ordering several samples in similar shades.</span></span>
-                    <button onclick="playAudio('For this reason, we recommend ordering several samples in similar shades.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('For this reason, we recommend ordering several samples in similar shades.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>因此，我們建議訂購幾個色調相似的樣品。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>因此，我們建議訂購幾個色調相似的樣品。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>Recommend 用法</strong>：recommend + V-ing (動名詞)。</li>
                     </ul>
@@ -432,17 +503,22 @@
             </div>
 
             <!-- Table Content Analysis -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group mt-10">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 bg-gray-100 p-2 rounded">表格關鍵內容分析</h3>
-                <div class="mb-6 text-base md:text-lg leading-loose">
+            <div class="highlight-box bg-slate-50 border-slate-200">
+                <div class="mb-4">
+                    <span class="bg-slate-200 text-slate-600 px-3 py-1 rounded text-sm font-bold">表格關鍵內容分析</span>
+                </div>
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S (Noun Phr)</span><span class="tag-s">Expedited shipping</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V (Implicit)</span><span class="tag-v">[costs]</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O (Price)</span><span class="tag-o">$18.99</span></span>
-                    <button onclick="playAudio('Expedited shipping costs eighteen dollars and ninety-nine cents.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Expedited shipping costs eighteen dollars and ninety-nine cents.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>急件運費為 $18.99。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>急件運費為 $18.99。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>名詞片語</strong>：Expedited shipping (急件運送)，Expedited 為過去分詞轉形容詞，修飾 shipping。</li>
                     </ul>
@@ -450,48 +526,65 @@
             </div>
 
             <!-- Email Body -->
-            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group mt-10">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 bg-gray-100 p-2 rounded">信件內容分析</h3>
-                
-                <div class="mb-6 text-base md:text-lg leading-loose">
+            <div class="mt-12 mb-6">
+               <h3 class="text-xl font-bold text-gray-800 border-b pb-2 mb-6">信件內容分析</h3>
+            </div>
+            
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">Thanks</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 Thanks)</span><span class="tag-prep">for sending my order #3397</span></span>
                     <span class="sentence-chunk text-gray-400">—</span>
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">it</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">arrived</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adv (修飾 arrived)</span><span class="tag-mod">this morning.</span></span>
-                    <button onclick="playAudio('Thanks for sending my order #3397—it arrived this morning.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Thanks for sending my order #3397—it arrived this morning.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>感謝您寄送我的訂單 #3397—它今早已送達。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>感謝您寄送我的訂單 #3397—它今早已送達。</span>
+                </div>
+            </div>
 
-                 <div class="mb-6 text-base md:text-lg leading-loose">
+             <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adv (修飾全句)</span><span class="tag-mod">Unfortunately,</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">the paint</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">was not</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-orange-600">C</span><span class="tag-c">the one</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adj Clause (修飾 the one)</span><span class="tag-mod">[that] I had asked for.</span></span>
-                    <button onclick="playAudio('Unfortunately, the paint was not the one I had asked for.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Unfortunately, the paint was not the one I had asked for.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>不幸的是，這油漆不是我要求的那個。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>不幸的是，這油漆不是我要求的那個。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>過去完成式</strong>："had asked for" 發生在 "was not" 之前，所以用過去完成式。</li>
                     </ul>
                 </div>
+            </div>
 
-                <div class="mb-6 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">I</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">had selected</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O</span><span class="tag-o">color SP 944</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-gray-500">Conj</span><span class="tag-conj">but</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">received</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">O</span><span class="tag-o">SP 945 (Ocean Waves).</span></span>
-                    <button onclick="playAudio('I had selected color SP 944 but received SP 945 (Ocean Waves).')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('I had selected color SP 944 but received SP 945 (Ocean Waves).')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我選擇了 SP 944 號色，但收到了 SP 945 號色 (Ocean Waves)。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我選擇了 SP 944 號色，但收到了 SP 945 號色 (Ocean Waves)。</span>
+                </div>
+            </div>
 
-                <div class="mb-6 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">They</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">appear</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-orange-600">C (Adv Phr 修飾 appear)</span><span class="tag-c">right next to each other</span></span>
@@ -500,35 +593,45 @@
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">the two</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">may have been confused</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 confused)</span><span class="tag-prep">at your end.</span></span>
-                    <button onclick="playAudio('They appear right next to each other on your Web site, so the two may have been confused at your end.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('They appear right next to each other on your Web site, so the two may have been confused at your end.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>它們在你們網站上位置緊鄰，所以這兩者可能在你們那邊被搞混了。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>它們在你們網站上位置緊鄰，所以這兩者可能在你們那邊被搞混了。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>助動詞推測 (過去)</strong>：may + have + p.p. 表示對過去發生的事情進行推測，「可能已經...」。這裡使用被動態 "been confused"。</li>
                         <li><strong>At your end</strong>：片語，指「在你們那一端/你們那邊」。</li>
                     </ul>
                 </div>
+            </div>
 
-                <div class="mb-6 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">Could you send</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">IO</span><span class="tag-o">me</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-green-600">DO</span><span class="tag-o">the correct paint,</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 send)</span><span class="tag-prep">along with additional samples</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adj Clause (修飾 samples)</span><span class="tag-mod">that are close in color to SP 722?</span></span>
-                    <button onclick="playAudio('Could you send me the correct paint, along with additional samples that are close in color to SP 722?')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('Could you send me the correct paint, along with additional samples that are close in color to SP 722?')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>您可以寄給我正確的油漆，以及顏色接近 SP 722 的其他樣品嗎？</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>您可以寄給我正確的油漆，以及顏色接近 SP 722 的其他樣品嗎？</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>授與動詞 Send</strong>：send + IO (me) + DO (paint) 表示「寄給某人某物」。</li>
                         <li><strong>關係子句</strong>："that are close in color..." 修飾前面的 samples。</li>
                     </ul>
                 </div>
+            </div>
 
-                <div class="mb-6 text-base md:text-lg leading-loose">
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif">
                     <span class="sentence-chunk"><span class="tag-label text-blue-600">S</span><span class="tag-s">That sample</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">worked</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-yellow-600">Adv (修飾 worked)</span><span class="tag-mod">well</span></span>
@@ -537,351 +640,418 @@
                     <span class="sentence-chunk"><span class="tag-label text-red-600">V</span><span class="tag-v">looked</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-orange-600">C (補語)</span><span class="tag-c">too green</span></span>
                     <span class="sentence-chunk"><span class="tag-label text-purple-600">Prep Phr (修飾 looked)</span><span class="tag-prep">on my walls.</span></span>
-                    <button onclick="playAudio('That sample worked well in my house; the others looked too green on my walls.')" class="audio-btn audio-btn-small hover:bg-indigo-100 transition"><i class="fas fa-volume-up"></i></button>
+                    <button onclick="playAudio('That sample worked well in my house; the others looked too green on my walls.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>那個樣品在我家效果很好；其他的在我牆上看起來太綠了。</p></div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>那個樣品在我家效果很好；其他的在我牆上看起來太綠了。</span>
+                </div>
                 <div class="grammar-note">
-                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
                     <ul>
                         <li><strong>分號 (Semicolon)</strong>：用於連接兩個關係緊密但文法獨立的子句。</li>
                         <li><strong>連綴動詞 Look</strong>：look + Adj (green) 表示「看起來...」。</li>
                     </ul>
                 </div>
-
             </div>
+
         </div>
     </section>
 
     <!-- SECTION 3: TOEIC Vocabulary -->
-    <section>
-        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-green-500 pl-3 mb-6">3. TOEIC 核心單字與片語 (Vocabulary & Phrases)</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <section class="section-card">
+        <div class="bg-teal-600 p-4">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-tags mr-3 opacity-80"></i> 3. TOEIC 核心單字與片語 (Vocabulary & Phrases)
+            </h2>
+        </div>
+        <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
             
             <!-- Word 1 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                 <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                 <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 550+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">1. browse</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/braʊz/</span>
-                    <button onclick="playAudio('browse')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">1.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">browse</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/braʊz/</span>
+                    <button onclick="playAudio('browse')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">瀏覽，隨意觀看</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Customers can browse through our catalog online.</p>
-                <p class="text-gray-500 text-sm">(顧客可以在線上瀏覽我們的目錄。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Customers can browse through our catalog online.</p>
+                    <p class="text-gray-400">(顧客可以在線上瀏覽我們的目錄。)</p>
+                </div>
             </div>
 
              <!-- Word 2 -->
-             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-50 text-orange-600 border border-orange-100">TOEIC 750+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">2. coordinate</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/koʊˈɔrdnˌeɪt/</span>
-                    <button onclick="playAudio('coordinate')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">2.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">coordinate</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/koʊˈɔrdnˌeɪt/</span>
+                    <button onclick="playAudio('coordinate')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">協調，搭配</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">The curtains coordinate well with the carpet.</p>
-                <p class="text-gray-500 text-sm">(窗簾和地毯搭配得很好。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">The curtains coordinate well with the carpet.</p>
+                    <p class="text-gray-400">(窗簾和地毯搭配得很好。)</p>
+                </div>
             </div>
 
             <!-- Word 3 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 700+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-50 text-orange-600 border border-orange-100">TOEIC 700+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">3. adhesive</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ədˈhisɪv/</span>
-                    <button onclick="playAudio('adhesive')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">3.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">adhesive</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ədˈhisɪv/</span>
+                    <button onclick="playAudio('adhesive')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">adj.</span>
                     <span class="text-gray-700 font-medium">有黏性的，黏著的</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Use adhesive tape to secure the package.</p>
-                <p class="text-gray-500 text-sm">(使用膠帶固定包裹。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Use adhesive tape to secure the package.</p>
+                    <p class="text-gray-400">(使用膠帶固定包裹。)</p>
+                </div>
             </div>
 
              <!-- Word 4 -->
-             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 600+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">4. expedited</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈɛkspəˌdaɪtɪd/</span>
-                    <button onclick="playAudio('expedited')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">4.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">expedited</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈɛkspəˌdaɪtɪd/</span>
+                    <button onclick="playAudio('expedited')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">adj.</span>
                     <span class="text-gray-700 font-medium">加速的，急件的</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">We offer expedited shipping for an extra fee.</p>
-                <p class="text-gray-500 text-sm">(我們提供需額外付費的急件運送服務。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">We offer expedited shipping for an extra fee.</p>
+                    <p class="text-gray-400">(我們提供需額外付費的急件運送服務。)</p>
+                </div>
             </div>
 
             <!-- Word 5 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-100">TOEIC 450+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">5. monitor</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈmɑnətɚ/</span>
-                    <button onclick="playAudio('monitor')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">5.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">monitor</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈmɑnətɚ/</span>
+                    <button onclick="playAudio('monitor')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">顯示器，螢幕</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Colors may look different on your computer monitor.</p>
-                <p class="text-gray-500 text-sm">(顏色在您的電腦螢幕上看起來可能會有所不同。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Colors may look different on your computer monitor.</p>
+                    <p class="text-gray-400">(顏色在您的電腦螢幕上看起來可能會有所不同。)</p>
+                </div>
             </div>
 
             <!-- Word 6 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 550+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">6. recommend</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌrɛkəˈmɛnd/</span>
-                    <button onclick="playAudio('recommend')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">6.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">recommend</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˌrɛkəˈmɛnd/</span>
+                    <button onclick="playAudio('recommend')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">建議，推薦</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">I recommend ordering a sample first.</p>
-                <p class="text-gray-500 text-sm">(我建議先訂購樣品。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">I recommend ordering a sample first.</p>
+                    <p class="text-gray-400">(我建議先訂購樣品。)</p>
+                </div>
             </div>
 
             <!-- Word 7 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 400+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-100">TOEIC 400+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">7. shade</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ʃeɪd/</span>
-                    <button onclick="playAudio('shade')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">7.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">shade</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ʃeɪd/</span>
+                    <button onclick="playAudio('shade')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">色調，陰影</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">We have paint in various shades of blue.</p>
-                <p class="text-gray-500 text-sm">(我們有各種藍色色調的油漆。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">We have paint in various shades of blue.</p>
+                    <p class="text-gray-400">(我們有各種藍色色調的油漆。)</p>
+                </div>
             </div>
 
             <!-- Word 8 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 500+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">8. summary</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈsʌməri/</span>
-                    <button onclick="playAudio('summary')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">8.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">summary</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈsʌməri/</span>
+                    <button onclick="playAudio('summary')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">摘要，總結</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Please review your order summary before checkout.</p>
-                <p class="text-gray-500 text-sm">(請在結帳前檢視您的訂單摘要。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Please review your order summary before checkout.</p>
+                    <p class="text-gray-400">(請在結帳前檢視您的訂單摘要。)</p>
+                </div>
             </div>
 
             <!-- Word 9 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-50 text-orange-600 border border-orange-100">TOEIC 750+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">9. proceed</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/prəˈsid/</span>
-                    <button onclick="playAudio('proceed')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">9.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">proceed</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/prəˈsid/</span>
+                    <button onclick="playAudio('proceed')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">繼續進行</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Click the button to proceed to checkout.</p>
-                <p class="text-gray-500 text-sm">(點擊按鈕以繼續進行結帳。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Click the button to proceed to checkout.</p>
+                    <p class="text-gray-400">(點擊按鈕以繼續進行結帳。)</p>
+                </div>
             </div>
 
              <!-- Word 10 -->
-             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 550+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">10. unfortunately</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ʌnˈfɔrʧənɪtli/</span>
-                    <button onclick="playAudio('unfortunately')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">10.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">unfortunately</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ʌnˈfɔrʧənɪtli/</span>
+                    <button onclick="playAudio('unfortunately')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adv.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">adv.</span>
                     <span class="text-gray-700 font-medium">不幸地，遺憾地</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Unfortunately, the item is out of stock.</p>
-                <p class="text-gray-500 text-sm">(很遺憾，該商品缺貨中。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Unfortunately, the item is out of stock.</p>
+                    <p class="text-gray-400">(很遺憾，該商品缺貨中。)</p>
+                </div>
             </div>
 
             <!-- Word 11 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-100">TOEIC 450+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">11. confuse</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/kənˈfjuz/</span>
-                    <button onclick="playAudio('confuse')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">11.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">confuse</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/kənˈfjuz/</span>
+                    <button onclick="playAudio('confuse')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">使困惑，搞混</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">The instructions were very confusing.</p>
-                <p class="text-gray-500 text-sm">(這些說明非常令人困惑。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">The instructions were very confusing.</p>
+                    <p class="text-gray-400">(這些說明非常令人困惑。)</p>
+                </div>
             </div>
 
             <!-- Word 12 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-red-100 text-red-800">TOEIC 800+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-red-50 text-red-600 border border-red-100">TOEIC 800+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">12. backing</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈbækɪŋ/</span>
-                    <button onclick="playAudio('backing')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">12.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">backing</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈbækɪŋ/</span>
+                    <button onclick="playAudio('backing')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">背襯，支持</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Peel off the paper backing before use.</p>
-                <p class="text-gray-500 text-sm">(使用前請撕下背紙。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Peel off the paper backing before use.</p>
+                    <p class="text-gray-400">(使用前請撕下背紙。)</p>
+                </div>
             </div>
             
              <!-- Word 13 -->
-             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 500+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">13. typical</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈtɪpɪkəl/</span>
-                    <button onclick="playAudio('typical')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">13.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">typical</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈtɪpɪkəl/</span>
+                    <button onclick="playAudio('typical')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">adj.</span>
                     <span class="text-gray-700 font-medium">典型的，通常的</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">This is a typical example of his work.</p>
-                <p class="text-gray-500 text-sm">(這是他作品的典型例子。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">This is a typical example of his work.</p>
+                    <p class="text-gray-400">(這是他作品的典型例子。)</p>
+                </div>
             </div>
 
             <!-- Word 14 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 600+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">14. improvement</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ɪmˈpruvmənt/</span>
-                    <button onclick="playAudio('improvement')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">14.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">improvement</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ɪmˈpruvmənt/</span>
+                    <button onclick="playAudio('improvement')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">改善，改進</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Home improvement stores sell tools and materials.</p>
-                <p class="text-gray-500 text-sm">(居家修繕店販售工具和材料。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Home improvement stores sell tools and materials.</p>
+                    <p class="text-gray-400">(居家修繕店販售工具和材料。)</p>
+                </div>
             </div>
 
             <!-- Word 15 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-100">TOEIC 450+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">15. gallon</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈgælən/</span>
-                    <button onclick="playAudio('gallon')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">15.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">gallon</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈgælən/</span>
+                    <button onclick="playAudio('gallon')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">加侖 (液量單位)</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">The car gets 30 miles per gallon.</p>
-                <p class="text-gray-500 text-sm">(這輛車每加侖可行駛 30 英里。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">The car gets 30 miles per gallon.</p>
+                    <p class="text-gray-400">(這輛車每加侖可行駛 30 英里。)</p>
+                </div>
             </div>
             
             <!-- Word 16 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-50 text-orange-600 border border-orange-100">TOEIC 750+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">16. adhere</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ədˈhɪr/</span>
-                    <button onclick="playAudio('adhere')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">16.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">adhere</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ədˈhɪr/</span>
+                    <button onclick="playAudio('adhere')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">黏附，堅持</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">The glue will help the tile adhere to the wall.</p>
-                <p class="text-gray-500 text-sm">(膠水將幫助磁磚黏附在牆上。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">The glue will help the tile adhere to the wall.</p>
+                    <p class="text-gray-400">(膠水將幫助磁磚黏附在牆上。)</p>
+                </div>
             </div>
 
             <!-- Word 17 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 550+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">17. shipping</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈʃɪpɪŋ/</span>
-                    <button onclick="playAudio('shipping')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">17.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">shipping</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈʃɪpɪŋ/</span>
+                    <button onclick="playAudio('shipping')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">運送，運輸</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Free shipping is available for orders over $50.</p>
-                <p class="text-gray-500 text-sm">(訂單滿 50 美元可享免運費。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Free shipping is available for orders over $50.</p>
+                    <p class="text-gray-400">(訂單滿 50 美元可享免運費。)</p>
+                </div>
             </div>
 
             <!-- Word 18 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-50 text-blue-600 border border-blue-100">TOEIC 600+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">18. checkout</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈʧɛkˌaʊt/</span>
-                    <button onclick="playAudio('checkout')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">18.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">checkout</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/ˈʧɛkˌaʊt/</span>
+                    <button onclick="playAudio('checkout')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">n.</span>
                     <span class="text-gray-700 font-medium">結帳，退房</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Proceed to checkout to complete your purchase.</p>
-                <p class="text-gray-500 text-sm">(前往結帳以完成您的購買。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Proceed to checkout to complete your purchase.</p>
+                    <p class="text-gray-400">(前往結帳以完成您的購買。)</p>
+                </div>
             </div>
 
             <!-- Word 19 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 350+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-100">TOEIC 350+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">19. select</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/səˈlɛkt/</span>
-                    <button onclick="playAudio('select')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">19.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">select</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/səˈlɛkt/</span>
+                    <button onclick="playAudio('select')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">選擇，挑選</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">Please select an option from the menu.</p>
-                <p class="text-gray-500 text-sm">(請從選單中選擇一個選項。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">Please select an option from the menu.</p>
+                    <p class="text-gray-400">(請從選單中選擇一個選項。)</p>
+                </div>
             </div>
 
             <!-- Word 20 -->
-            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative group hover:shadow-lg transition">
-                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 400+</div>
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-50 text-green-600 border border-green-100">TOEIC 400+</div>
                 <div class="flex items-center mb-3">
-                    <h3 class="text-xl font-bold text-gray-800 mr-3">20. receive</h3>
-                    <span class="text-gray-500 font-mono text-sm mr-3">/rɪˈsiv/</span>
-                    <button onclick="playAudio('receive')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                    <span class="text-teal-600 font-bold mr-2">20.</span>
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">receive</h3>
+                    <span class="text-gray-400 font-mono text-sm mr-3">/rɪˈsiv/</span>
+                    <button onclick="playAudio('receive')" class="audio-btn audio-btn-large"><i class="fas fa-volume-up"></i></button>
                 </div>
-                <div class="mb-2">
-                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                <div class="mb-3">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded mr-2 font-medium">v.</span>
                     <span class="text-gray-700 font-medium">收到，接待</span>
                 </div>
-                <p class="text-gray-600 text-sm mt-3 mb-1">I did not receive the email you sent.</p>
-                <p class="text-gray-500 text-sm">(我沒有收到你寄的電子郵件。)</p>
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">I did not receive the email you sent.</p>
+                    <p class="text-gray-400">(我沒有收到你寄的電子郵件。)</p>
+                </div>
             </div>
             
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="mt-12 text-center text-gray-500 text-sm pb-8">
+    <footer class="mt-16 text-center text-gray-400 text-sm pb-12">
         <p>Generated by AI Teaching Assistant &copy; 2024</p>
     </footer>
 
