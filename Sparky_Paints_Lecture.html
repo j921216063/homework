@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sparky Paints - Interactive Lecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: { 600: '#0d9488' },
+                        orange: { 500: '#f97316', 600: '#ea580c' }
+                    },
+                    lineHeight: {
+                        'loose': '2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .highlight-box {
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .highlight-box:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 6px;
+            margin-bottom: 8px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Grammar Tags */
+        .tag-s { color: #2563eb; font-weight: 700; } /* Blue */
+        .tag-v { color: #dc2626; font-weight: 700; } /* Red */
+        .tag-o { color: #16a34a; font-weight: 700; } /* Green */
+        .tag-c { color: #ea580c; font-weight: 700; } /* Orange */
+        .tag-appos { color: #0d9488; font-weight: 700; } /* Teal */
+        .tag-mod { color: #ca8a04; font-weight: 700; } /* Yellow-Dark */
+        .tag-prep { color: #9333ea; font-weight: 700; } /* Purple */
+        
+        .implicit-text {
+            border: 1px dashed #9ca3af;
+            color: #6b7280;
+            padding: 0 4px;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .grammar-note {
+            background-color: #fef9c3;
+            border-left: 4px solid #facc15;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+        }
+        
+        .grammar-note ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 4px;
+        }
+        
+        .grammar-note li {
+            margin-bottom: 4px;
+        }
+
+        .audio-btn {
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom style for the small inline button */
+        .audio-btn-small {
+            width: 32px;
+            height: 32px;
+            font-size: 0.875rem; /* text-sm */
+            display: inline-flex;
+            vertical-align: middle;
+            margin-left: 8px;
+            margin-bottom: 8px; /* Align with chunks */
+        }
+        
+        /* Larger button for other sections */
+        .audio-btn-large {
+            width: 44px;
+            height: 44px;
+        }
+
+        .email-header-row {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 8px 0;
+        }
+        .email-label {
+            width: 80px;
+            font-weight: bold;
+            color: #4b5563;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Sparky Paints, Inc.</h1>
+        <p class="text-lg text-gray-600">互動式英語解析講義</p>
+    </header>
+
+    <!-- SECTION 1: Original Text -->
+    <section class="mb-12">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-indigo-600 pl-3">1. 原文閱讀 (Original Text)</h2>
+            <button onclick="playAll()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center shadow-lg">
+                <i class="fas fa-play-circle mr-2"></i> 朗讀全文
+            </button>
+        </div>
+
+        <!-- Webpage Simulation -->
+        <div class="bg-white border-2 border-gray-300 rounded-t-lg shadow-sm mb-6 overflow-hidden relative">
+            <!-- Content Top -->
+            <div class="p-6 md:p-8 border-b-2 border-gray-200">
+                <div class="text-center mb-6">
+                    <h1 class="text-3xl font-serif font-bold text-gray-900 inline-block border-b-4 border-black pb-1">Sparky Paints, Inc. <i class="fas fa-paint-roller text-2xl ml-2"></i></h1>
+                </div>
+
+                <p class="text-lg text-gray-800 mb-4 leading-relaxed text-justify">
+                    Sparky Paints, Inc., makes it easy to select the right colors for your home. Browse through hundreds of colors on our Web site, www.sparkypaints.com. Select your top colors, and we'll send free samples right to your door. Our color samples are three times larger than typical samples found in home-improvement stores and come with self-adhesive backing, allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home. When you're ready to begin painting, simply select your chosen colors online, and we'll ship the paint of your choice to arrive at your home within 3-5 business days, or within 2 business days for an additional expedited shipping fee.
+                </p>
+                
+                <p class="text-sm text-gray-600 italic mt-4">
+                    *Actual colors may differ slightly from what appears on your monitor. For this reason, we recommend ordering several samples in similar shades.
+                </p>
+            </div>
+            
+            <!-- Browser Bar & Cart -->
+            <div class="bg-gray-100 border-y border-gray-300 p-2 flex items-center">
+                <div class="bg-white border border-gray-300 rounded px-3 py-1 text-sm text-gray-600 flex-grow truncate mx-2">
+                    http://www.sparkypaints.com/shoppingcart
+                </div>
+                <i class="fas fa-arrow-right text-gray-400"></i>
+            </div>
+
+            <!-- Shopping Cart Table -->
+            <div class="p-6 md:p-8 bg-gray-50">
+                <div class="text-center mb-4">
+                    <h2 class="text-2xl font-serif font-bold text-gray-900">Sparky Paints, Inc. <i class="fas fa-paint-roller text-lg ml-1"></i></h2>
+                    <i class="fas fa-shopping-cart text-2xl float-right mr-4"></i>
+                </div>
+
+                <div class="bg-white border border-gray-800">
+                    <div class="flex justify-between border-b border-gray-800 p-2 font-bold bg-gray-100">
+                        <span>Order Summary #3397</span>
+                        <span>Customer: Arun Phan</span>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-800">
+                                <th class="p-2 border-r border-gray-800 w-1/2">Item</th>
+                                <th class="p-2 border-r border-gray-800 text-center">Size</th>
+                                <th class="p-2 border-r border-gray-800 text-center">Quantity</th>
+                                <th class="p-2 text-right">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-2 border-r border-gray-800">Caspian Blue<br>SP 237</td>
+                                <td class="p-2 border-r border-gray-800 text-center">n/a</td>
+                                <td class="p-2 border-r border-gray-800 text-center">1</td>
+                                <td class="p-2 text-right">$0.00</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-2 border-r border-gray-800">Deep Sea Blue<br>SP 298</td>
+                                <td class="p-2 border-r border-gray-800 text-center">n/a</td>
+                                <td class="p-2 border-r border-gray-800 text-center">1</td>
+                                <td class="p-2 text-right">$0.00</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-2 border-r border-gray-800">Stormy Blue<br>SP 722</td>
+                                <td class="p-2 border-r border-gray-800 text-center">n/a</td>
+                                <td class="p-2 border-r border-gray-800 text-center">1</td>
+                                <td class="p-2 text-right">$0.00</td>
+                            </tr>
+                            <tr class="border-b border-gray-800">
+                                <td class="p-2 border-r border-gray-800">Misty Gray<br>SP 944</td>
+                                <td class="p-2 border-r border-gray-800 text-center">Gallon</td>
+                                <td class="p-2 border-r border-gray-800 text-center">2</td>
+                                <td class="p-2 text-right">$50.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="p-2 text-right">
+                        <div class="flex justify-end gap-4"><span class="text-gray-600">Tax (8 percent)</span> <span>$4.00</span></div>
+                        <div class="flex justify-end gap-4"><span class="text-gray-600">Expedited shipping</span> <span>$18.99</span></div>
+                        <div class="flex justify-end gap-4 font-bold text-lg mt-1"><span>Total</span> <span>$72.99</span></div>
+                    </div>
+                </div>
+                <div class="text-right mt-4">
+                    <button class="bg-white border border-gray-800 rounded-full px-4 py-1 font-bold text-sm shadow-sm hover:bg-gray-100">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Email Simulation -->
+        <div class="bg-white border-2 border-gray-400 rounded-lg shadow-md overflow-hidden mt-8">
+            <div class="bg-gray-200 p-4 border-b border-gray-400">
+                <div class="bg-white border border-gray-400 rounded p-4 shadow-inner">
+                    <div class="email-header-row">
+                        <span class="email-label">From:</span>
+                        <span class="text-gray-800 select-all">Arun Phan &lt;arun.phan@tnet.com&gt;</span>
+                    </div>
+                    <div class="email-header-row">
+                        <span class="email-label">To:</span>
+                        <span class="text-gray-800 select-all">Customer Support &lt;support@sparkypaints.com&gt;</span>
+                    </div>
+                    <div class="email-header-row">
+                        <span class="email-label">Date:</span>
+                        <span class="text-gray-800">March 12</span>
+                    </div>
+                    <div class="email-header-row border-none">
+                        <span class="email-label">Subject:</span>
+                        <span class="text-gray-800 font-medium">Order #3397</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 text-lg text-gray-800 leading-relaxed font-serif">
+                <p class="mb-4">Hello,</p>
+                <p class="mb-4">
+                    Thanks for sending my order #3397—it arrived this morning. Unfortunately, the paint was not the one I had asked for. I had selected color SP 944 but received SP 945 (Ocean Waves). They appear right next to each other on your Web site, so the two may have been confused at your end. Could you send me the correct paint, along with additional samples that are close in color to SP 722? That sample worked well in my house; the others looked too green on my walls.
+                </p>
+                <p class="mb-2">Thank you,</p>
+                <p class="font-bold">Arun Phan</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Sentence Analysis -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-500 pl-3 mb-6">2. 全篇句型結構分析 (Sentence Structure)</h2>
+
+        <div class="space-y-8">
+            <!-- Ad Paragraph 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Sparky Paints, Inc.,</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>makes</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (虛受詞)</span>it</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C</span>easy</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (真受詞)</span>to select the right colors for your home.</span>
+                    <button onclick="playAudio('Sparky Paints, Inc., makes it easy to select the right colors for your home.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>Sparky Paints 公司讓為您的住家挑選合適的顏色變得容易。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>虛受詞句型</strong>：make + it (虛受詞) + Adj (補語) + to V (真受詞)。真正的受詞是後面的不定詞片語。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ad Paragraph 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Browse</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adv)</span>through hundreds of colors</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Place)</span>on our Web site, www.sparkypaints.com.</span>
+                    <button onclick="playAudio('Browse through hundreds of colors on our Web site, www.sparkypaints.com.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>請在我們的網站 www.sparkypaints.com 瀏覽數百種顏色。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>祈使句</strong>：省略主詞 You，以原形動詞 Browse 開頭。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ad Paragraph 3 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Select</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>your top colors,</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>we</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>'ll send</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>free samples</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Place)</span>right to your door.</span>
+                    <button onclick="playAudio('Select your top colors, and we\'ll send free samples right to your door.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>挑選您最喜愛的顏色，我們將把免費樣品直接送到您家門口。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>祈使句 + and + 未來式</strong>：表示「只要做...，就會...」。</li>
+                        <li><strong>Right 用法</strong>：在此作為副詞，強調「直接」送到。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ad Paragraph 4 (Long Sentence) -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Our color samples</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V1</span>are</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C (Comp)</span>three times larger</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Comp)</span>than typical samples found in home-improvement stores</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V2</span>come</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adj)</span>with self-adhesive backing,</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Participle Phr (Result)</span>allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home.</span>
+                    <button onclick="playAudio('Our color samples are three times larger than typical samples found in home-improvement stores and come with self-adhesive backing, allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我們的顏色樣品比居家修繕店常見的樣品大三倍，並附有背膠，讓您可以將其黏貼在牆上，輕鬆看出顏色在您家中的搭配效果。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>倍數比較級</strong>：A is [number] times larger than B。</li>
+                        <li><strong>過去分詞片語</strong>："found in..." 修飾前面的 typical samples。</li>
+                        <li><strong>分詞構句</strong>："allowing..." 表示前面動作帶來的結果或功能，原句可能是 "...which allows you to..."。</li>
+                        <li><strong>名詞子句</strong>："how colors will coordinate..." 當作 see 的受詞。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Ad Paragraph 5 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv Clause</span>When you're ready to begin painting,</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>simply</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>select</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>your chosen colors</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>online,</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>we</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>'ll ship</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>the paint of your choice</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Inf - Result)</span>to arrive at your home within 3-5 business days,</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>or</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Time)</span>within 2 business days</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Reason)</span>for an additional expedited shipping fee.</span>
+                    <button onclick="playAudio('When you\'re ready to begin painting, simply select your chosen colors online, and we\'ll ship the paint of your choice to arrive at your home within 3-5 business days, or within 2 business days for an additional expedited shipping fee.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>當您準備好開始粉刷時，只需在線上選擇您選定的顏色，我們就會寄送您選擇的油漆，在 3-5 個工作天內送達您府上，或支付額外急件運費在 2 個工作天內送達。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>時間連接詞 When</strong>：引導時間副詞子句。</li>
+                        <li><strong>不定詞結果用法</strong>："to arrive..." 表示 ship 這個動作之後發生的結果。</li>
+                        <li><strong>Or 連接對等片語</strong>：連接兩個時間介系詞片語 (within 3-5... or within 2...)。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Actual colors</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>may differ</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>slightly</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>from what appears on your monitor.</span>
+                    <button onclick="playAudio('Actual colors may differ slightly from what appears on your monitor.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>實際顏色可能與您螢幕上顯示的略有差異。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>名詞子句</strong>："what appears on your monitor" 作為介系詞 "from" 的受詞。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Reason)</span>For this reason,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>we</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>recommend</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Gerund Phr)</span>ordering several samples in similar shades.</span>
+                    <button onclick="playAudio('For this reason, we recommend ordering several samples in similar shades.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>因此，我們建議訂購幾個色調相似的樣品。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>Recommend 用法</strong>：recommend + V-ing (動名詞)。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Body -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group mt-10">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 bg-gray-100 p-2 rounded">信件內容分析</h3>
+                
+                <div class="mb-6 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Thanks</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Reason)</span>for sending my order #3397</span>
+                    <span class="sentence-chunk text-gray-400">—</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>it</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>arrived</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Time)</span>this morning.</span>
+                    <button onclick="playAudio('Thanks for sending my order #3397—it arrived this morning.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>感謝您寄送我的訂單 #3397—它今早已送達。</p></div>
+
+                 <div class="mb-6 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>Unfortunately,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>the paint</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>was not</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C</span>the one</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause</span>[that] I had asked for.</span>
+                    <button onclick="playAudio('Unfortunately, the paint was not the one I had asked for.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>不幸的是，這油漆不是我要求的那個。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>過去完成式</strong>："had asked for" 發生在 "was not" 之前，所以用過去完成式。</li>
+                    </ul>
+                </div>
+
+                <div class="mb-6 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>They</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>appear</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C / Adv</span>right next to each other</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>on your Web site,</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>so</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>the two</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>may have been confused</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>at your end.</span>
+                    <button onclick="playAudio('They appear right next to each other on your Web site, so the two may have been confused at your end.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>它們在你們網站上位置緊鄰，所以這兩者可能在你們那邊被搞混了。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>助動詞推測 (過去)</strong>：may + have + p.p. 表示對過去發生的事情進行推測，「可能已經...」。這裡使用被動態 "been confused"。</li>
+                        <li><strong>At your end</strong>：片語，指「在你們那一端/你們那邊」。</li>
+                    </ul>
+                </div>
+
+                <!-- Missing Sentence 1 -->
+                <div class="mb-6 text-base md:text-lg leading-loose mt-8 border-t pt-6 border-gray-200">
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Could you send</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">IO</span>me</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">DO</span>the correct paint,</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>along with additional samples</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause</span>that are close in color to SP 722?</span>
+                    <button onclick="playAudio('Could you send me the correct paint, along with additional samples that are close in color to SP 722?')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>您可以寄給我正確的油漆，以及顏色接近 SP 722 的其他樣品嗎？</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>授與動詞 Send</strong>：send + IO (me) + DO (paint) 表示「寄給某人某物」。</li>
+                        <li><strong>關係子句</strong>："that are close in color..." 修飾前面的 samples。</li>
+                    </ul>
+                </div>
+
+                <!-- Missing Sentence 2 -->
+                <div class="mb-6 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>That sample</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>worked</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>well</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>in my house;</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>the others</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>looked</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C</span>too green</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr</span>on my walls.</span>
+                    <button onclick="playAudio('That sample worked well in my house; the others looked too green on my walls.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>那個樣品在我家效果很好；其他的在我牆上看起來太綠了。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>分號 (Semicolon)</strong>：用於連接兩個關係緊密但文法獨立的子句。</li>
+                        <li><strong>連綴動詞 Look</strong>：look + Adj (green) 表示「看起來...」。</li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: TOEIC Vocabulary -->
+    <section>
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-green-500 pl-3 mb-6">3. TOEIC 核心單字與片語 (Vocabulary & Phrases)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Word 1 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                 <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">browse</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/braʊz/</span>
+                    <button onclick="playAudio('browse')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">瀏覽，隨意觀看</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Customers can browse through our catalog online.</p>
+                <p class="text-gray-500 text-sm">(顧客可以在線上瀏覽我們的目錄。)</p>
+            </div>
+
+             <!-- Word 2 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">coordinate</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/koʊˈɔrdnˌeɪt/</span>
+                    <button onclick="playAudio('coordinate')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">協調，搭配</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The curtains coordinate well with the carpet.</p>
+                <p class="text-gray-500 text-sm">(窗簾和地毯搭配得很好。)</p>
+            </div>
+
+            <!-- Word 3 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 700+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">adhesive</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ədˈhisɪv/</span>
+                    <button onclick="playAudio('adhesive')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">有黏性的，黏著的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Use adhesive tape to secure the package.</p>
+                <p class="text-gray-500 text-sm">(使用膠帶固定包裹。)</p>
+            </div>
+
+             <!-- Word 4 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">expedited</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈɛkspəˌdaɪtɪd/</span>
+                    <button onclick="playAudio('expedited')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">加速的，急件的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We offer expedited shipping for an extra fee.</p>
+                <p class="text-gray-500 text-sm">(我們提供需額外付費的急件運送服務。)</p>
+            </div>
+
+            <!-- Word 5 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">monitor</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈmɑnətɚ/</span>
+                    <button onclick="playAudio('monitor')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">顯示器，螢幕</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Colors may look different on your computer monitor.</p>
+                <p class="text-gray-500 text-sm">(顏色在您的電腦螢幕上看起來可能會有所不同。)</p>
+            </div>
+
+            <!-- Word 6 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">recommend</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌrɛkəˈmɛnd/</span>
+                    <button onclick="playAudio('recommend')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">建議，推薦</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">I recommend ordering a sample first.</p>
+                <p class="text-gray-500 text-sm">(我建議先訂購樣品。)</p>
+            </div>
+
+            <!-- Word 7 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 400+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">shade</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ʃeɪd/</span>
+                    <button onclick="playAudio('shade')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">色調，陰影</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We have paint in various shades of blue.</p>
+                <p class="text-gray-500 text-sm">(我們有各種藍色色調的油漆。)</p>
+            </div>
+
+            <!-- Word 8 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">summary</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈsʌməri/</span>
+                    <button onclick="playAudio('summary')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">摘要，總結</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Please review your order summary before checkout.</p>
+                <p class="text-gray-500 text-sm">(請在結帳前檢視您的訂單摘要。)</p>
+            </div>
+
+            <!-- Word 9 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">proceed</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/prəˈsid/</span>
+                    <button onclick="playAudio('proceed')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">繼續進行</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Click the button to proceed to checkout.</p>
+                <p class="text-gray-500 text-sm">(點擊按鈕以繼續進行結帳。)</p>
+            </div>
+
+             <!-- Word 10 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">unfortunately</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ʌnˈfɔrʧənɪtli/</span>
+                    <button onclick="playAudio('unfortunately')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adv.</span>
+                    <span class="text-gray-700 font-medium">不幸地，遺憾地</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Unfortunately, the item is out of stock.</p>
+                <p class="text-gray-500 text-sm">(很遺憾，該商品缺貨中。)</p>
+            </div>
+
+            <!-- Word 11 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">confuse</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/kənˈfjuz/</span>
+                    <button onclick="playAudio('confuse')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">使困惑，搞混</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The instructions were very confusing.</p>
+                <p class="text-gray-500 text-sm">(這些說明非常令人困惑。)</p>
+            </div>
+
+            <!-- Word 12 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-red-100 text-red-800">TOEIC 800+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">backing</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈbækɪŋ/</span>
+                    <button onclick="playAudio('backing')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">背襯，支持</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Peel off the paper backing before use.</p>
+                <p class="text-gray-500 text-sm">(使用前請撕下背紙。)</p>
+            </div>
+            
+             <!-- Word 13 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">typical</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈtɪpɪkəl/</span>
+                    <button onclick="playAudio('typical')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">典型的，通常的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">This is a typical example of his work.</p>
+                <p class="text-gray-500 text-sm">(這是他作品的典型例子。)</p>
+            </div>
+
+            <!-- Word 14 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">improvement</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ɪmˈpruvmənt/</span>
+                    <button onclick="playAudio('improvement')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">改善，改進</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Home improvement stores sell tools and materials.</p>
+                <p class="text-gray-500 text-sm">(居家修繕店販售工具和材料。)</p>
+            </div>
+
+            <!-- Word 15 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">gallon</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈgælən/</span>
+                    <button onclick="playAudio('gallon')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">加侖 (液量單位)</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The car gets 30 miles per gallon.</p>
+                <p class="text-gray-500 text-sm">(這輛車每加侖可行駛 30 英里。)</p>
+            </div>
+            
+            <!-- Word 16 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">adhere</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ədˈhɪr/</span>
+                    <button onclick="playAudio('adhere')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">黏附，堅持</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The glue will help the tile adhere to the wall.</p>
+                <p class="text-gray-500 text-sm">(膠水將幫助磁磚黏附在牆上。)</p>
+            </div>
+
+            <!-- Word 17 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">shipping</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈʃɪpɪŋ/</span>
+                    <button onclick="playAudio('shipping')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">運送，運輸</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Free shipping is available for orders over $50.</p>
+                <p class="text-gray-500 text-sm">(訂單滿 50 美元可享免運費。)</p>
+            </div>
+
+            <!-- Word 18 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">checkout</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈʧɛkˌaʊt/</span>
+                    <button onclick="playAudio('checkout')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">結帳，退房</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Proceed to checkout to complete your purchase.</p>
+                <p class="text-gray-500 text-sm">(前往結帳以完成您的購買。)</p>
+            </div>
+
+            <!-- Word 19 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 350+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">select</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/səˈlɛkt/</span>
+                    <button onclick="playAudio('select')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">選擇，挑選</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Please select an option from the menu.</p>
+                <p class="text-gray-500 text-sm">(請從選單中選擇一個選項。)</p>
+            </div>
+
+            <!-- Word 20 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 400+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">receive</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/rɪˈsiv/</span>
+                    <button onclick="playAudio('receive')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">v.</span>
+                    <span class="text-gray-700 font-medium">收到，接待</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">I did not receive the email you sent.</p>
+                <p class="text-gray-500 text-sm">(我沒有收到你寄的電子郵件。)</p>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-500 text-sm pb-8">
+        <p>Generated by AI Teaching Assistant &copy; 2024</p>
+    </footer>
+
+    <script>
+        // Web Speech API Implementation
+        function playAudio(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; // Slightly slower for teaching
+                
+                // Try to select a better voice
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => voice.name.includes('Google US English') || voice.name.includes('Samantha'));
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+
+        function playAll() {
+            const fullText = `
+                Sparky Paints, Inc.
+                Sparky Paints, Inc., makes it easy to select the right colors for your home. Browse through hundreds of colors on our Web site, www.sparkypaints.com. Select your top colors, and we'll send free samples right to your door. Our color samples are three times larger than typical samples found in home-improvement stores and come with self-adhesive backing, allowing you to adhere them to your walls so you can easily see how colors will coordinate in your home. When you're ready to begin painting, simply select your chosen colors online, and we'll ship the paint of your choice to arrive at your home within 3-5 business days, or within 2 business days for an additional expedited shipping fee. Actual colors may differ slightly from what appears on your monitor. For this reason, we recommend ordering several samples in similar shades.
+
+                Order Summary #3397. Customer: Arun Phan. 
+                Items: Caspian Blue SP 237, Quantity 1, Price $0.00.
+                Deep Sea Blue SP 298, Quantity 1, Price $0.00.
+                Stormy Blue SP 722, Quantity 1, Price $0.00.
+                Misty Gray SP 944, Gallon, Quantity 2, Price $50.00.
+                Tax $4.00. Expedited shipping $18.99. Total $72.99.
+
+                Email. From Arun Phan. To Customer Support. Subject Order #3397.
+                Hello, Thanks for sending my order #3397—it arrived this morning. Unfortunately, the paint was not the one I had asked for. I had selected color SP 944 but received SP 945 (Ocean Waves). They appear right next to each other on your Web site, so the two may have been confused at your end. Could you send me the correct paint, along with additional samples that are close in color to SP 722? That sample worked well in my house; the others looked too green on my walls. Thank you, Arun Phan.
+            `;
+            playAudio(fullText);
+        }
+    </script>
+</body>
+</html>
