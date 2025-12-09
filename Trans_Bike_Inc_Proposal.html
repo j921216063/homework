@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business English: Addressing Employee Concerns</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: { 600: '#0d9488', 500: '#14b8a6' },
+                        orange: { 500: '#f97316', 600: '#ea580c' }
+                    },
+                    lineHeight: {
+                        'loose': '2.8',
+                        'relaxed': '1.8',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* Section Card Style */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* Highlight Box for Sentences */
+        .highlight-box {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .highlight-box:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            padding: 0 2px;
+            position: relative;
+            vertical-align: bottom;
+        }
+
+        /* Grammar Tags Styling */
+        .tag-s { color: #1e293b; border-bottom: 3px solid #93c5fd; } /* Blue */
+        .tag-v { color: #1e293b; border-bottom: 3px solid #fca5a5; } /* Red */
+        .tag-o { color: #1e293b; border-bottom: 3px solid #86efac; } /* Green */
+        .tag-c { color: #1e293b; border-bottom: 3px solid #fdba74; } /* Orange */
+        .tag-mod { color: #1e293b; border-bottom: 3px solid #fde047; } /* Yellow */
+        .tag-prep { color: #1e293b; border-bottom: 3px solid #d8b4fe; } /* Purple */
+        .tag-app { color: #1e293b; border-bottom: 3px solid #5eead4; } /* Teal */
+
+        /* Tag Labels */
+        .tag-label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+            line-height: 1;
+            white-space: nowrap; 
+            letter-spacing: 0.025em;
+        }
+        
+        /* Label Colors */
+        .lbl-blue { color: #2563eb; }
+        .lbl-red { color: #dc2626; }
+        .lbl-green { color: #16a34a; }
+        .lbl-orange { color: #f97316; }
+        .lbl-yellow { color: #ca8a04; }
+        .lbl-purple { color: #9333ea; }
+        .lbl-teal { color: #0d9488; }
+
+        /* Grammar Note Styling */
+        .grammar-note {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 16px;
+            margin-top: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .grammar-note ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+        
+        .grammar-note li {
+            margin-bottom: 4px;
+        }
+
+        /* Translation Box Styling */
+        .translation-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #94a3b8; /* Added border as requested */
+            border-radius: 0 8px 8px 0;
+            padding: 10px 14px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #475569;
+            font-size: 1rem;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.6;
+        }
+
+        /* Audio Buttons */
+        .audio-btn {
+            transition: transform 0.1s, background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        .audio-btn-small {
+            width: 26px;
+            height: 26px;
+            font-size: 0.75rem; 
+            display: inline-flex;
+            vertical-align: middle;
+            margin-left: 6px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            color: #64748b;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        
+        .audio-btn-small:hover {
+            color: #4f46e5;
+            border-color: #818cf8;
+            background-color: #eef2ff;
+        }
+
+        .audio-btn-large {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #eff6ff;
+            color: #4f46e5;
+        }
+        .audio-btn-large:hover {
+            background-color: #e0e7ff;
+        }
+
+        /* Hide scrollbar utility */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto pb-20">
+
+    <!-- Header -->
+    <header class="mb-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3 tracking-tight">
+            Trans-Bike Inc. Proposal
+        </h1>
+        <p class="text-xl text-slate-500 font-medium">Business English Interactive Analysis</p>
+    </header>
+
+    <!-- SECTION 1: ORIGINAL TEXT -->
+    <section class="section-card" id="original-text">
+        <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-file-alt mr-3 opacity-80"></i> Original Text Reading
+            </h2>
+            <button onclick="speakText(document.getElementById('full-content').innerText)" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center backdrop-blur-sm border border-white/30">
+                <i class="fas fa-play mr-2 text-xs"></i> Play All
+            </button>
+        </div>
+        
+        <div class="p-6 md:p-10" id="full-content">
+            <!-- Table Section -->
+            <h3 class="font-bold text-lg mb-4 text-gray-900">Reasons for Employee Departure in Trans-Bike Inc., 2019-2020</h3>
+            <div class="overflow-x-auto mb-8 border border-gray-200 rounded-lg shadow-sm">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-gray-50 text-gray-700 uppercase font-bold">
+                        <tr>
+                            <th class="px-4 py-3 border-b">Reasons for Leaving</th>
+                            <th class="px-4 py-3 border-b">Description</th>
+                            <th class="px-4 py-3 border-b text-right">Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        <tr>
+                            <td class="px-4 py-3 font-medium">Salary Issues</td>
+                            <td class="px-4 py-3">Dissatisfaction with salary package or market standards.</td>
+                            <td class="px-4 py-3 text-right">39%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 font-medium">Lack of Promotion Opportunities</td>
+                            <td class="px-4 py-3">Limited chances for promotion and career growth.</td>
+                            <td class="px-4 py-3 text-right">14%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 font-medium">High Work Pressure</td>
+                            <td class="px-4 py-3">Excessive workload and stress impacting work-life balance.</td>
+                            <td class="px-4 py-3 text-right">23%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 font-medium">Lack of Job Satisfaction</td>
+                            <td class="px-4 py-3">Unfulfilling work leading to dissatisfaction.</td>
+                            <td class="px-4 py-3 text-right">8%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 font-medium">Unhealthy Work Environment</td>
+                            <td class="px-4 py-3">Conflicts, poor relationships, or cultural mismatch with the company.</td>
+                            <td class="px-4 py-3 text-right">12%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 font-medium">Lack of Training and Development</td>
+                            <td class="px-4 py-3">Insufficient opportunities for learning and professional growth.</td>
+                            <td class="px-4 py-3 text-right">36%</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4 py-3 font-medium">Other</td>
+                            <td class="px-4 py-3">N/A</td>
+                            <td class="px-4 py-3 text-right">3%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <hr class="border-t-2 border-gray-100 my-8">
+
+            <!-- Email Section -->
+            <div class="space-y-4 text-gray-800 leading-relaxed font-serif text-lg">
+                <p class="font-bold underline text-xl text-gray-900">Proposal: Addressing Employee Concerns at Trans-Bike Inc.</p>
+                <p>Dear Management Team,</p>
+                <p>As the Head of the HR Department at Trans-Bike Inc., I would like to propose concrete strategies to address the top three concerns identified by our departing employees during 2019–2020: Salary Issues, Lack of Promotion Opportunities, and High Work Pressure.</p>
+                
+                <p class="font-bold mt-4 text-gray-900">1. Salary Issues:</p>
+                <ul class="list-none space-y-2 ml-1">
+                    <li>A. Conduct a comprehensive salary analysis to identify any gaps between our current salary packages and market standards.</li>
+                    <li>B. Develop a structured salary increase plan based on performance, experience, and market research findings.</li>
+                    <li>C. Regularly review and adjust salaries to ensure they remain competitive and aligned with industry benchmarks.</li>
+                </ul>
+
+                <p class="font-bold mt-4 text-gray-900">2. Lack of Promotion Opportunities:</p>
+                <ul class="list-none space-y-2 ml-1">
+                    <li>A. Implement a career development program that offers employees clear growth paths and opportunities for advancement.</li>
+                    <li>B. Establish mentorship programs to provide guidance and support for employees seeking career progression.</li>
+                    <li>C. Encourage cross–functional training and job rotations to enhance employees' skills and prepare them for future leadership roles.</li>
+                </ul>
+
+                <p class="font-bold mt-4 text-gray-900">3. High Work Pressure:</p>
+                <ul class="list-none space-y-2 ml-1">
+                    <li>A. Conduct a workload assessment to Identify areas of excessive pressure and workload imbalance.</li>
+                    <li>B. Explore the possibility of hiring additional staff or redistributing tasks to alleviate work pressure.</li>
+                    <li>C. Implement stress management programs, such as mindfulness workshops and wellness initiatives, to promote a healthy work–life balance.</li>
+                </ul>
+
+                <p class="mt-6">By implementing these strategies, we aim to address the key concerns raised by our departing employees and foster a more positive and engaging work environment at Trans–Bike Inc. These initiatives will help us attract and retain top talent while fostering employee satisfaction, growth, and productivity.</p>
+                
+                <p>Thank you for considering these strategies. We are confident that they will contribute to the long–term success of our company.</p>
+                
+                <div class="mt-8">
+                    <p>Sincerely,</p>
+                    <br>
+                    <p class="font-semibold text-gray-900">Kelly</p>
+                    <p>Head of HR Department</p>
+                    <p>Trans–Bike Inc.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION 2: SENTENCE STRUCTURE ANALYSIS -->
+    <section class="section-card" id="structure-analysis">
+        <div class="bg-rose-500 px-6 py-4">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-project-diagram mr-3 opacity-80"></i> Full Sentence Structure Analysis
+            </h2>
+        </div>
+
+        <div class="p-6 md:p-10">
+            <!-- Legend -->
+            <div class="bg-slate-50 p-4 rounded-lg shadow-sm text-xs flex flex-wrap gap-3 select-none mb-8 border border-slate-100">
+                <span class="px-2 py-1 rounded bg-blue-50 text-blue-700 font-bold border-b-2 border-blue-400">S 主詞</span>
+                <span class="px-2 py-1 rounded bg-red-50 text-red-700 font-bold border-b-2 border-red-400">V 動詞</span>
+                <span class="px-2 py-1 rounded bg-green-50 text-green-700 font-bold border-b-2 border-green-400">O 受詞</span>
+                <span class="px-2 py-1 rounded bg-orange-50 text-orange-700 font-bold border-b-2 border-orange-400">C 補語</span>
+                <span class="px-2 py-1 rounded bg-yellow-50 text-yellow-700 font-bold border-b-2 border-yellow-400">Mod 修飾語</span>
+                <span class="px-2 py-1 rounded bg-purple-50 text-purple-700 font-bold border-b-2 border-purple-400">Prep 介系詞</span>
+            </div>
+
+            <!-- Sentence 1 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <!-- As the Head... -->
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-purple">Prep Phr (修飾全句)</span>
+                        <span class="tag-prep">As the Head of the HR Department at Trans-Bike Inc.,</span>
+                    </span>
+                    <!-- I -->
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-blue">S</span>
+                        <span class="tag-s">I</span>
+                    </span>
+                    <!-- would like -->
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V</span>
+                        <span class="tag-v">would like</span>
+                    </span>
+                    <!-- to propose -->
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O (不定詞)</span>
+                        <span class="tag-o">to propose</span>
+                    </span>
+                    <!-- concrete strategies -->
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O (of propose)</span>
+                        <span class="tag-o">
+                            <span class="tag-mod border-b-2 border-yellow-400">concrete</span>
+                            strategies
+                        </span>
+                    </span>
+                    <!-- to address... -->
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-yellow">Adj Phr (修飾 strategies)</span>
+                        <span class="tag-mod">to address the top three concerns identified by our departing employees...</span>
+                    </span>
+                    
+                    <button onclick="speakText('As the Head of the HR Department at Trans-Bike Inc., I would like to propose concrete strategies to address the top three concerns identified by our departing employees during 2019–2020.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+                
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>身為 Trans-Bike Inc. 的人資部主管，我想提出具體策略，以解決 2019-2020 年間離職員工指出的三大主要擔憂。</span>
+                </div>
+
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>As + 職位</strong>：表示「身為...」、「作為...」。</li>
+                        <li><strong>identified by...</strong>：過去分詞片語，作形容詞用，後位修飾前方的 concerns (被離職員工指出的擔憂)。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 1A -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V (祈使句)</span>
+                        <span class="tag-v">Conduct</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">
+                            a 
+                            <span class="tag-mod border-b-2 border-yellow-400">comprehensive</span>
+                            salary analysis
+                        </span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-yellow">Adv Phr (目的)</span>
+                        <span class="tag-mod">to identify any gaps between our current salary packages and market standards.</span>
+                    </span>
+
+                    <button onclick="speakText('Conduct a comprehensive salary analysis to identify any gaps between our current salary packages and market standards.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>進行全面的薪資分析，以找出我們目前的薪資方案與市場標準之間的差距。</span>
+                </div>
+                
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>to identify...</strong>：不定詞片語表「目的」。</li>
+                        <li><strong>between A and B</strong>：在 A 與 B 之間。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 1B -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V</span>
+                        <span class="tag-v">Develop</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">a structured salary increase plan</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-yellow">Adj Phr (修飾 plan)</span>
+                        <span class="tag-mod">based on performance, experience, and market research findings.</span>
+                    </span>
+
+                    <button onclick="speakText('Develop a structured salary increase plan based on performance, experience, and market research findings.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>根據績效、經驗和市場研究結果，制定結構化的加薪計畫。</span>
+                </div>
+                
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>based on...</strong>：過去分詞片語，修飾前方的 plan，表示「基於...的」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 2A -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V</span>
+                        <span class="tag-v">Implement</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">a career development program</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-yellow">Adj Clause (修飾 program)</span>
+                        <span class="tag-mod">that offers employees clear growth paths and opportunities for advancement.</span>
+                    </span>
+
+                    <button onclick="speakText('Implement a career development program that offers employees clear growth paths and opportunities for advancement.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>實施職涯發展計畫，為員工提供清晰的成長路徑和晉升機會。</span>
+                </div>
+                
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>that offers...</strong>：關係子句，修飾前方的 program。</li>
+                        <li><strong>offers (V) + employees (IO) + clear paths... (DO)</strong>：授與動詞句型，提供某人某物。</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- Sentence 2C -->
+             <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V</span>
+                        <span class="tag-v">Encourage</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">cross-functional training and job rotations</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-yellow">Adv Phr (目的)</span>
+                        <span class="tag-mod">to enhance employees' skills and prepare them for future leadership roles.</span>
+                    </span>
+
+                    <button onclick="speakText('Encourage cross-functional training and job rotations to enhance employees\' skills and prepare them for future leadership roles.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>鼓勵跨部門培訓和工作輪調，以提升員工技能並為未來的領導角色做好準備。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 3B -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V</span>
+                        <span class="tag-v">Explore</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">the possibility of hiring additional staff or redistributing tasks</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-yellow">Adv Phr (目的)</span>
+                        <span class="tag-mod">to alleviate work pressure.</span>
+                    </span>
+
+                    <button onclick="speakText('Explore the possibility of hiring additional staff or redistributing tasks to alleviate work pressure.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>探討招聘額外員工或重新分配任務的可能性，以減輕工作壓力。</span>
+                </div>
+            </div>
+
+            <!-- Closing Sentence 1 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-purple">Prep Phr (修飾全句)</span>
+                        <span class="tag-prep">By implementing these strategies,</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-blue">S</span>
+                        <span class="tag-s">we</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V</span>
+                        <span class="tag-v">aim to address</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">the key concerns raised by our departing employees</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-red">V2 (連接詞and)</span>
+                        <span class="tag-v">and foster</span>
+                    </span>
+                    <span class="sentence-chunk">
+                        <span class="tag-label lbl-green">O</span>
+                        <span class="tag-o">a more positive and engaging work environment at Trans-Bike Inc.</span>
+                    </span>
+
+                    <button onclick="speakText('By implementing these strategies, we aim to address the key concerns raised by our departing employees and foster a more positive and engaging work environment at Trans-Bike Inc.')" class="audio-btn audio-btn-small">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>透過實施這些策略，我們旨在解決離職員工提出的主要擔憂，並在 Trans-Bike Inc. 營造更積極、更具參與感的工作環境。</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: VOCABULARY CARDS -->
+    <section class="section-card" id="vocabulary">
+        <div class="bg-teal-600 px-6 py-4">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-tags mr-3 opacity-80"></i> TOEIC Core Vocabulary & Phrases
+            </h2>
+        </div>
+        
+        <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-6" id="vocab-grid">
+            <!-- Cards generated by JS below to keep HTML clean -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 text-center text-gray-400 text-sm pb-12">
+        <p>Generated by AI Teaching Assistant &copy; 2024</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Web Speech API
+        const synth = window.speechSynthesis;
+
+        function speakText(text) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            setTimeout(() => {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; 
+                utterance.pitch = 1;
+                synth.speak(utterance);
+            }, 50);
+        }
+
+        // Vocabulary Data
+        // Updated: Lowercase for non-proper nouns, added phrases
+        const vocabList = [
+            { word: "dissatisfaction", pos: "n.", ipa: "/ˌdɪsˌsætɪsˈfækʃən/", level: "Blue", def: "不滿意", example: "Customer dissatisfaction can lead to a loss of revenue.", trans: "顧客的不滿可能導致收入損失。" },
+            { word: "salary package", pos: "n. phr.", ipa: "/ˈsæləri ˈpækɪʤ/", level: "Gold", def: "薪資方案 (包含福利)", example: "The company offers a competitive salary package.", trans: "這家公司提供具競爭力的薪資方案。" },
+            { word: "market standard", pos: "n. phr.", ipa: "/ˈmɑrkɪt ˈstændərd/", level: "Green", def: "市場標準", example: "We must ensure our prices meet market standards.", trans: "我們必須確保價格符合市場標準。" },
+            { word: "promotion", pos: "n.", ipa: "/prəˈmoʊʃən/", level: "Gold", def: "晉升；促銷", example: "She received a promotion to manager.", trans: "她獲得了經理職位的晉升。" },
+            { word: "excessive", pos: "adj.", ipa: "/ɪkˈsɛsɪv/", level: "Gold", def: "過度的", example: "Excessive noise can be harmful to hearing.", trans: "過度的噪音可能對聽力有害。" },
+            { word: "workload", pos: "n.", ipa: "/ˈwɜrkˌloʊd/", level: "Blue", def: "工作量", example: "The heavy workload caused stress among employees.", trans: "繁重的工作量在員工中造成了壓力。" },
+            { word: "work-life balance", pos: "n. phr.", ipa: "/wɜrk laɪf ˈbæləns/", level: "Gold", def: "工作與生活平衡", example: "Maintaining a healthy work-life balance is essential.", trans: "維持健康的工作與生活平衡至關重要。" },
+            { word: "unfulfilling", pos: "adj.", ipa: "/ˌʌnfʊlˈfɪlɪŋ/", level: "Blue", def: "無法讓人滿足的", example: "He left the unfulfilling job to pursue his passion.", trans: "他離開了那份無法讓人滿足的工作去追求他的熱情。" },
+            { word: "mismatch", pos: "n.", ipa: "/ˈmɪsˌmætʃ/", level: "Blue", def: "不匹配；錯配", example: "There is a mismatch between your skills and the job requirements.", trans: "你的技能與工作要求之間存在不匹配。" },
+            { word: "insufficient", pos: "adj.", ipa: "/ˌɪnsəˈfɪʃənt/", level: "Gold", def: "不足的", example: "Insufficient funds delayed the project.", trans: "資金不足延誤了專案。" },
+            { word: "professional growth", pos: "n. phr.", ipa: "/prəˈfɛʃənəl groʊθ/", level: "Gold", def: "專業成長", example: "The company encourages professional growth through training.", trans: "公司透過培訓鼓勵專業成長。" },
+            { word: "concrete", pos: "adj.", ipa: "/ˈkɑnkrit/", level: "Green", def: "具體的", example: "We need concrete evidence to prove the theory.", trans: "我們需要具體的證據來證明這個理論。" },
+            { word: "strategy", pos: "n.", ipa: "/ˈstrætədʒi/", level: "Gold", def: "策略", example: "Marketing strategy is key to business success.", trans: "行銷策略是商業成功的關鍵。" },
+            { word: "comprehensive", pos: "adj.", ipa: "/ˌkɑmpriˈhɛnsɪv/", level: "Gold", def: "全面的", example: "The report provides a comprehensive review of the market.", trans: "這份報告提供了對市場的全面回顧。" },
+            { word: "analysis", pos: "n.", ipa: "/əˈnæləsɪs/", level: "Green", def: "分析", example: "Further analysis is required.", trans: "需要進一步的分析。" },
+            { word: "gap", pos: "n.", ipa: "/ɡæp/", level: "Green", def: "差距；缺口", example: "We need to bridge the gap between rich and poor.", trans: "我們需要縮小貧富差距。" },
+            { word: "benchmark", pos: "n.", ipa: "/ˈbɛntʃˌmɑrk/", level: "Gold", def: "基準", example: "This product sets a new benchmark for quality.", trans: "這項產品為品質設定了新基準。" },
+            { word: "implement", pos: "v.", ipa: "/ˈɪmpləˌmɛnt/", level: "Gold", def: "實施", example: "It is time to implement the changes.", trans: "是時候實施這些改變了。" },
+            { word: "mentorship", pos: "n.", ipa: "/ˈmɛntɔrˌʃɪp/", level: "Blue", def: "導師制度", example: "The mentorship program helps new hires adapt.", trans: "導師制度幫助新員工適應。" },
+            { word: "progression", pos: "n.", ipa: "/prəˈɡrɛʃən/", level: "Blue", def: "進展；晉升", example: "Career progression is important to millennials.", trans: "職涯發展對千禧世代很重要。" },
+            { word: "cross-functional", pos: "adj.", ipa: "/krɔs ˈfʌŋkʃənəl/", level: "Gold", def: "跨職能的", example: "Cross-functional teams foster innovation.", trans: "跨職能團隊促進創新。" },
+            { word: "job rotation", pos: "n. phr.", ipa: "/ʤɑb roʊˈteɪʃən/", level: "Green", def: "工作輪調", example: "Job rotation broadens employees' skills.", trans: "工作輪調能擴展員工的技能。" },
+            { word: "assessment", pos: "n.", ipa: "/əˈsɛsmənt/", level: "Gold", def: "評估", example: "The tax assessment was accurate.", trans: "稅務評估是準確的。" },
+            { word: "imbalance", pos: "n.", ipa: "/ɪmˈbæləns/", level: "Blue", def: "不平衡", example: "Hormonal imbalance can affect health.", trans: "荷爾蒙失調會影響健康。" },
+            { word: "alleviate", pos: "v.", ipa: "/əˈliviˌeɪt/", level: "Gold", def: "減輕；緩和", example: "Medicine can alleviate pain.", trans: "藥物可以減輕疼痛。" },
+            { word: "wellness initiative", pos: "n. phr.", ipa: "/ˈwɛlnəs ɪˈnɪʃiətɪv/", level: "Gold", def: "健康促進計畫", example: "The wellness initiative promotes healthy eating.", trans: "這項健康促進計畫推廣健康飲食。" },
+            { word: "foster", pos: "v.", ipa: "/ˈfɔstər/", level: "Gold", def: "促進；培養", example: "The teacher tries to foster a love of reading.", trans: "老師試著培養學生對閱讀的熱愛。" },
+            { word: "retain", pos: "v.", ipa: "/rɪˈteɪn/", level: "Gold", def: "留住；保持", example: "The company aims to retain its best employees.", trans: "公司旨在留住最優秀的員工。" },
+            { word: "productivity", pos: "n.", ipa: "/ˌproʊdʌkˈtɪvɪti/", level: "Green", def: "生產力", example: "Technology can increase productivity.", trans: "科技可以提高生產力。" }
+        ];
+
+        // Generate Vocab Cards
+        const vocabGrid = document.getElementById('vocab-grid');
+        
+        vocabList.forEach((item, index) => {
+            const levelColor = item.level === 'Gold' ? 'bg-orange-50 text-orange-600 border border-orange-100' : (item.level === 'Blue' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-green-50 text-green-600 border border-green-100');
+            const levelScore = item.level === 'Gold' ? 'TOEIC 800+' : (item.level === 'Blue' ? 'TOEIC 600+' : 'TOEIC 450+');
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition';
+            card.innerHTML = `
+                <!-- Header: Word & Audio (No tag here anymore) -->
+                <div class="flex justify-between items-start mb-2">
+                    <div class="overflow-hidden mr-2 w-full">
+                        <div class="flex items-center overflow-x-auto no-scrollbar">
+                            <span class="text-teal-600 font-bold mr-2 text-lg shrink-0">${index + 1}.</span>
+                            <h3 class="text-xl font-bold text-gray-800 whitespace-nowrap">${item.word}</h3>
+                        </div>
+                        <div class="text-gray-400 font-mono text-sm mt-1 pl-1">[${item.ipa}]</div>
+                    </div>
+                    <button onclick="speakText('${item.word}')" class="audio-btn audio-btn-large shrink-0 ml-2"><i class="fas fa-volume-up"></i></button>
+                </div>
+
+                <!-- Meta Row: POS + TOEIC Tag + Definition -->
+                <div class="mb-3 flex flex-wrap items-center gap-2">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded font-medium">${item.pos}</span>
+                    <span class="${levelColor} text-xs font-bold px-2 py-0.5 rounded border">${levelScore}</span>
+                    <span class="text-gray-700 font-medium">${item.def}</span>
+                </div>
+
+                <!-- Example Box -->
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500">
+                    <p class="text-gray-600 mb-1">${item.example}</p>
+                    <p class="text-gray-400">(${item.trans})</p>
+                </div>
+            `;
+            vocabGrid.appendChild(card);
+        });
+
+    </script>
+</body>
+</html>
