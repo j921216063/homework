@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Audio Pro - Interactive Lecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: { 600: '#0d9488' },
+                        orange: { 500: '#f97316', 600: '#ea580c' }
+                    },
+                    lineHeight: {
+                        'loose': '2',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .highlight-box {
+            background-color: #ffffff;
+            transition: all 0.3s ease;
+        }
+        
+        .highlight-box:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 6px;
+            margin-bottom: 8px;
+            padding: 2px 4px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* Grammar Tags */
+        .tag-s { color: #2563eb; font-weight: 700; } /* Blue */
+        .tag-v { color: #dc2626; font-weight: 700; } /* Red */
+        .tag-o { color: #16a34a; font-weight: 700; } /* Green */
+        .tag-c { color: #ea580c; font-weight: 700; } /* Orange */
+        .tag-appos { color: #0d9488; font-weight: 700; } /* Teal */
+        .tag-mod { color: #ca8a04; font-weight: 700; } /* Yellow-Dark */
+        .tag-prep { color: #9333ea; font-weight: 700; } /* Purple */
+        
+        .implicit-text {
+            border: 1px dashed #9ca3af;
+            color: #6b7280;
+            padding: 0 4px;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .grammar-note {
+            background-color: #fef9c3;
+            border-left: 4px solid #facc15;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+        }
+        
+        .grammar-note ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 4px;
+        }
+        
+        .grammar-note li {
+            margin-bottom: 4px;
+        }
+
+        .audio-btn {
+            transition: transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Custom style for the small inline button */
+        .audio-btn-small {
+            width: 32px;
+            height: 32px;
+            font-size: 0.875rem; /* text-sm */
+            display: inline-flex;
+            vertical-align: middle;
+            margin-left: 8px;
+            margin-bottom: 8px; /* Align with chunks */
+        }
+        
+        /* Larger button for other sections */
+        .audio-btn-large {
+            width: 44px;
+            height: 44px;
+        }
+
+        .email-header-row {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 8px 0;
+        }
+        .email-label {
+            width: 80px;
+            font-weight: bold;
+            color: #4b5563;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Business Audio Pro</h1>
+        <p class="text-lg text-gray-600">互動式英語解析講義</p>
+    </header>
+
+    <!-- SECTION 1: Original Text -->
+    <section class="mb-12">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-indigo-600 pl-3">1. 原文閱讀 (Original Text)</h2>
+            <button onclick="playAll()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center shadow-lg">
+                <i class="fas fa-play-circle mr-2"></i> 朗讀全文
+            </button>
+        </div>
+
+        <!-- Webpage Simulation -->
+        <div class="bg-white border-2 border-gray-300 rounded-t-lg shadow-sm mb-6 overflow-hidden relative">
+            <!-- Browser Bar -->
+            <div class="bg-gray-100 border-b border-gray-300 p-2 flex items-center">
+                <div class="bg-white border border-gray-300 rounded px-3 py-1 text-sm text-gray-600 flex-grow truncate mx-2">
+                    http://www.businessaudiopro.com
+                </div>
+                <i class="fas fa-arrow-right text-gray-400"></i>
+            </div>
+            
+            <!-- Content -->
+            <div class="p-6 md:p-8">
+                <div class="text-center border-b-2 border-gray-800 pb-4 mb-6">
+                    <h1 class="text-3xl font-serif font-bold text-gray-900">Business Audio Pro</h1>
+                </div>
+
+                <div class="text-center mb-8">
+                    <h2 class="text-xl md:text-2xl font-bold italic text-gray-800 leading-snug">
+                        Enhance Your Company's Image with a <br>Professionally Recorded Telephone Greeting
+                    </h2>
+                </div>
+
+                <p class="text-lg text-gray-700 mb-4 leading-relaxed">
+                    A professional, personalized voicemail message creates an excellent first impression. 
+                    <strong>Business Audio Pro</strong> meets your specifications to record a customized telephone greeting within three business days!
+                </p>
+
+                <h3 class="text-lg font-bold text-gray-900 mb-3">Services We Offer:</h3>
+                
+                <ol class="list-decimal list-outside pl-5 space-y-4 text-gray-800 text-lg">
+                    <li>
+                        <strong>Professional Voice Talent for Voicemail Messages</strong> – We have numerous male and female voice actors with a wide range of tones, accents, and dialects. Visit businessaudiopro.com to hear examples of what each actor sounds like and choose the one that best suits your needs.
+                    </li>
+                    <li>
+                        <strong>On-Hold Messages</strong> – We also create professional on-hold messages with pleasant music to enhance your customers' experience.
+                    </li>
+                    <li>
+                        <strong>Customized Script Writing</strong> – Our experienced script writers can help you craft a personalized message that distinguishes you and your business.
+                    </li>
+                    <li>
+                        <strong>Multilingual Voice Production</strong> – For those with a multilingual customer base, we offer services in a wide range of languages.
+                    </li>
+                </ol>
+
+                <p class="mt-8 text-lg text-gray-700 leading-relaxed">
+                    Send us an e-mail (inquiry@businessaudiopro.com) with your contact information and your specific needs. A representative will call you within 24 hours to discuss your project and provide a price estimate.
+                </p>
+            </div>
+        </div>
+
+        <!-- Email Simulation -->
+        <div class="bg-white border-2 border-gray-400 rounded-lg shadow-md overflow-hidden">
+            <div class="bg-gray-200 p-4 border-b border-gray-400">
+                <div class="bg-white border border-gray-400 rounded p-4 shadow-inner">
+                    <div class="email-header-row">
+                        <span class="email-label">To:</span>
+                        <span class="text-gray-800 select-all">inquiry@businessaudiopro.com</span>
+                    </div>
+                    <div class="email-header-row">
+                        <span class="email-label">From:</span>
+                        <span class="text-gray-800 select-all">j.annesly@anneslydata.com</span>
+                    </div>
+                    <div class="email-header-row">
+                        <span class="email-label">Date:</span>
+                        <span class="text-gray-800">June 25</span>
+                    </div>
+                    <div class="email-header-row border-none">
+                        <span class="email-label">Subject:</span>
+                        <span class="text-gray-800 font-medium">Request</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6 md:p-8 text-lg text-gray-800 leading-relaxed font-serif">
+                <p class="mb-4">
+                    I found your notice in the newspaper and wish to use your services for my data-processing and transcription business. I am looking specifically for a professionally recorded voicemail greeting intended for my clients, and I wonder if you would be available to write and record this for me, and how soon. Since I work with English- and Spanish-speaking clients, I would like the message to be recorded in both languages. Please reach out to me at my mobile phone between the hours of 10:00 A.M. and 5:00 P.M. I hope to hear from you soon.
+                </p>
+                <p class="mb-2">Thank you,</p>
+                <p class="font-bold">Jody Annesly</p>
+                <p>Annesly Data</p>
+                <p>512-555-6879 (mobile)</p>
+                <p>342 Maymill Road, Fort Worth, TX 70609</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Sentence Analysis -->
+    <section class="mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-red-500 pl-3 mb-6">2. 全篇句型結構分析 (Sentence Structure)</h2>
+
+        <div class="space-y-8">
+            <!-- Headline -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk implicit-text"><span class="block text-xs text-gray-500 font-bold mb-1">S (Implicit)</span>[You]</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Enhance</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>Your Company's Image</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adv)</span>with a Professionally Recorded Telephone Greeting</span>
+                    <button onclick="playAudio('Enhance Your Company\'s Image with a Professionally Recorded Telephone Greeting')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>用專業錄製的電話問候語來提升貴公司的形象。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>祈使句 (Imperative)</strong>：主詞 "You" 被省略，直接以動詞原形 "Enhance" 開頭，表示建議或請求。</li>
+                        <li><strong>介系詞 with</strong>：表示「使用...手段/工具」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Body 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>A professional, personalized voicemail message</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>creates</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>an excellent first impression.</span>
+                    <button onclick="playAudio('A professional, personalized voicemail message creates an excellent first impression.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>一則專業、個人化的語音留言能創造極佳的第一印象。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>形容詞並列</strong>："professional" 與 "personalized" 同為形容詞，以逗號分隔，共同修飾名詞 "message"。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Body 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Business Audio Pro</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>meets</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>your specifications</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Purpose)</span>to record a customized telephone greeting</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Time)</span>within three business days!</span>
+                    <button onclick="playAudio('Business Audio Pro meets your specifications to record a customized telephone greeting within three business days!')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>Business Audio Pro 滿足您的規格要求，在三個工作天內錄製客製化的電話問候語！</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>不定詞表目的</strong>："to record..." 修飾動詞 "meets"，說明滿足規格是「為了」錄製問候語。</li>
+                        <li><strong>時間介系詞 within</strong>：表示「在...時間之內」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- List 1 Part A -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>We</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>have</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>numerous male and female voice actors</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adj)</span>with a wide range of tones, accents, and dialects.</span>
+                    <button onclick="playAudio('We have numerous male and female voice actors with a wide range of tones, accents, and dialects.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我們擁有眾多具備各種音色、口音和方言的男性與女性配音員。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>介系詞片語修飾</strong>："with..." 作形容詞用，修飾 "actors"，表示這些演員「具備」的特質。</li>
+                        <li><strong>主動詞一致性</strong>："actors" 是複數，所以前面形容詞也搭配表示許多的 "numerous"。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- List 1 Part B -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk implicit-text"><span class="block text-xs text-gray-500 font-bold mb-1">S (Implicit)</span>[You]</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V1</span>Visit</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>businessaudiopro.com</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Purpose)</span>to hear examples of what each actor sounds like</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V2</span>choose</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>the one</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause (修飾 one)</span>that best suits your needs.</span>
+                    <button onclick="playAudio('Visit businessaudiopro.com to hear examples of what each actor sounds like and choose the one that best suits your needs.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>請造訪 businessaudiopro.com 試聽每位配音員的範例，並選擇最符合您需求的一位。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>並列祈使句</strong>："Visit" 和 "choose" 是兩個主要動作，由 "and" 連接。</li>
+                        <li><strong>名詞子句</strong>："what each actor sounds like" 當作 "of" 的受詞。</li>
+                        <li><strong>關係子句</strong>："that best suits your needs" 修飾前面的代名詞 "the one"。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- List 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>We</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>also create</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>professional on-hold messages</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adj)</span>with pleasant music</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Purpose)</span>to enhance your customers’ experience.</span>
+                    <button onclick="playAudio('We also create professional on-hold messages with pleasant music to enhance your customers\' experience.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我們也製作搭配悅耳音樂的專業電話保留訊息，以提升您顧客的體驗。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>名詞所有格</strong>："customers" 是複數，所有格符號 (') 直接加在 s 後面。</li>
+                        <li><strong>不定詞表目的</strong>："to enhance..." 說明 "create messages" 的目的。</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- List 3 -->
+             <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>Our experienced script writers</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>can help</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>you</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C (Inf w/o to)</span>[to] craft a personalized message</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adj Clause (修飾 message)</span>that distinguishes you and your business.</span>
+                    <button onclick="playAudio('Our experienced script writers can help you craft a personalized message that distinguishes you and your business.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我們經驗豐富的劇本撰寫人能協助您撰寫個人化的訊息，讓您與您的企業脫穎而出。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>Help 用法</strong>："help + 受詞 + (to) V"，這裡省略了 to，直接接原形動詞 "craft"。</li>
+                        <li><strong>關係子句</strong>："that distinguishes..." 修飾 "message"，"that" 為主格，動詞 "distinguishes" 需隨先行詞單數變化。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- List 4 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adv)</span>For those with a multilingual customer base,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>we</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>offer</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>services</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adj)</span>in a wide range of languages.</span>
+                    <button onclick="playAudio('For those with a multilingual customer base, we offer services in a wide range of languages.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>針對擁有這多語系客群的客戶，我們提供多種語言的服務。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>代名詞 Those</strong>：泛指 "people" (那些人)。</li>
+                        <li><strong>介系詞片語</strong>："with..." 修飾 "those"，說明這些人的特徵。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contact CTA -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk implicit-text"><span class="block text-xs text-gray-500 font-bold mb-1">S (Implicit)</span>[You]</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Send</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">IO</span>us</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">DO</span>an e-mail</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Adj)</span>with your contact information and your specific needs.</span>
+                    <button onclick="playAudio('Send us an e-mail with your contact information and your specific needs.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>請寄電子郵件給我們，附上您的聯絡資訊與具體需求。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>授與動詞</strong>："Send" 接雙受詞：間接受詞 (us) + 直接受詞 (an e-mail)。</li>
+                    </ul>
+                </div>
+            </div>
+
+             <!-- Follow up -->
+             <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>A representative</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>will call</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>you</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Time)</span>within 24 hours</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv (Purpose)</span>to discuss your project and provide a price estimate.</span>
+                    <button onclick="playAudio('A representative will call you within 24 hours to discuss your project and provide a price estimate.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>專員將在 24 小時內致電給您，討論您的專案並提供報價。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>平行結構</strong>："to discuss... and [to] provide..."，and 連接了兩個不定詞動作（後面省略了 to）。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Sentence 1 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group mt-10">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 bg-gray-100 p-2 rounded">信件內容分析</h3>
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>I</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V1</span>found</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>your notice</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Place)</span>in the newspaper</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V2</span>wish</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Inf Phr)</span>to use your services</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Purpose)</span>for my data-processing and transcription business.</span>
+                    <button onclick="playAudio('I found your notice in the newspaper and wish to use your services for my data-processing and transcription business.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我在報紙上看到你們的公告，希望我的資料處理與聽寫轉錄業務能使用你們的服務。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>對等連接詞 and</strong>：連接 "found" (過去式) 和 "wish" (現在式)。時態不一致是合理的，因為「看見」是過去發生，「希望」是現在狀態。</li>
+                        <li><strong>Wish 用法</strong>：wish to V，表示希望做某事。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Sentence 2 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>I</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>am looking</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv</span>specifically</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Target)</span>for a professionally recorded voicemail greeting</span>
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Participle Phr (Adj)</span>intended for my clients,</span>
+                    <span class="sentence-chunk"><span class="block text-xs text-gray-400 font-bold mb-1">Conj</span>and</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>I</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>wonder</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Noun Clause)</span>if you would be available to write and record this for me, and how soon.</span>
+                    <button onclick="playAudio('I am looking specifically for a professionally recorded voicemail greeting intended for my clients, and I wonder if you would be available to write and record this for me, and how soon.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>我特別在尋找針對我的客戶所設計的專業錄製語音問候，想知道你們是否有空為我撰寫並錄製，以及多快能完成。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>分詞片語修飾</strong>："intended for..." 是過去分詞片語，修飾前面的 "greeting"，表示「被打算給...的」。</li>
+                        <li><strong>間接問句</strong>："if you would be available..." 是名詞子句當 "wonder" 的受詞，"if" 在此表示「是否」。</li>
+                        <li><strong>省略句</strong>："...and [I wonder] how soon [you can do it]"。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Sentence 3 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-yellow-400"><span class="block text-xs text-yellow-600 font-bold mb-1">Adv Clause (Reason)</span>Since I work with English- and Spanish-speaking clients,</span>
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>I</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>would like</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O</span>the message</span>
+                    <span class="sentence-chunk border-b-2 border-orange-400"><span class="block text-xs text-orange-600 font-bold mb-1">C (Inf Passive)</span>to be recorded in both languages.</span>
+                    <button onclick="playAudio('Since I work with English- and Spanish-speaking clients, I would like the message to be recorded in both languages.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>因為我有講英語和西班牙語的客戶，我希望留言能以雙語錄製。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>連接詞 Since</strong>：表示「因為」、「既然」。</li>
+                        <li><strong>受詞補語</strong>："would like + 受詞 + to V" 結構。受詞 "the message" 接受動作，故使用被動態不定詞 "to be recorded"。</li>
+                        <li><strong>複合形容詞</strong>："English- and Spanish-speaking"，共用後面的 "-speaking"。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Sentence 4 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk implicit-text"><span class="block text-xs text-gray-500 font-bold mb-1">S (Implicit)</span>[You]</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>Please reach out</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Target)</span>to me</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Means)</span>at my mobile phone</span>
+                    <span class="sentence-chunk border-b-2 border-purple-400"><span class="block text-xs text-purple-600 font-bold mb-1">Prep Phr (Time)</span>between the hours of 10:00 A.M. and 5:00 P.M.</span>
+                    <button onclick="playAudio('Please reach out to me at my mobile phone between the hours of 10:00 A.M. and 5:00 P.M.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>請在上午 10:00 到下午 5:00 之間撥打我的手機與我聯絡。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>片語 Reach out</strong>："Reach out to sb" 是商務英語常見的「聯絡」，比 "contact" 更親切。</li>
+                        <li><strong>介系詞 at</strong>：在此用於指「電話號碼/聯絡方式」（at my number/phone）。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Email Sentence 5 -->
+            <div class="highlight-box border border-gray-200 rounded-lg p-5 relative group">
+                <div class="mb-4 text-base md:text-lg leading-loose">
+                    <span class="sentence-chunk border-b-2 border-blue-400"><span class="block text-xs text-blue-600 font-bold mb-1">S</span>I</span>
+                    <span class="sentence-chunk border-b-2 border-red-400"><span class="block text-xs text-red-600 font-bold mb-1">V</span>hope</span>
+                    <span class="sentence-chunk border-b-2 border-green-400"><span class="block text-xs text-green-600 font-bold mb-1">O (Inf Phr)</span>to hear from you soon.</span>
+                    <button onclick="playAudio('I hope to hear from you soon.')" class="audio-btn audio-btn-small text-gray-400 hover:text-indigo-600 bg-white rounded-full shadow-sm border border-gray-100"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="flex items-start bg-gray-50 p-3 rounded text-base text-gray-700 mb-2"><p>希望能盡快收到您的回覆。</p></div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-1"></i> 文法亮點</strong>
+                    <ul>
+                        <li><strong>片語 Hear from</strong>："hear from sb" 指「收到某人的消息」，"hear of" 則是「聽說過某人/事」。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: TOEIC Vocabulary -->
+    <section>
+        <h2 class="text-2xl font-bold text-gray-800 border-l-4 border-green-500 pl-3 mb-6">3. TOEIC 核心單字與片語 (Vocabulary & Phrases)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Word 1 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                 <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">enhance</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ɪnˈhæns/</span>
+                    <button onclick="playAudio('enhance')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">提高，增加，加強</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The company is looking for ways to enhance its image.</p>
+                <p class="text-gray-500 text-sm">(這家公司正在尋找提升其形象的方法。)</p>
+            </div>
+
+             <!-- Word 2 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">specification</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌspɛsəfəˈkeʃən/</span>
+                    <button onclick="playAudio('specification')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">規格，詳細計畫 (常用複數)</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The product was built to meet the customer's exact specifications.</p>
+                <p class="text-gray-500 text-sm">(該產品是為了滿足客戶的確切規格而製造的。)</p>
+            </div>
+
+            <!-- Word 3 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-orange-100 text-orange-800">TOEIC 750+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">transcription</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/trænˈskrɪpʃən/</span>
+                    <button onclick="playAudio('transcription')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">轉錄，抄寫；錄音檔轉文字</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Our business specializes in medical transcription.</p>
+                <p class="text-gray-500 text-sm">(我們的業務專精於醫療錄音轉寫。)</p>
+            </div>
+
+             <!-- Word 4 -->
+             <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">distinguish</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/dɪˈstɪŋgwɪʃ/</span>
+                    <button onclick="playAudio('distinguish')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">使...有別於；區分</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Quality service distinguishes us from our competitors.</p>
+                <p class="text-gray-500 text-sm">(優質的服務使我們有別於競爭對手。)</p>
+            </div>
+
+            <!-- Word 5 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-red-100 text-red-800">TOEIC 800+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">multilingual</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌmʌltiˈlɪŋgwəl/</span>
+                    <button onclick="playAudio('multilingual')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">使用多種語言的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We serve a multilingual client base from around the world.</p>
+                <p class="text-gray-500 text-sm">(我們為來自世界各地的多語種客戶群提供服務。)</p>
+            </div>
+
+            <!-- Word 6 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-red-100 text-red-800">TOEIC 850+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">dialect</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈdaɪəˌlɛkt/</span>
+                    <button onclick="playAudio('dialect')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">方言，土語</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">The actor can speak in several different regional dialects.</p>
+                <p class="text-gray-500 text-sm">(這位演員能說幾種不同的地方方言。)</p>
+            </div>
+
+            <!-- Word 7 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">customized</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈkʌstəˌmaɪzd/</span>
+                    <button onclick="playAudio('customized')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">客製化的，訂做的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We offer customized solutions for every client.</p>
+                <p class="text-gray-500 text-sm">(我們為每位客戶提供客製化的解決方案。)</p>
+            </div>
+
+            <!-- Word 8 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 450+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">representative</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˌrɛprɪˈzɛntətɪv/</span>
+                    <button onclick="playAudio('representative')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">代表，專員</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">A sales representative will contact you shortly.</p>
+                <p class="text-gray-500 text-sm">(銷售專員將很快與您聯繫。)</p>
+            </div>
+
+            <!-- Word 9 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">estimate</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈɛstəmət/</span>
+                    <button onclick="playAudio('estimate')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">估價，估計</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Please provide a price estimate for the project.</p>
+                <p class="text-gray-500 text-sm">(請提供這個專案的價格估算。)</p>
+            </div>
+
+            <!-- Word 10 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-green-100 text-green-800">TOEIC 350+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">impression</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ɪmˈprɛʃən/</span>
+                    <button onclick="playAudio('impression')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">印象</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">A good voicemail greeting creates a professional first impression.</p>
+                <p class="text-gray-500 text-sm">(好的語音信箱問候語能創造專業的第一印象。)</p>
+            </div>
+
+            <!-- Word 11 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 650+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">craft</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/kræft/</span>
+                    <button onclick="playAudio('craft')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">vt.</span>
+                    <span class="text-gray-700 font-medium">精心製作</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We can help you craft a speech that will impress the audience.</p>
+                <p class="text-gray-500 text-sm">(我們可以協助您精心撰寫一篇能打動觀眾的演講稿。)</p>
+            </div>
+
+            <!-- Word 12 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 600+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">reach out</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/riʧ aʊt/</span>
+                    <button onclick="playAudio('reach out')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">phr.</span>
+                    <span class="text-gray-700 font-medium">聯絡，接觸 (通常指主動幫忙或尋求合作)</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Feel free to reach out to me if you have any questions.</p>
+                <p class="text-gray-500 text-sm">(如果你有任何問題，隨時與我聯絡。)</p>
+            </div>
+
+            <!-- Word 13 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">voice talent</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/vɔɪs ˈtælənt/</span>
+                    <button onclick="playAudio('voice talent')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">配音員</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We hire professional voice talent for our commercials.</p>
+                <p class="text-gray-500 text-sm">(我們聘請專業配音員來錄製我們的廣告。)</p>
+            </div>
+
+            <!-- Word 14 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 550+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">customer base</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ˈkʌstəmər beɪs/</span>
+                    <button onclick="playAudio('customer base')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">n.</span>
+                    <span class="text-gray-700 font-medium">客群，客戶基礎</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">Our goal is to expand our customer base in Asia.</p>
+                <p class="text-gray-500 text-sm">(我們的目標是擴大我們在亞洲的客群。)</p>
+            </div>
+
+            <!-- Word 15 -->
+            <div class="bg-white rounded-lg p-6 shadow border border-gray-100 relative">
+                <div class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded bg-blue-100 text-blue-800">TOEIC 500+</div>
+                <div class="flex items-center mb-3">
+                    <h3 class="text-xl font-bold text-gray-800 mr-3">on-hold</h3>
+                    <span class="text-gray-500 font-mono text-sm mr-3">/ɑn hoʊld/</span>
+                    <button onclick="playAudio('on-hold')" class="text-indigo-600 hover:text-indigo-800 audio-btn-large audio-btn"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="mb-2">
+                    <span class="bg-gray-200 text-gray-700 text-xs px-2 py-0.5 rounded mr-2">adj.</span>
+                    <span class="text-gray-700 font-medium">電話等候的，保留的</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-3 mb-1">We play music during the on-hold time.</p>
+                <p class="text-gray-500 text-sm">(我們在電話等候時間播放音樂。)</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-gray-500 text-sm pb-8">
+        <p>Generated by AI Teaching Assistant &copy; 2024</p>
+    </footer>
+
+    <script>
+        // Web Speech API Implementation
+        function playAudio(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9; // Slightly slower for teaching
+                
+                // Try to select a better voice
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => voice.name.includes('Google US English') || voice.name.includes('Samantha'));
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert('Sorry, your browser does not support text-to-speech.');
+            }
+        }
+
+        function playAll() {
+            const fullText = `
+                Business Audio Pro. Enhance Your Company's Image with a Professionally Recorded Telephone Greeting.
+                A professional, personalized voicemail message creates an excellent first impression. 
+                Business Audio Pro meets your specifications to record a customized telephone greeting within three business days!
+                Services We Offer:
+                1. Professional Voice Talent for Voicemail Messages. We have numerous male and female voice actors with a wide range of tones, accents, and dialects. Visit businessaudiopro.com to hear examples of what each actor sounds like and choose the one that best suits your needs.
+                2. On-Hold Messages. We also create professional on-hold messages with pleasant music to enhance your customers' experience.
+                3. Customized Script Writing. Our experienced script writers can help you craft a personalized message that distinguishes you and your business.
+                4. Multilingual Voice Production. For those with a multilingual customer base, we offer services in a wide range of languages.
+                Send us an e-mail at inquiry@businessaudiopro.com with your contact information and your specific needs. A representative will call you within 24 hours to discuss your project and provide a price estimate.
+                
+                Email from J Annesly. Subject Request.
+                I found your notice in the newspaper and wish to use your services for my data-processing and transcription business. I am looking specifically for a professionally recorded voicemail greeting intended for my clients, and I wonder if you would be available to write and record this for me, and how soon. Since I work with English- and Spanish-speaking clients, I would like the message to be recorded in both languages. Please reach out to me at my mobile phone between the hours of 10:00 A.M. and 5:00 P.M. I hope to hear from you soon.
+            `;
+            playAudio(fullText);
+        }
+    </script>
+</body>
+</html>
