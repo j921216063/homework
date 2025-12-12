@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InnovaSpaces: Business English Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: { 600: '#0d9488', 500: '#14b8a6' },
+                        orange: { 500: '#f97316', 600: '#ea580c' },
+                        slate: { 850: '#1e293b' } 
+                    },
+                    fontFamily: {
+                        sans: ['"Roboto"', '"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Merriweather"', 'serif'],
+                    },
+                    lineHeight: {
+                        'loose': '2.8',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* Section Card Style */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* ----------------------------------------------------
+           STYLE: Trans-Bike Consistent Chunking
+           ---------------------------------------------------- */
+        
+        .highlight-box {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .highlight-box:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            padding: 0 2px;
+            position: relative;
+            vertical-align: bottom;
+        }
+
+        /* Tag Labels */
+        .tag-label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+            line-height: 1;
+            white-space: nowrap; 
+            letter-spacing: 0.025em;
+        }
+        
+        /* The Text Content */
+        .chunk-text {
+            font-family: 'Merriweather', serif; /* Consistent Font */
+            font-size: 1.125rem; /* Text lg */
+            color: #1f2937; /* Gray 800 */
+            padding-bottom: 2px;
+        }
+
+        /* Grammar Tags Styling */
+        .tag-s .tag-label { color: #2563eb; } /* Blue label */
+        .tag-s .chunk-text { border-bottom: 3px solid #93c5fd; } /* Blue border */
+
+        .tag-v .tag-label { color: #dc2626; } /* Red label */
+        .tag-v .chunk-text { border-bottom: 3px solid #fca5a5; } /* Red border */
+
+        .tag-o .tag-label { color: #16a34a; } /* Green label */
+        .tag-o .chunk-text { border-bottom: 3px solid #86efac; } /* Green border */
+
+        .tag-c .tag-label { color: #ea580c; } /* Orange label */
+        .tag-c .chunk-text { border-bottom: 3px solid #fdba74; } /* Orange border */
+
+        .tag-mod .tag-label { color: #ca8a04; } /* Yellow label */
+        .tag-mod .chunk-text { border-bottom: 3px solid #fde047; } /* Yellow border */
+
+        .tag-prep .tag-label { color: #9333ea; } /* Purple label */
+        .tag-prep .chunk-text { border-bottom: 3px solid #d8b4fe; } /* Purple border */
+
+        .tag-conn .tag-label { color: #4b5563; } /* Gray label */
+        .tag-conn .chunk-text { border-bottom: 3px solid #cbd5e1; } /* Gray border */
+
+
+        /* Translation Box */
+        .translation-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #94a3b8;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 14px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #475569;
+            font-size: 1rem;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.6;
+        }
+
+        /* Grammar Note - Trans-Bike Style */
+        .grammar-note {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 16px;
+            margin-top: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .grammar-note ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+        
+        .grammar-note li {
+            margin-bottom: 4px;
+        }
+
+        /* Audio Button */
+        .audio-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .audio-btn:active { transform: scale(0.95); }
+
+        .audio-btn-small {
+            width: 26px;
+            height: 26px;
+            font-size: 0.75rem; 
+            margin-left: 6px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            color: #64748b;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            vertical-align: middle;
+        }
+        .audio-btn-small:hover {
+            color: #4f46e5;
+            border-color: #818cf8;
+            background-color: #eef2ff;
+        }
+        
+        .audio-btn-large {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #eff6ff;
+            color: #4f46e5;
+        }
+        .audio-btn-large:hover {
+            background-color: #e0e7ff;
+        }
+
+
+        /* Vocab Styles */
+        .vocab-level {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+        .level-gold { background-color: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+        .level-blue { background-color: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
+        .level-green { background-color: #f0fdf4; color: #15803d; border-color: #dcfce7; }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto pb-20">
+
+    <!-- Header -->
+    <header class="mb-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3 tracking-tight">
+            InnovaSpaces & Complaint Email
+        </h1>
+        <p class="text-xl text-slate-500 font-medium">Business English Interactive Analysis</p>
+    </header>
+
+    <!-- SECTION 1: ORIGINAL TEXT -->
+    <section class="section-card" id="original-text">
+        <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-file-alt mr-3 opacity-80"></i> Original Text Reading
+            </h2>
+            <button onclick="speakText(document.getElementById('full-content').innerText)" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center backdrop-blur-sm border border-white/30">
+                <i class="fas fa-play mr-2 text-xs"></i> Play All
+            </button>
+        </div>
+        
+        <div class="p-6 md:p-10 font-serif text-lg leading-relaxed text-slate-700 space-y-6" id="full-content">
+            <!-- Ad Part -->
+            <div>
+                <h3 class="font-bold text-2xl text-slate-900 mb-2">InnovaSpaces</h3>
+                <p>Elevate your next corporate gathering, seminar, or collaborative session at our cutting-edge meeting spaces, conveniently situated in the heart of the city center. Equipped with contemporary facilities such as high-speed internet, state-of-the-art audio-visual equipment, and ergonomic seating, our versatile conference rooms cater to a range of occasions, including:</p>
+                <ul class="list-disc pl-5 mt-4 space-y-3">
+                    <li><strong class="text-slate-900">Team Assemblies:</strong> Our conference rooms provide a serene and professional setting for your team to foster teamwork, generate ideas, and strategize for the future.</li>
+                    <li><strong class="text-slate-900">Training Workshops:</strong> Whether you are conducting orientation programs for new hires or enhancing the skills of your current workforce, our conference rooms offer a comfortable and distraction-free atmosphere for effective learning.</li>
+                    <li><strong class="text-slate-900">Client Presentations:</strong> Wow your clients with an impressive presentation in our conference rooms, complete with top-notch audio-visual equipment and breathtaking panoramic views of the cityscape.</li>
+                    <li><strong class="text-slate-900">Interactive Workshops:</strong> Host your upcoming workshop in our conference rooms and offer participants a stimulating and cozy environment conducive to learning and networking.</li>
+                    <li><strong class="text-slate-900">Study Collaborations:</strong> Our conference rooms offer a serene and focused ambiance for students to engage in group study sessions and collaborative projects.</li>
+                </ul>
+                <p class="mt-4 font-medium text-slate-800">Reach out to us today to arrange a personalized tour and uncover why InnovaSpaces stands as the premier choice for your next event.</p>
+            </div>
+            <hr class="border-slate-200 my-8">
+            <!-- Email Part -->
+            <div class="bg-slate-50 p-6 rounded-lg border border-slate-100">
+                <p class="mb-4"><span class="font-bold text-slate-900">Subject:</span> Complaint</p>
+                <p class="mb-4">Dear InnovaSpaces,</p>
+                <p class="mb-4">I am writing to express my disappointment regarding a recent study group session that took place in one of your conference rooms. As the head of the study group, I am concerned about the significant noise disruptions caused by individuals occupying the adjacent room.</p>
+                <p class="mb-4">Despite the quiet and distraction-free environment your conference rooms are known for, we experienced constant disturbances due to excessive noise from the neighboring occupants. This situation greatly hampered our ability to concentrate and collaborate effectively during our study session.</p>
+                <p class="mb-4">I kindly request that you address this issue promptly to ensure a peaceful and conducive environment for future study groups. It would be highly appreciated if you could implement measures to minimize such disturbances and ensure that all guests adhere to the expected standards of behavior and noise control.</p>
+                <p class="mb-4">Thank you for your attention to this matter. I look forward to your prompt response and a satisfactory resolution.</p>
+                <p>Yours sincerely,<br>Nelson</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEGEND -->
+    <div class="sticky top-2 z-50 bg-white/95 backdrop-blur shadow-sm border border-slate-200 rounded-lg p-3 mb-8 flex flex-wrap gap-3 justify-center text-xs md:text-sm select-none">
+        <div class="flex items-center"><div class="w-3 h-3 bg-blue-500 rounded-full mr-1"></div><span class="font-bold text-blue-700">S 主詞</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-red-500 rounded-full mr-1"></div><span class="font-bold text-red-700">V 動詞</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-green-500 rounded-full mr-1"></div><span class="font-bold text-green-700">O 受詞</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-yellow-500 rounded-full mr-1"></div><span class="font-bold text-yellow-700">Mod 修飾/補語</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-purple-500 rounded-full mr-1"></div><span class="font-bold text-purple-700">Prep 介系詞</span></div>
+    </div>
+
+    <!-- SECTION 2: SENTENCE STRUCTURE ANALYSIS -->
+    <section class="section-card" id="structure-analysis">
+        <div class="bg-rose-500 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-project-diagram mr-3 opacity-80"></i> 
+                Full Sentence Structure Analysis
+            </h2>
+        </div>
+
+        <div class="p-6 md:p-10">
+            
+            <!-- Sentence 1 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">Elevate</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">your next corporate gathering, seminar, or collaborative session</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">at our cutting-edge meeting spaces,</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adj Phr</span><span class="chunk-text">conveniently situated in the heart of the city center.</span>
+                    </span>
+                    <button onclick="speakText('Elevate your next corporate gathering, seminar, or collaborative session at our cutting-edge meeting spaces, conveniently situated in the heart of the city center.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>在我們位於市中心最先進的會議空間，提升您的下一場企業聚會、研討會或協作會議的品質。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>situated in...</strong>：過去分詞片語，修飾前面的 <em>spaces</em>，表示「位於...的」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 2 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Participle Phr</span><span class="chunk-text">Equipped with contemporary facilities such as high-speed internet...</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">our versatile conference rooms</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">cater to</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">a range of occasions</span>
+                    </span>
+                    <button onclick="speakText('Equipped with contemporary facilities such as high-speed internet, state-of-the-art audio-visual equipment, and ergonomic seating, our versatile conference rooms cater to a range of occasions.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>配備了高速網路等現代化設施，我們的多功能會議室能滿足各種場合的需求。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>Equipped with...</strong>：過去分詞構句，修飾主詞 <em>conference rooms</em>。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 3 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">Our conference rooms</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">provide</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">a serene and professional setting</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Inf Phr (Purp)</span><span class="chunk-text">for your team to foster teamwork, generate ideas, and strategize for the future.</span>
+                    </span>
+                    <button onclick="speakText('Our conference rooms provide a serene and professional setting for your team to foster teamwork, generate ideas, and strategize for the future.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我們的會議室提供寧靜且專業的環境，讓您的團隊能培養默契、激發創意並為未來制定策略。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>to foster...</strong>：不定詞片語，表示目的。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 4 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv Clause</span><span class="chunk-text">Whether you are conducting orientation programs for new hires or enhancing the skills of your current workforce,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">our conference rooms</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">offer</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">a comfortable and distraction-free atmosphere</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">for effective learning.</span>
+                    </span>
+                    <button onclick="speakText('Whether you are conducting orientation programs for new hires or enhancing the skills of your current workforce, our conference rooms offer a comfortable and distraction-free atmosphere for effective learning.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>無論您是要為新員工進行職前培訓，或是提升現有員工的技能，我們的會議室都能提供舒適且無干擾的學習氛圍。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>Whether...or...</strong>：引導副詞子句，表示「無論...還是...」。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 5 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">Wow</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">your clients</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">with an impressive presentation in our conference rooms,</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adj Phr</span><span class="chunk-text">complete with top-notch audio-visual equipment and breathtaking panoramic views of the cityscape.</span>
+                    </span>
+                    <button onclick="speakText('Wow your clients with an impressive presentation in our conference rooms, complete with top-notch audio-visual equipment and breathtaking panoramic views of the cityscape.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>在我們的會議室用令人印象深刻的簡報讓客戶驚艷，這裡配備頂級視聽設備和令人屏息的城市全景。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 6 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">Host</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">your upcoming workshop</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                         <span class="tag-label">Prep Phr</span><span class="chunk-text">in our conference rooms</span>
+                    </span>
+                    <span class="sentence-chunk tag-conn">
+                        <span class="tag-label">Conj</span><span class="chunk-text">and</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">offer</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">IO</span><span class="chunk-text">participants</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">DO</span><span class="chunk-text">a stimulating and cozy environment conducive to learning and networking.</span>
+                    </span>
+                    <button onclick="speakText('Host your upcoming workshop in our conference rooms and offer participants a stimulating and cozy environment conducive to learning and networking.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>在我們的會議室舉辦您即將到來的工作坊，為參與者提供一個既舒適又能激發靈感、有利於學習與社交的環境。</span>
+                </div>
+                 <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>offer + 人 + 物</strong>：授與動詞用法。</li>
+                        <li><strong>conducive to...</strong>：形容詞片語修飾 environment。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 7 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">Our conference rooms</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">offer</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">a serene and focused ambiance</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Inf Phr</span><span class="chunk-text">for students to engage in group study sessions and collaborative projects.</span>
+                    </span>
+                    <button onclick="speakText('Our conference rooms offer a serene and focused ambiance for students to engage in group study sessions and collaborative projects.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我們的會議室為學生提供寧靜專注的氛圍，適合進行小組讀書會和協作專案。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 8 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">Reach out to</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">us</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv</span><span class="chunk-text">today</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Inf Phr (Purp)</span><span class="chunk-text">to arrange a personalized tour and uncover why InnovaSpaces stands as the premier choice for your next event.</span>
+                    </span>
+                    <button onclick="speakText('Reach out to us today to arrange a personalized tour and uncover why InnovaSpaces stands as the premier choice for your next event.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>今天就聯繫我們安排個人導覽，並發掘為何 InnovaSpaces 是您下一次活動的首選。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 9 (Email Start) -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">I</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">am writing</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O (Inf)</span><span class="chunk-text">to express my disappointment</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">regarding a recent study group session</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adj Clause</span><span class="chunk-text">that took place in one of your conference rooms.</span>
+                    </span>
+                    <button onclick="speakText('I am writing to express my disappointment regarding a recent study group session that took place in one of your conference rooms.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我寫這封信是為了表達我對最近在你們其中一間會議室進行的讀書會感到失望。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>that took place...</strong>：關係子句修飾 <em>session</em>。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 10 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">As the head of the study group,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">I</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">am concerned about</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">the significant noise disruptions caused by individuals occupying the adjacent room.</span>
+                    </span>
+                    <button onclick="speakText('As the head of the study group, I am concerned about the significant noise disruptions caused by individuals occupying the adjacent room.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>身為讀書會的負責人，我對隔壁房間使用者造成的嚴重噪音干擾感到擔憂。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>caused by...</strong>：過去分詞片語修飾 <em>disruptions</em>。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 11 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">Despite the quiet and distraction-free environment your conference rooms are known for,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">we</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">experienced</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">constant disturbances</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">due to excessive noise from the neighboring occupants.</span>
+                    </span>
+                    <button onclick="speakText('Despite the quiet and distraction-free environment your conference rooms are known for, we experienced constant disturbances due to excessive noise from the neighboring occupants.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>儘管你們的會議室以安靜無干擾聞名，我們卻因隔壁使用者的過度噪音而遭受持續干擾。</span>
+                </div>
+                 <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>your conference rooms are known for</strong>：省略了關係代名詞的形容詞子句，修飾 environment。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 12 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">This situation</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv</span><span class="chunk-text">greatly</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">hampered</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">our ability to concentrate and collaborate effectively during our study session.</span>
+                    </span>
+                    <button onclick="speakText('This situation greatly hampered our ability to concentrate and collaborate effectively during our study session.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>這個情況嚴重妨礙了我們在讀書會期間集中注意力和有效協作的能力。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 13 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">I</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv</span><span class="chunk-text">kindly</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">request</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">Noun Clause</span><span class="chunk-text">that you address this issue promptly</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Inf Phr (Purp)</span><span class="chunk-text">to ensure a peaceful and conducive environment for future study groups.</span>
+                    </span>
+                    <button onclick="speakText('I kindly request that you address this issue promptly to ensure a peaceful and conducive environment for future study groups.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我懇請您立即處理這個問題，以確保未來的讀書會能有一個平靜且有益的環境。</span>
+                </div>
+                 <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>request that...</strong>：後接子句使用虛擬語氣 (省略 should)。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 14 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S (It)</span><span class="chunk-text">It</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">would be</span>
+                    </span>
+                    <span class="sentence-chunk tag-c">
+                        <span class="tag-label">C</span><span class="chunk-text">highly appreciated</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv Clause</span><span class="chunk-text">if you could implement measures to minimize such disturbances and ensure that all guests adhere to the expected standards of behavior and noise control.</span>
+                    </span>
+                    <button onclick="speakText('It would be highly appreciated if you could implement measures to minimize such disturbances and ensure that all guests adhere to the expected standards of behavior and noise control.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>如果您能實施措施來將此類干擾降至最低，並確保所有客人遵守預期的行為和噪音控制標準，我們將不勝感激。</span>
+                </div>
+                 <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>It...if...</strong>：假設語氣用法，表示禮貌的請求。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 15 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">Thank</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">you</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr</span><span class="chunk-text">for your attention to this matter.</span>
+                    </span>
+                    <button onclick="speakText('Thank you for your attention to this matter.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>感謝您關注此事。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 16 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">I</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">look forward to</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">your prompt response and a satisfactory resolution.</span>
+                    </span>
+                    <button onclick="speakText('I look forward to your prompt response and a satisfactory resolution.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>期待您的迅速回覆和滿意的解決方案。</span>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- SECTION 3: VOCABULARY -->
+    <section class="section-card" id="vocabulary">
+        <div class="bg-teal-600 px-6 py-4">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-tags mr-3 opacity-80"></i> 
+                TOEIC Core Vocabulary & Phrases
+            </h2>
+        </div>
+        
+        <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-4" id="vocab-grid">
+            <!-- JS Generated content -->
+        </div>
+    </section>
+
+    <footer class="mt-16 text-center text-slate-400 text-sm pb-12">
+        <p>Generated by AI Teaching Assistant &copy; 2024</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- TEXT TO SPEECH ---
+        const synth = window.speechSynthesis;
+        function speakText(text) {
+            if (synth.speaking) synth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            
+            const voices = synth.getVoices();
+            const preferredVoice = voices.find(voice => voice.name.includes('Google US English') || voice.name.includes('Samantha'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+
+            synth.speak(utterance);
+        }
+
+        // --- VOCABULARY DATA ---
+        const vocabList = [
+            { word: "elevate", pos: "v.", ipa: "/ˈel.ə.veɪt/", level: "Gold", def: "提升；舉起", example: "We aim to elevate our customer service standards.", trans: "我們致力於提升客戶服務水準。" },
+            { word: "corporate", pos: "adj.", ipa: "/ˈkɔːr.pɚ.ət/", level: "Blue", def: "公司的；企業的", example: "Corporate events are held annually.", trans: "企業活動每年舉行一次。" },
+            { word: "gathering", pos: "n.", ipa: "/ˈɡæð.ɚ.ɪŋ/", level: "Green", def: "聚會；集會", example: "It was a casual social gathering.", trans: "這是一個非正式的社交聚會。" },
+            { word: "seminar", pos: "n.", ipa: "/ˈsem.ə.nɑːr/", level: "Blue", def: "研討會", example: "I attended a seminar on marketing.", trans: "我參加了一場行銷研討會。" },
+            { word: "collaborative", pos: "adj.", ipa: "/kəˈlæb.ɚ.ə.tɪv/", level: "Blue", def: "協作的；合作的", example: "It was a collaborative effort.", trans: "這是協作的成果。" },
+            { word: "cutting-edge", pos: "adj.", ipa: "/ˌkʌtɪŋˈɛʤ/", level: "Gold", def: "最先進的；尖端的", example: "They use cutting-edge technology.", trans: "他們使用最先進的技術。" },
+            { word: "facility", pos: "n.", ipa: "/fəˈsɪl.ə.t̬i/", level: "Blue", def: "設施；場所", example: "The hotel has excellent sports facilities.", trans: "這家飯店擁有極佳的運動設施。" },
+            { word: "contemporary", pos: "adj.", ipa: "/kənˈtem.pə.rer.i/", level: "Gold", def: "當代的；現代的", example: "The office has contemporary furniture.", trans: "辦公室配有現代風格的家具。" },
+            { word: "state-of-the-art", pos: "adj.", ipa: "/ˌsteɪt əv ði ˈɑrt/", level: "Gold", def: "最先進的；頂級的", example: "Our gym features state-of-the-art equipment.", trans: "我們的健身房擁有最先進的設備。" },
+            { word: "ergonomic", pos: "adj.", ipa: "/ˌɜːr.ɡəˈnɑː.mɪk/", level: "Gold", def: "符合人體工學的", example: "Ergonomic chairs reduce back pain.", trans: "人體工學椅可減輕背痛。" },
+            { word: "versatile", pos: "adj.", ipa: "/ˈvɝː.sə.t̬əl/", level: "Gold", def: "多功能的", example: "This versatile tool has many uses.", trans: "這個多功能工具有很多用途。" },
+            { word: "cater to", pos: "phr. v.", ipa: "/ˈkeɪ.t̬ɚ tuː/", level: "Blue", def: "迎合；滿足需求", example: "We cater to a wide range of tastes.", trans: "我們迎合各種口味。" },
+            { word: "occasion", pos: "n.", ipa: "/əˈkeɪ.ʒən/", level: "Blue", def: "場合；時機", example: "This suit is suitable for all occasions.", trans: "這套西裝適合各種場合。" },
+            { word: "assembly", pos: "n.", ipa: "/əˈsem.bli/", level: "Blue", def: "集會；裝配", example: "The morning assembly starts at 8 AM.", trans: "晨會早上八點開始。" },
+            { word: "serene", pos: "adj.", ipa: "/səˈriːn/", level: "Blue", def: "寧靜的；安詳的", example: "The lake looked serene.", trans: "湖泊看起來很寧靜。" },
+            { word: "foster", pos: "v.", ipa: "/ˈfɑː.stɚ/", level: "Gold", def: "促進；培養", example: "We want to foster innovation.", trans: "我們想要促進創新。" },
+            { word: "strategize", pos: "v.", ipa: "/ˈstræt̬.ə.dʒaɪz/", level: "Gold", def: "制定戰略", example: "We need to strategize for next year.", trans: "我們需要為明年制定戰略。" },
+            { word: "orientation", pos: "n.", ipa: "/ˌɔːr.i.enˈteɪ.ʃən/", level: "Blue", def: "職前培訓；方向", example: "New employee orientation is Monday.", trans: "新員工入職培訓是週一。" },
+            { word: "workforce", pos: "n.", ipa: "/ˈwɝːk.fɔːrs/", level: "Blue", def: "勞動力；全體員工", example: "A skilled workforce is essential.", trans: "熟練的勞動力至關重要。" },
+            { word: "distraction-free", pos: "adj.", ipa: "/dɪˈstræk.ʃən friː/", level: "Blue", def: "無干擾的", example: "A distraction-free zone.", trans: "無干擾區。" },
+            { word: "top-notch", pos: "adj.", ipa: "/ˌtɑːpˈnɑːtʃ/", level: "Gold", def: "頂尖的；一流的", example: "We offer top-notch service.", trans: "我們提供一流的服務。" },
+            { word: "cityscape", pos: "n.", ipa: "/ˈsɪt.i.skeɪp/", level: "Blue", def: "都市風景", example: "The room offers a view of the cityscape.", trans: "房間可以欣賞都市風景。" },
+            { word: "cozy", pos: "adj.", ipa: "/ˈkoʊ.zi/", level: "Green", def: "舒適的；溫馨的", example: "A cozy atmosphere.", trans: "溫馨的氣氛。" },
+            { word: "panoramic", pos: "adj.", ipa: "/ˌpæn.əˈræm.ɪk/", level: "Blue", def: "全景的", example: "A panoramic view of the city.", trans: "城市的全景。" },
+            { word: "stimulating", pos: "adj.", ipa: "/ˈstɪm.jə.leɪ.tɪŋ/", level: "Blue", def: "有啟發性的", example: "A stimulating discussion.", trans: "一場有啟發性的討論。" },
+            { word: "conducive", pos: "adj.", ipa: "/kənˈduː.sɪv/", level: "Gold", def: "有利於...的", example: "Quiet is conducive to study.", trans: "安靜有利於學習。" },
+            { word: "ambiance", pos: "n.", ipa: "/ˈæm.bi.əns/", level: "Blue", def: "氣氛；情調", example: "The restaurant has a nice ambiance.", trans: "這家餐廳氣氛很好。" },
+            { word: "premier", pos: "adj.", ipa: "/prɪˈmɪr/", level: "Gold", def: "首要的；頂級的", example: "The premier event of the year.", trans: "這是年度最重要的活動。" },
+            { word: "regarding", pos: "prep.", ipa: "/rɪˈɡɑːr.dɪŋ/", level: "Blue", def: "關於", example: "I am writing regarding the issue.", trans: "我寫這封信是關於這個問題。" },
+            { word: "disruption", pos: "n.", ipa: "/dɪsˈrʌp.ʃən/", level: "Gold", def: "中斷；混亂", example: "Sorry for the disruption.", trans: "對於中斷感到抱歉。" },
+            { word: "occupant", pos: "n.", ipa: "/ˈɑː.kjə.pənt/", level: "Gold", def: "居住者；佔用者", example: "The occupants were evacuated.", trans: "居住者被疏散了。" },
+            { word: "adjacent", pos: "adj.", ipa: "/əˈdʒeɪ.sənt/", level: "Gold", def: "鄰近的", example: "The adjacent room is empty.", trans: "隔壁房間是空的。" },
+            { word: "disturbance", pos: "n.", ipa: "/dɪˈstɝː.bəns/", level: "Gold", def: "干擾；騷亂", example: "Report any disturbance to security.", trans: "向保全報告任何騷亂。" },
+            { word: "excessive", pos: "adj.", ipa: "/ekˈses.ɪv/", level: "Gold", def: "過度的", example: "Excessive noise is forbidden.", trans: "禁止過度噪音。" },
+            { word: "hamper", pos: "v.", ipa: "/ˈhæm.pɚ/", level: "Gold", def: "妨礙；阻礙", example: "Bad weather hampered us.", trans: "惡劣天氣阻礙了我們。" },
+            { word: "promptly", pos: "adv.", ipa: "/ˈprɑːmpt.li/", level: "Blue", def: "迅速地", example: "Please reply promptly.", trans: "請立即回覆。" },
+            { word: "implement", pos: "v.", ipa: "/ˈɪm.plə.ment/", level: "Gold", def: "實施", example: "Implement the plan now.", trans: "現在實施計畫。" },
+            { word: "minimize", pos: "v.", ipa: "/ˈmɪn.ə.maɪz/", level: "Blue", def: "使降到最低", example: "We must minimize the risk of infection.", trans: "我們必須將感染風險降到最低。" },
+            { word: "adhere to", pos: "phr. v.", ipa: "/ədˈhɪr tuː/", level: "Gold", def: "遵守", example: "Adhere to the rules.", trans: "遵守規則。" },
+            { word: "resolution", pos: "n.", ipa: "/ˌrez.əˈluː.ʃən/", level: "Gold", def: "解決；決議", example: "A peaceful resolution.", trans: "和平解決。" },
+            { word: "satisfactory", pos: "adj.", ipa: "/ˌsæt.ɪsˈfæk.tɚ.i/", level: "Blue", def: "令人滿意的", example: "We hope for a satisfactory outcome.", trans: "我們希望能有一個令人滿意的結果。" }
+        ];
+
+        const vocabGrid = document.getElementById('vocab-grid');
+        
+        vocabList.forEach((item, index) => {
+            const levelClass = item.level === 'Gold' ? 'level-gold' : (item.level === 'Blue' ? 'level-blue' : 'level-green');
+            
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition';
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="overflow-hidden w-full mr-2">
+                        <div class="flex items-center overflow-x-auto no-scrollbar">
+                            <span class="text-teal-600 font-bold text-sm mr-2 shrink-0">${index + 1}.</span>
+                            <span class="text-lg font-bold text-slate-800 whitespace-nowrap">${item.word}</span>
+                        </div>
+                    </div>
+                    <button onclick="speakText('${item.word}')" class="audio-btn audio-btn-large shrink-0 ml-2"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="text-xs text-slate-400 font-mono mt-1 mb-2 block pl-1">[${item.ipa}]</div>
+                
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded font-medium">${item.pos}</span>
+                    <span class="${levelClass} text-xs font-bold px-2 py-0.5 rounded border">TOEIC ${item.level === 'Gold' ? '800+' : (item.level === 'Blue' ? '600+' : '450+')}</span>
+                    <span class="text-gray-700 font-medium">${item.def}</span>
+                </div>
+                
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500 mt-2">
+                    <p class="text-slate-600 mb-1">${item.example}</p>
+                    <p class="text-slate-400">(${item.trans})</p>
+                </div>
+            `;
+            vocabGrid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
