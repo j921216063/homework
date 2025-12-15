@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投資組合再平衡計算器</title>
+    
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. React 核心 (使用 cdnjs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    
+    <!-- 3. Recharts 依賴與本體 (使用 cdnjs) -->
+    <!-- 注意：Recharts UMD 建置有時需要 prop-types -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.8.1/prop-types.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.3/Recharts.min.js"></script>
+
+    <!-- 4. Babel (解析 JSX) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // 確保 React 與 Recharts 已載入
+        const { useState, useMemo, useRef, useEffect } = React;
+        const Recharts = window.Recharts;
+        
+        // 圖表元件解構 (如果 Recharts 沒載入成功，這裡會報錯，但我們在 UI 做檢查)
+        const { PieChart, Pie, Cell, ResponsiveContainer, Tooltip: RechartsTooltip, Legend } = Recharts || {};
+
+        // --- Icons (SVG) ---
+        const Icon = ({ path, className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{path}</svg>
+        );
+
+        const Icons = {
+            Calculator: (p) => <Icon {...p} path={<><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></>} />,
+            Globe: (p) => <Icon {...p} path={<><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></>} />,
+            Upload: (p) => <Icon {...p} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>} />,
+            Save: (p) => <Icon {...p} path={<><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>} />,
+            DollarSign: (p) => <Icon {...p} path={<><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></>} />,
+            Coins: (p) => <Icon {...p} path={<><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7 .71-2.82 2.82"/></>} />,
+            TrendingUp: (p) => <Icon {...p} path={<><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></>} />,
+            PieChartIcon: (p) => <Icon {...p} path={<><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></>} />,
+            Settings: (p) => <Icon {...p} path={<><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></>} />,
+            Link: (p) => <Icon {...p} path={<><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></>} />,
+            CheckCircle: (p) => <Icon {...p} path={<><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></>} />,
+            AlertTriangle: (p) => <Icon {...p} path={<><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></>} />,
+            Plus: (p) => <Icon {...p} path={<><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></>} />,
+            Clipboard: (p) => <Icon {...p} path={<><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></>} />,
+            RefreshCw: (p) => <Icon {...p} path={<><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>} />,
+            Eraser: (p) => <Icon {...p} path={<><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></>} />,
+            GripVertical: (p) => <Icon {...p} path={<><circle cx="9" cy="12" r="1"/><circle cx="9" cy="5" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="19" r="1"/></>} />,
+            Lock: (p) => <Icon {...p} path={<><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />,
+            Trash2: (p) => <Icon {...p} path={<><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></>} />,
+            X: (p) => <Icon {...p} path={<><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>} />,
+            ArrowLeftRight: (p) => <Icon {...p} path={<><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></>} />,
+        };
+
+        const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16', '#14b8a6', '#f43f5e', '#64748b', '#475569'];
+
+        const App = () => {
+            const initialData = [
+                { id: 99, symbol: '0050.TW', name: '元大台灣50', shares: 0, cost: 150, price: 190, targetWeight: 15, currency: 'TWD' }, 
+                { id: 1, symbol: 'VTI', name: 'Vanguard整體股市', shares: 46.56506, cost: 246.71, price: 339.87, targetWeight: 22.95, currency: 'USD' }, 
+                { id: 2, symbol: 'VXUS', name: 'Vanguard總體國際', shares: 189.59805, cost: 57.024, price: 76.13, targetWeight: 19.55, currency: 'USD' }, 
+                { id: 10, symbol: 'VT', name: 'Vanguard全世界', shares: 0, cost: 90, price: 105, targetWeight: 0, currency: 'USD' }, 
+                { id: 5, symbol: 'AVUV', name: 'Avantis美國小盤價值', shares: 39.58286, cost: 87.332, price: 106.25, targetWeight: 6.8, currency: 'USD' }, 
+                { id: 6, symbol: 'QVAL', name: 'Alpha Arch.美國價值', shares: 87.20793, cost: 40.584, price: 49.495, targetWeight: 6.8, currency: 'USD' }, 
+                { id: 7, symbol: 'AVDV', name: 'Avantis國際小盤價值', shares: 37.10718, cost: 59.665, price: 93.94, targetWeight: 4.25, currency: 'USD' }, 
+                { id: 8, symbol: 'IVAL', name: 'Alpha Arch.國際價值', shares: 101.38331, cost: 25.023, price: 31.32, targetWeight: 4.25, currency: 'USD' }, 
+                { id: 11, symbol: 'AVES', name: 'Avantis新興市場價值', shares: 20, cost: 45, price: 52, targetWeight: 3.4, currency: 'USD' }, 
+                { id: 3, symbol: 'QMOM', name: 'Alpha Arch.美國動能', shares: 82.80332, cost: 54.402, price: 67.543, targetWeight: 9.35, currency: 'USD' }, 
+                { id: 4, symbol: 'IMOM', name: 'Alpha Arch.國際動能', shares: 162.98839, cost: 27.144, price: 38.61, targetWeight: 7.65, currency: 'USD' }, 
+            ];
+
+            const [portfolio, setPortfolio] = useState(initialData);
+            const [cashInjection, setCashInjection] = useState(0); 
+            const [exchangeRate, setExchangeRate] = useState(32.5); 
+
+            const [strategyMode, setStrategyMode] = useState('threshold');
+            const [absoluteThreshold, setAbsoluteThreshold] = useState(5); 
+            const [relativeThresholdRatio, setRelativeThresholdRatio] = useState(25); 
+
+            const [groupConfig, setGroupConfig] = useState({
+                enabled: true,
+                mode: 'reverse', 
+                totalTarget: 42.5, 
+                variableId: 10, 
+                fixedIds: [1, 2], 
+                ratios: { 1: 27, 2: 23 } 
+            });
+            const [showGroupModal, setShowGroupModal] = useState(false);
+
+            const fileInputRef = useRef(null);
+            const dragItem = useRef(null);
+            const dragOverItem = useRef(null);
+
+            const stats = useMemo(() => {
+                let totalMarketValueUsd = 0;
+                let totalCostUsd = 0;
+                let currentTotalWeight = 0;
+
+                const portfolioWithUsd = portfolio.map(stock => {
+                    const priceUsd = stock.currency === 'TWD' ? stock.price / exchangeRate : stock.price;
+                    const costUsd = stock.currency === 'TWD' ? stock.cost / exchangeRate : stock.cost;
+                    const marketValueUsd = stock.shares * priceUsd;
+                    return { ...stock, priceUsd, costUsd, marketValueUsd };
+                });
+
+                portfolioWithUsd.forEach(p => totalMarketValueUsd += p.marketValueUsd);
+                const totalAssetsUsd = totalMarketValueUsd + parseFloat(cashInjection || 0);
+
+                const processedPortfolio = portfolioWithUsd.map(stock => {
+                    let overriddenTarget = stock.targetWeight;
+                    if (groupConfig.enabled && groupConfig.mode === 'reverse') {
+                        const vtStock = portfolioWithUsd.find(p => p.id === groupConfig.variableId);
+                        if (vtStock) {
+                            const vtCurrentWeight = totalAssetsUsd > 0 ? (vtStock.marketValueUsd / totalAssetsUsd) * 100 : 0;
+                            if (stock.id === groupConfig.variableId) {
+                                overriddenTarget = parseFloat(vtCurrentWeight.toFixed(2));
+                            } else if (groupConfig.fixedIds.includes(stock.id)) {
+                                const remainingTarget = groupConfig.totalTarget - vtCurrentWeight;
+                                const ratioTotal = groupConfig.ratios[1] + groupConfig.ratios[2]; 
+                                const myRatio = groupConfig.ratios[stock.id] || 0;
+                                if (remainingTarget > 0) {
+                                    const calculatedTarget = remainingTarget * (myRatio / ratioTotal);
+                                    overriddenTarget = parseFloat(calculatedTarget.toFixed(2));
+                                } else {
+                                    overriddenTarget = 0;
+                                }
+                            }
+                        }
+                    }
+                    return { ...stock, targetWeight: overriddenTarget };
+                });
+
+                let totalProfitUsd = 0;
+                totalMarketValueUsd = 0; 
+                totalCostUsd = 0;
+                currentTotalWeight = 0;
+
+                const enrichedPortfolio = processedPortfolio.map(stock => {
+                    const marketValueUsd = stock.shares * stock.priceUsd;
+                    const totalStockCostUsd = stock.shares * stock.costUsd;
+                    const profitUsd = marketValueUsd - totalStockCostUsd;
+                    const roi = totalStockCostUsd > 0 ? (profitUsd / totalStockCostUsd) * 100 : 0;
+                    const marketValueOriginal = stock.shares * stock.price;
+
+                    totalMarketValueUsd += marketValueUsd;
+                    totalCostUsd += totalStockCostUsd;
+                    currentTotalWeight += parseFloat(stock.targetWeight || 0);
+
+                    const currentWeight = totalAssetsUsd > 0 ? (marketValueUsd / totalAssetsUsd) * 100 : 0;
+                    
+                    const relativeThreshold = stock.targetWeight * (relativeThresholdRatio / 100);
+                    const thresholdCalculated = Math.max(0.1, Math.min(absoluteThreshold, relativeThreshold));
+                    const effectiveThreshold = strategyMode === 'periodic' ? 0 : thresholdCalculated;
+
+                    const deviation = currentWeight - stock.targetWeight;
+                    const isDrifting = Math.abs(deviation) >= effectiveThreshold && Math.abs(deviation) > 0.01;
+
+                    const targetValueUsd = totalAssetsUsd * (stock.targetWeight / 100);
+                    const valueDifferenceUsd = targetValueUsd - marketValueUsd;
+                    const sharesAction = stock.priceUsd > 0 ? Math.round(valueDifferenceUsd / stock.priceUsd) : 0;
+
+                    const isGroupFixed = groupConfig.enabled && groupConfig.fixedIds.includes(stock.id);
+                    const isGroupVariable = groupConfig.enabled && groupConfig.variableId === stock.id;
+                    const isAutoCalculated = groupConfig.enabled && (
+                        (groupConfig.mode === 'reverse' && (isGroupFixed || isGroupVariable)) ||
+                        (groupConfig.mode === 'default' && isGroupVariable)
+                    );
+
+                    return {
+                        ...stock, marketValueUsd, marketValueOriginal, totalStockCostUsd, profitUsd, roi, currentWeight, deviation,
+                        effectiveThreshold, isDrifting, targetValueUsd, valueDifferenceUsd, sharesAction,
+                        isGroupFixed, isGroupVariable, isAutoCalculated
+                    };
+                });
+
+                totalProfitUsd = totalMarketValueUsd - totalCostUsd;
+                const totalRoi = totalCostUsd > 0 ? (totalProfitUsd / totalCostUsd) * 100 : 0;
+                const needsRebalance = enrichedPortfolio.some(s => s.isDrifting);
+
+                return {
+                    portfolio: enrichedPortfolio, totalMarketValueUsd, totalCostUsd, totalProfitUsd, totalRoi,
+                    currentTotalWeight, totalAssetsUsd, needsRebalance
+                };
+            }, [portfolio, cashInjection, exchangeRate, absoluteThreshold, relativeThresholdRatio, strategyMode, groupConfig]);
+
+            const handleSort = () => {
+                let _portfolio = [...portfolio];
+                const draggedItemContent = _portfolio.splice(dragItem.current, 1)[0];
+                _portfolio.splice(dragOverItem.current, 0, draggedItemContent);
+                dragItem.current = null;
+                dragOverItem.current = null;
+                setPortfolio(_portfolio);
+            };
+
+            const updateStock = (id, field, value) => {
+                const oldStock = portfolio.find(p => p.id === id);
+                let newPortfolio = portfolio.map(p => p.id === id ? { ...p, [field]: value } : p);
+
+                if (field === 'targetWeight' && oldStock?.currency === 'TWD') {
+                    const oldWeight = oldStock.targetWeight || 0;
+                    const newWeight = value;
+                    const oldRemainder = 100 - oldWeight;
+                    const newRemainder = 100 - newWeight;
+                    if (oldRemainder > 0 && newRemainder >= 0) {
+                        const scaleRatio = newRemainder / oldRemainder;
+                        newPortfolio = newPortfolio.map(p => {
+                            if (p.id === id) return p; 
+                            const newTarget = parseFloat((p.targetWeight * scaleRatio).toFixed(4)); 
+                            return { ...p, targetWeight: newTarget };
+                        });
+                        if (groupConfig.enabled) {
+                            const newTotalTarget = parseFloat((groupConfig.totalTarget * scaleRatio).toFixed(4));
+                            setGroupConfig(prev => ({ ...prev, totalTarget: newTotalTarget }));
+                        }
+                    }
+                }
+
+                if (groupConfig.enabled && groupConfig.mode === 'default' && field === 'targetWeight' && groupConfig.fixedIds.includes(id)) {
+                    const fixedSum = newPortfolio
+                        .filter(p => groupConfig.fixedIds.includes(p.id))
+                        .reduce((sum, p) => sum + (parseFloat(p.targetWeight) || 0), 0);
+                    let newVariableWeight = groupConfig.totalTarget - fixedSum;
+                    if (newVariableWeight < 0) newVariableWeight = 0;
+                    newPortfolio = newPortfolio.map(p => 
+                        p.id === groupConfig.variableId ? { ...p, targetWeight: parseFloat(newVariableWeight.toFixed(2)) } : p
+                    );
+                }
+                setPortfolio(newPortfolio);
+            };
+
+            const addStock = () => {
+                const newId = portfolio.length > 0 ? Math.max(...portfolio.map(p => p.id)) + 1 : 1;
+                setPortfolio([...portfolio, { id: newId, symbol: '', name: '', shares: 0, cost: 0, price: 0, targetWeight: 0, currency: 'USD' }]);
+            };
+            const removeStock = (id) => setPortfolio(portfolio.filter(p => p.id !== id));
+            const clearPortfolio = () => { if (window.confirm('確定清空？')) setPortfolio([]); };
+            
+            const handleExport = () => {
+                const date = new Date().toISOString().split('T')[0];
+                const fileName = `Portfolio_Backup_${date}.json`;
+                try {
+                    const dataToSave = { version: "1.7", portfolio, cashInjection, exchangeRate, strategyMode, absoluteThreshold, relativeThresholdRatio, groupConfig };
+                    const blob = new Blob([JSON.stringify(dataToSave, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                } catch (error) { alert("存檔失敗"); }
+            };
+
+            const handleImportClick = () => fileInputRef.current?.click();
+            const handleFileChange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        if (importedData.portfolio) {
+                            setPortfolio(importedData.portfolio);
+                            if (importedData.cashInjection !== undefined) setCashInjection(importedData.cashInjection);
+                            if (importedData.exchangeRate !== undefined) setExchangeRate(importedData.exchangeRate);
+                            if (importedData.strategyMode) setStrategyMode(importedData.strategyMode);
+                            if (importedData.groupConfig) setGroupConfig(importedData.groupConfig);
+                        }
+                    } catch (error) { alert("讀取失敗"); }
+                    e.target.value = '';
+                };
+                reader.readAsText(file);
+            };
+
+            const formatUsd = (num) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(num); 
+            const formatNumber = (num) => new Intl.NumberFormat('zh-TW').format(Math.round(num)); 
+            const formatPercent = (num) => `${parseFloat(num).toFixed(2)}%`;
+            const formatSignedPercent = (num) => `${num > 0 ? '+' : ''}${parseFloat(num).toFixed(2)}%`;
+
+            const currentAllocationData = stats.portfolio.map(s => ({ name: s.symbol || '未命名', value: s.marketValueUsd }));
+
+            const DashboardCard = ({ title, mainValue, subValue, icon: IconComponent, type = "neutral" }) => {
+                const typeStyles = {
+                    neutral: { bg: "bg-blue-50", text: "text-blue-600", border: "border-slate-100" },
+                    success: { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-slate-100" },
+                    warning: { bg: "bg-amber-50", text: "text-amber-600", border: "border-slate-100" },
+                    danger: { bg: "bg-rose-50", text: "text-rose-600", border: "border-slate-100" },
+                };
+                const style = typeStyles[type] || typeStyles.neutral;
+
+                return (
+                    <div className={`bg-white p-6 rounded-2xl shadow-sm border ${style.border} relative overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-md animate-fade-in`}>
+                        <div className={`absolute top-4 right-4 p-3 rounded-full ${style.bg} bg-opacity-50`}>
+                            <IconComponent className={`w-6 h-6 ${style.text}`} />
+                        </div>
+                        <div className="text-slate-500 text-sm font-medium mb-2">{title}</div>
+                        <div className="text-3xl font-bold text-slate-800 tracking-tight mb-1">{mainValue}</div>
+                        {subValue && <div className="text-sm text-slate-400 font-mono">{subValue}</div>}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="max-w-7xl mx-auto space-y-8 p-4">
+                    <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 animate-fade-in">
+                        <div>
+                            <h1 className="text-3xl font-extrabold text-slate-900 flex items-center gap-3">
+                                <div className="bg-indigo-600 p-2 rounded-lg text-white">
+                                    <Icons.Calculator className="w-6 h-6" />
+                                </div>
+                                投資組合再平衡
+                            </h1>
+                            <p className="text-slate-500 mt-2 font-medium">全方位資產配置工具｜核心組合 VTI+VXUS+VT ｜ 5/25 法則</p>
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="flex items-center gap-2 bg-slate-100 px-4 py-2 rounded-xl border border-slate-200">
+                                <Icons.Globe className="w-4 h-4 text-indigo-500" />
+                                <span className="text-sm font-bold text-slate-600">匯率:</span>
+                                <input type="number" value={exchangeRate} onChange={(e) => setExchangeRate(Number(e.target.value))} className="w-16 bg-transparent text-right font-mono font-bold text-slate-800 focus:outline-none focus:border-b-2 focus:border-indigo-500" />
+                            </div>
+                            <div className="h-8 w-px bg-slate-200 mx-1 hidden md:block"></div>
+                            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".json" className="hidden" />
+                            <button onClick={handleImportClick} className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 hover:text-indigo-600 hover:border-indigo-200 transition-all text-sm font-semibold shadow-sm">
+                                <Icons.Upload className="w-4 h-4" /> 匯入
+                            </button>
+                            <button onClick={handleExport} className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all text-sm font-semibold shadow-lg hover:shadow-xl">
+                                <Icons.Save className="w-4 h-4" /> 儲存
+                            </button>
+                        </div>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <DashboardCard title="總資產市值" icon={Icons.DollarSign} mainValue={`NT$ ${formatNumber(stats.totalAssetsUsd * exchangeRate)}`} subValue={`USD ${formatUsd(stats.totalAssetsUsd)}`} type="neutral" />
+                        <DashboardCard title="總投入成本" icon={Icons.Coins} mainValue={`NT$ ${formatNumber(stats.totalCostUsd * exchangeRate)}`} subValue={`USD ${formatUsd(stats.totalCostUsd)}`} type="neutral" />
+                        <DashboardCard title="未實現損益" icon={Icons.TrendingUp} mainValue={`${stats.totalProfitUsd >= 0 ? '+' : ''}NT$ ${formatNumber(stats.totalProfitUsd * exchangeRate)}`} subValue={`${stats.totalProfitUsd >= 0 ? '+' : ''}USD ${formatUsd(stats.totalProfitUsd)}`} type={stats.totalProfitUsd >= 0 ? "danger" : "success"} />
+                        <DashboardCard title="總報酬率 (ROI)" icon={Icons.PieChartIcon} mainValue={`${stats.totalRoi >= 0 ? '+' : ''}${formatPercent(stats.totalRoi)}`} subValue="混合幣別計算" type={stats.totalRoi >= 0 ? "danger" : "success"} />
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col lg:flex-row gap-8 animate-fade-in">
+                        <div className="flex-1 space-y-3">
+                            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2"><Icons.Settings className="w-4 h-4 text-slate-400" /> 再平衡策略</h3>
+                            <div className="flex bg-slate-100 p-1 rounded-xl w-full max-w-md">
+                                <button onClick={() => setStrategyMode('threshold')} className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${strategyMode === 'threshold' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>5/25 法則 (監控)</button>
+                                <button onClick={() => setStrategyMode('periodic')} className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${strategyMode === 'periodic' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>強制平衡 (操作)</button>
+                            </div>
+                        </div>
+                        <div className="w-px bg-slate-100 hidden lg:block"></div>
+                        <div className="lg:w-auto flex-1 space-y-3">
+                            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2"><Icons.Link className="w-4 h-4 text-slate-400" /> 核心組合連動 (USD)</h3>
+                            <div className="flex items-center gap-4">
+                                <div className={`text-sm font-medium px-4 py-2 rounded-lg border ${groupConfig.enabled ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 'bg-slate-50 border-slate-200 text-slate-400'}`}>
+                                    {groupConfig.enabled ? (<span className="flex items-center gap-2"><Icons.CheckCircle className="w-4 h-4" /> {groupConfig.mode === 'reverse' ? 'VT 驅動模式' : '自動填補模式'} <span className="opacity-50">|</span> 總佔比 {formatPercent(groupConfig.totalTarget)}</span>) : '未啟用鎖定'}
+                                </div>
+                                <button onClick={() => setShowGroupModal(true)} className="text-sm text-slate-500 hover:text-indigo-600 font-medium underline decoration-slate-300 underline-offset-4 hover:decoration-indigo-300 transition-all">設定規則</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {stats.needsRebalance ? (
+                        <div className="bg-rose-50 border border-rose-100 p-4 rounded-xl flex items-start gap-4 shadow-sm animate-fade-in">
+                            <div className="bg-rose-100 p-2 rounded-full"><Icons.AlertTriangle className="w-5 h-5 text-rose-600" /></div>
+                            <div><h4 className="font-bold text-rose-800">{strategyMode === 'periodic' ? '請執行週期性調整' : '建議執行再平衡'}</h4><p className="text-sm text-rose-600 mt-1">{strategyMode === 'periodic' ? '目前為「強制平衡模式」，請參考下方的操作建議。' : '系統偵測到部分資產已超出 5/25 法則的容許範圍。'}</p></div>
+                        </div>
+                    ) : (
+                        <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl flex items-center gap-4 shadow-sm animate-fade-in">
+                            <div className="bg-emerald-100 p-2 rounded-full"><Icons.CheckCircle className="w-5 h-5 text-emerald-600" /></div>
+                            <div><h4 className="font-bold text-emerald-800">投資組合狀態健康</h4><p className="text-sm text-emerald-600 mt-1">目前的資產配置符合您的策略設定，無需進行操作。</p></div>
+                        </div>
+                    )}
+
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden animate-fade-in">
+                        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <h2 className="font-bold text-xl text-slate-800">持股明細</h2>
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <div className="flex items-center gap-2 bg-indigo-50 pl-3 pr-4 py-1.5 rounded-lg border border-indigo-100"><Icons.Plus className="w-4 h-4 text-indigo-600" /><span className="text-sm text-indigo-900 font-medium whitespace-nowrap">投入新資金 (USD)</span><input type="number" value={cashInjection} onChange={(e) => setCashInjection(Number(e.target.value))} className="w-24 bg-transparent border-b border-indigo-300 text-right font-bold text-indigo-700 focus:outline-none focus:border-indigo-600 px-1" placeholder="0" /></div>
+                                <div className="h-6 w-px bg-slate-200 mx-1 hidden md:block"></div>
+                                <button onClick={() => setPortfolio(initialData)} className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-indigo-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors"><Icons.RefreshCw className="w-4 h-4" /> 重置範例</button>
+                                <button onClick={clearPortfolio} className="flex items-center gap-1.5 text-sm font-medium text-rose-500 hover:text-rose-700 px-3 py-1.5 rounded-lg hover:bg-rose-50 transition-colors"><Icons.Eraser className="w-4 h-4" /> 清空</button>
+                            </div>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm text-left">
+                                <thead className="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-100 font-semibold tracking-wider">
+                                    <tr>
+                                        <th className="px-3 py-4 w-10 text-center">#</th><th className="px-3 py-4 w-16 text-center">幣別</th><th className="px-4 py-4">資產名稱 / 代號</th><th className="px-4 py-4 text-right">股數</th><th className="px-4 py-4 text-right">成本 (原幣)</th><th className="px-4 py-4 text-right">現價 (原幣)</th><th className="px-4 py-4 text-right">市值 (原幣)</th><th className="px-4 py-4 text-right">現況 (%)</th><th className="px-4 py-4 text-right">目標 (%)</th><th className="px-4 py-4 text-right">偏離</th><th className="px-4 py-4 text-center">狀態</th><th className="px-4 py-4 text-center">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-50">
+                                    {stats.portfolio.map((stock, index) => (
+                                        <tr key={stock.id} draggable onDragStart={() => (dragItem.current = index)} onDragEnter={() => (dragOverItem.current = index)} onDragEnd={handleSort} onDragOver={(e) => e.preventDefault()} className={`group hover:bg-slate-50 transition-colors cursor-move ${stock.isDrifting && strategyMode === 'threshold' ? 'bg-rose-50/60 hover:bg-rose-50' : ''}`}>
+                                            <td className="px-3 py-4 text-center text-slate-300 group-hover:text-slate-400"><Icons.GripVertical className="w-4 h-4 mx-auto" /></td>
+                                            <td className="px-3 py-4 text-center"><button onClick={() => updateStock(stock.id, 'currency', stock.currency === 'USD' ? 'TWD' : 'USD')} className={`text-[10px] font-bold px-2 py-1 rounded-md border transition-all ${stock.currency === 'TWD' ? 'bg-amber-100 text-amber-700 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-100'}`}>{stock.currency}</button></td>
+                                            <td className="px-4 py-4">
+                                                <div className="flex flex-col relative">
+                                                    {(stock.isGroupFixed || stock.isGroupVariable) && (<div className="absolute -left-4 top-1 text-indigo-400" title="核心組合鎖定成員"><Icons.Link className="w-3 h-3" /></div>)}
+                                                    <input type="text" value={stock.symbol} onChange={(e) => updateStock(stock.id, 'symbol', e.target.value)} className="font-bold text-slate-900 bg-transparent focus:bg-white focus:ring-2 focus:ring-indigo-500 rounded px-2 py-1 -ml-2 w-28 transition-all" placeholder="代號" />
+                                                    <input type="text" value={stock.name} onChange={(e) => updateStock(stock.id, 'name', e.target.value)} className="text-xs text-slate-500 bg-transparent focus:bg-white focus:ring-2 focus:ring-indigo-500 rounded px-2 py-0.5 -ml-2 w-32 mt-0.5 transition-all" placeholder="名稱" />
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-4 text-right"><input type="number" value={stock.shares} onChange={(e) => updateStock(stock.id, 'shares', Number(e.target.value))} className="w-24 text-right bg-transparent border-b border-transparent hover:border-slate-300 focus:bg-white focus:border-indigo-500 focus:outline-none rounded px-1 py-1 transition-all text-slate-700 font-mono" /></td>
+                                            <td className="px-4 py-4 text-right"><input type="number" value={stock.cost} onChange={(e) => updateStock(stock.id, 'cost', Number(e.target.value))} className="w-24 text-right bg-transparent border-b border-transparent hover:border-slate-300 focus:bg-white focus:border-indigo-500 focus:outline-none rounded px-1 py-1 transition-all text-slate-700 font-mono" /></td>
+                                            <td className="px-4 py-4 text-right"><input type="number" value={stock.price} onChange={(e) => updateStock(stock.id, 'price', Number(e.target.value))} className="w-24 text-right bg-transparent border-b border-transparent hover:border-amber-400 focus:bg-white focus:border-amber-500 focus:outline-none rounded px-1 py-1 transition-all text-amber-700 font-bold font-mono" /></td>
+                                            <td className="px-4 py-4 text-right font-medium text-slate-700 font-mono text-sm whitespace-nowrap">{stock.currency === 'TWD' ? `NT$ ${formatNumber(stock.marketValueOriginal)}` : formatUsd(stock.marketValueOriginal)}</td>
+                                            <td className="px-4 py-4 text-right text-slate-500">{formatPercent(stock.currentWeight)}</td>
+                                            <td className="px-4 py-4 text-right">
+                                                {stock.isAutoCalculated ? (
+                                                    <div className="flex items-center justify-end gap-1 px-2 py-1 text-slate-400 bg-slate-50 rounded cursor-not-allowed border border-slate-100"><Icons.Lock className="w-3 h-3" /><span className="font-bold text-slate-600">{stock.targetWeight}%</span></div>
+                                                ) : (
+                                                    <div className="relative group/input"><input type="number" value={stock.targetWeight} onChange={(e) => updateStock(stock.id, 'targetWeight', Number(e.target.value))} className="w-20 text-right bg-transparent border-b border-transparent hover:border-indigo-300 focus:bg-white focus:border-indigo-500 focus:outline-none rounded px-1 py-1 font-bold text-indigo-600 transition-all" /><span className="absolute right-0 top-0 text-[10px] text-slate-300 opacity-0 group-hover/input:opacity-100 pointer-events-none">%</span></div>
+                                                )}
+                                            </td>
+                                            <td className={`px-4 py-4 text-right font-bold ${Math.abs(stock.deviation) > 0.1 ? (stock.deviation > 0 ? 'text-rose-500' : 'text-emerald-600') : 'text-slate-300'}`}>{formatSignedPercent(stock.deviation)}</td>
+                                            <td className="px-4 py-4 text-center"><div className={`text-[10px] px-2 py-1 rounded-full inline-block font-medium ${strategyMode === 'threshold' ? 'bg-slate-100 text-slate-500' : 'bg-indigo-50 text-indigo-600'}`}>{strategyMode === 'threshold' ? `±${parseFloat(stock.effectiveThreshold).toFixed(1)}%` : '強制'}</div></td>
+                                            <td className="px-4 py-4 text-center"><button onClick={() => removeStock(stock.id)} className="text-slate-300 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-full transition-all"><Icons.Trash2 className="w-4 h-4" /></button></td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="p-4 border-t border-slate-100 bg-slate-50/50"><button onClick={addStock} className="flex items-center gap-2 text-indigo-600 font-semibold hover:text-indigo-800 transition-colors px-4 py-2 rounded-lg hover:bg-indigo-50 w-full justify-center border border-dashed border-indigo-200 hover:border-indigo-300"><Icons.Plus className="w-4 h-4" /> 新增資產</button></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-12">
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 animate-fade-in">
+                            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2"><div className="bg-emerald-100 p-1.5 rounded-lg text-emerald-600"><Icons.RefreshCw className="w-5 h-5" /></div> 再平衡操作建議</h3>
+                            <div className="overflow-hidden rounded-xl border border-slate-100">
+                                <table className="w-full text-sm">
+                                    <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                                        <tr><th className="py-3 px-4 text-left">代號</th><th className="py-3 px-4 text-right">目標市值 (USD)</th><th className="py-3 px-4 text-right">差距 (USD)</th><th className="py-3 px-4 text-right">建議 (股)</th></tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-50">
+                                        {stats.portfolio.map(stock => {
+                                            const showSuggestion = strategyMode === 'periodic' || stock.isDrifting || (cashInjection > 0 && stock.sharesAction > 0);
+                                            return (
+                                                <tr key={stock.id} className={`hover:bg-slate-50 transition-colors ${!showSuggestion && 'opacity-30 grayscale'}`}>
+                                                    <td className="py-4 px-4 font-bold text-slate-700">{stock.symbol}</td>
+                                                    <td className="py-4 px-4 text-right text-slate-500 font-mono">{formatUsd(stock.targetValueUsd)}</td>
+                                                    <td className={`py-4 px-4 text-right font-medium font-mono ${stock.valueDifferenceUsd > 0 ? 'text-rose-500' : 'text-emerald-500'}`}>{stock.valueDifferenceUsd > 0 ? '+' : ''}{formatUsd(stock.valueDifferenceUsd)}</td>
+                                                    <td className="py-4 px-4 text-right"><span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold ${stock.sharesAction > 0 ? 'bg-rose-100 text-rose-700' : stock.sharesAction < 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}>{stock.sharesAction > 0 ? '買進' : stock.sharesAction < 0 ? '賣出' : '持平'} <span className="ml-1 text-sm">{Math.abs(stock.sharesAction)}</span></span></td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 flex flex-col animate-fade-in">
+                            <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2"><div className="bg-purple-100 p-1.5 rounded-lg text-purple-600"><Icons.PieChartIcon className="w-5 h-5" /></div> 目前資產配置 (USD基準)</h3>
+                            <div className="flex-1 min-h-[350px] flex items-center justify-center">
+                                {!Recharts ? (
+                                    <div className="text-center text-rose-500 font-bold p-4 border border-rose-200 rounded-lg bg-rose-50">
+                                        圖表載入失敗 (CDN 問題)，請檢查網路連線。
+                                    </div>
+                                ) : (
+                                    <ResponsiveContainer width="100%" height={350}>
+                                        <PieChart>
+                                            <RechartsTooltip formatter={(value) => formatUsd(value)} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                            <Legend iconType="circle" layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '12px', color: '#64748b' }} />
+                                            <Pie data={currentAllocationData} cx="45%" cy="50%" innerRadius={80} outerRadius={110} paddingAngle={3} dataKey="value" stroke="none">
+                                                {currentAllocationData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+                                            </Pie>
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {showGroupModal && (
+                        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden">
+                                <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                                    <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Icons.Link className="w-5 h-5 text-indigo-500" /> 設定核心組合鎖定</h3>
+                                    <button onClick={() => setShowGroupModal(false)} className="text-slate-400 hover:text-slate-600 transition-colors"><Icons.X className="w-5 h-5" /></button>
+                                </div>
+                                <div className="p-6 space-y-6">
+                                    <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                                        <input type="checkbox" id="enableGroup" checked={groupConfig.enabled} onChange={(e) => setGroupConfig({...groupConfig, enabled: e.target.checked})} className="w-5 h-5 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500" />
+                                        <label htmlFor="enableGroup" className="font-bold text-indigo-900">啟用連動功能</label>
+                                    </div>
+                                    <div className={`space-y-5 transition-opacity ${!groupConfig.enabled ? 'opacity-50 pointer-events-none' : ''}`}>
+                                        <div>
+                                            <label className="block text-sm font-semibold text-slate-700 mb-2">總目標佔比 (%)</label>
+                                            <input type="number" value={groupConfig.totalTarget} onChange={(e) => setGroupConfig({...groupConfig, totalTarget: Number(e.target.value)})} className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-medium" />
+                                            <p className="text-xs text-slate-400 mt-1.5 ml-1">當您調整其他資產權重時，此數值將自動計算。</p>
+                                        </div>
+                                        <div className="p-1 bg-slate-100 rounded-xl flex">
+                                            <button onClick={() => setGroupConfig({...groupConfig, mode: 'default'})} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${groupConfig.mode === 'default' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>自動填補模式</button>
+                                            <button onClick={() => setGroupConfig({...groupConfig, mode: 'reverse'})} className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${groupConfig.mode === 'reverse' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>VT 驅動模式</button>
+                                        </div>
+                                        {groupConfig.mode === 'reverse' ? (
+                                            <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                                                <div className="text-xs text-indigo-600 bg-indigo-50 p-3 rounded-lg border border-indigo-100 leading-relaxed">鎖定 <strong>VT</strong> 現值為目標。剩餘空間按比例分配給 VTI 與 VXUS。</div>
+                                                <div>
+                                                    <label className="block text-sm font-semibold text-slate-700 mb-2">分配比例 (VTI : VXUS)</label>
+                                                    <div className="flex items-center gap-3">
+                                                        <input type="number" value={groupConfig.ratios[1]} onChange={(e) => setGroupConfig({...groupConfig, ratios: {...groupConfig.ratios, 1: Number(e.target.value)}})} className="w-full p-3 border border-slate-200 rounded-xl text-center font-bold text-slate-700 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                                                        <span className="font-bold text-slate-400">:</span>
+                                                        <input type="number" value={groupConfig.ratios[2]} onChange={(e) => setGroupConfig({...groupConfig, ratios: {...groupConfig.ratios, 2: Number(e.target.value)}})} className="w-full p-3 border border-slate-200 rounded-xl text-center font-bold text-slate-700 focus:ring-indigo-500 focus:border-indigo-500 outline-none" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <label className="block text-sm font-semibold text-slate-700 mb-2">動態填補成員 (VT)</label>
+                                                <select value={groupConfig.variableId || ''} onChange={(e) => setGroupConfig({...groupConfig, variableId: Number(e.target.value)})} className="w-full p-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white">
+                                                    <option value="">請選擇...</option>
+                                                    {portfolio.filter(p => !groupConfig.fixedIds.includes(p.id)).map(p => (<option key={p.id} value={p.id}>{p.symbol}</option>))}
+                                                </select>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="p-5 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+                                    <button onClick={() => setShowGroupModal(false)} className="px-5 py-2.5 text-slate-600 font-semibold hover:bg-white hover:shadow-sm rounded-xl transition-all">取消</button>
+                                    <button onClick={() => { setGroupConfig(groupConfig); setShowGroupModal(false); }} className="px-5 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all">儲存設定</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
