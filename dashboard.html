@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投資組合績效儀表板</title>
+    
+    <!-- 1. 引入必要的 CDN 函式庫 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/prop-types/prop-types.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.0/Recharts.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; -webkit-print-color-adjust: exact; }
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .pdf-section { margin-bottom: 20px; break-inside: avoid; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect, useRef } = React;
+        const { 
+            LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, 
+            AreaChart, Area, PieChart, Pie, Cell 
+        } = window.Recharts || {};
+
+        // --- Icon Components ---
+        const Icon = ({ path, size = 20, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{path}</svg>
+        );
+
+        const Icons = {
+            Briefcase: (p) => <Icon {...p} path={<><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></>} />,
+            Upload: (p) => <Icon {...p} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>} />,
+            Clipboard: (p) => <Icon {...p} path={<><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></>} />,
+            Printer: (p) => <Icon {...p} path={<><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></>} />,
+            Download: (p) => <Icon {...p} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>} />,
+            Loader2: (p) => <Icon {...p} className={`animate-spin ${p.className}`} path={<><path d="M21 12a9 9 0 1 1-6.219-8.56"/></>} />,
+            TrendingUp: (p) => <Icon {...p} path={<><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></>} />,
+            TrendingDown: (p) => <Icon {...p} path={<><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></>} />,
+            PieChartIcon: (p) => <Icon {...p} path={<><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></>} />,
+            Activity: (p) => <Icon {...p} path={<><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></>} />,
+            Calendar: (p) => <Icon {...p} path={<><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></>} />,
+            Layers: (p) => <Icon {...p} path={<><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></>} />,
+            Check: (p) => <Icon {...p} path={<><polyline points="20 6 9 17 4 12"/></>} />,
+            X: (p) => <Icon {...p} path={<><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>} />,
+            Edit2: (p) => <Icon {...p} path={<><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></>} />,
+            RefreshCw: (p) => <Icon {...p} path={<><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></>} />,
+            ChevronLeft: (p) => <Icon {...p} path={<><path d="m15 18-6-6 6-6"/></>} />,
+            ChevronRight: (p) => <Icon {...p} path={<><path d="m9 18 6-6-6-6"/></>} />,
+            List: (p) => <Icon {...p} path={<><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></>} />,
+            Info: (p) => <Icon {...p} path={<><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></>} />,
+        };
+
+        // --- Data ---
+        const DEFAULT_CSV_DATA = `Id,Symbol,Name,Display Symbol,Exchange,Portfolio,Currency,Shares Owned,Cost Per Share,Commission,Transaction Date,Transaction Time,Purchase Exchange Rate,Type,Accounting,Accounting Execution Ids,Notes
+"1","IMOM","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD",,,,,,,,,,
+"2","IMOM","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","143","27.97","0","2024-02-16 GMT+0800","21:47:00",,"Buy",,,
+"3","IMOM","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","13","28.3","0","2024-11-08 GMT+0800","23:43:00","0","Buy",,,
+"4","IMOM","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","2","28.25","0","2024-11-12 GMT+0800","23:40:00","0","Buy",,,
+"5","IMOM","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","4.98839","26.6078","0","2024-12-31 GMT+0800","00:42:00","0","Dividend Reinvest",,,
+"6","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD",,,,,,,,,,
+"7","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","41","88.6","0","2024-02-16 GMT+0800","22:28:00",,"Buy",,,
+"8","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","0.09574","91.915","0","2024-03-25 GMT+0800","09:44:00","0","Dividend Reinvest",,,
+"9","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","0.13963","88.234","0","2024-06-26 GMT+0800","22:46:00","0","Dividend Reinvest",,,
+"10","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","0.1175","94.9781","0","2024-09-25 GMT+0800","00:15:00","0","Dividend Reinvest",,,
+"11","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","2","103.68","0","2024-11-07 GMT+0800","23:37:00","0","Sell","Weighted Average",,
+"12","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","0.12412","96.44","0","2024-12-19 GMT+0800","00:39:00","0","Dividend Reinvest",,,
+"13","AVUV","Avantis U.S. Small Cap Value ET",,"PCX","Firstrade 帳戶","USD","0.10587","88.505","0","2025-03-27 GMT+0800","00:41:00","0","Dividend Reinvest",,,
+"14","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD",,,,,,,,,,
+"15","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","85","41.16","0","2024-02-16 GMT+0800","22:36:00",,"Buy",,,
+"16","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","1","40.64","0","2024-02-20 GMT+0800","22:51:00",,"Buy",,,
+"17","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","0.19534","42.9","0","2024-03-15 GMT+0800","00:27:00","0","Dividend Reinvest",,,
+"18","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","0.37915","43.07","0","2024-06-21 GMT+0800","22:41:00","0","Dividend Reinvest",,,
+"19","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","0.20276","44.24","0","2024-09-13 GMT+0800","00:13:00","0","Dividend Reinvest",,,
+"20","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","0.2861","44.8095","0","2024-12-31 GMT+0800","00:47:00","0","Dividend Reinvest",,,
+"21","QVAL","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","0.14458","41.775","0","2025-03-14 GMT+0800","00:48:00","0","Dividend Reinvest",,,"P"
+"22","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD",,,,,,,,,,
+"23","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","48","249.67","0","2024-02-16 GMT+0800","22:44:00",,"Buy",,,
+"24","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","0.11819","258.8275","0","2024-03-27 GMT+0800","09:46:00","0","Dividend Reinvest",,,
+"25","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","0.11979","267.6454","0","2024-07-02 GMT+0800","10:16:00","0","Dividend Reinvest",,,
+"26","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","0.10458","281.1376","0","2024-10-01 GMT+0800","23:32:00","0","Dividend Reinvest",,,
+"27","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","2","295.01","0","2024-11-07 GMT+0800","23:33:00","0","Sell","Weighted Average",,
+"28","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","0.10361","294.6618","0","2024-12-26 GMT+0800","00:50:00","0","Dividend Reinvest",,,
+"29","VTI","Vanguard Total Stock Market ETF",,"PCX","Firstrade 帳戶","USD","0.11889","269.49","0","2025-03-31 GMT+0800","00:50:00","0","Dividend Reinvest",,,
+"30","QMOM","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD",,,,,,,,,,
+"31","QMOM","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","88","54.96","0","2024-02-16 GMT+0800","22:46:00",,"Buy",,,
+"32","QMOM","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","1","54.2","0","2024-02-20 GMT+0800","22:50:00",,"Buy",,,
+"33","QMOM","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","1","53.49","0","2024-02-21 GMT+0800","22:52:00",,"Buy",,,
+"34","QMOM","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","8","68.63","0","2024-11-07 GMT+0800","23:39:00","0","Sell","Weighted Average",,
+"35","QMOM","Alpha Architect U.S. Quantitati",,"NGM","Firstrade 帳戶","USD","0.80332","64.37","0","2024-12-31 GMT+0800","00:46:00","0","Dividend Reinvest",,,
+"36","AVES","Avantis Emerging Markets Value ",,"PCX","Firstrade 帳戶","USD",,,,,,,,,,
+"37","AVES","Avantis Emerging Markets Value ",,"PCX","Firstrade 帳戶","USD","38","46.68","0","2024-02-20 GMT+0800","22:46:00",,"Buy",,,
+"38","AVES","Avantis Emerging Markets Value ",,"PCX","Firstrade 帳戶","USD","1","46.26","0","2024-04-16 GMT+0800","09:48:00","0","Buy",,,
+"39","AVES","Avantis Emerging Markets Value ",,"PCX","Firstrade 帳戶","USD","0.26866","48.5","0","2024-06-26 GMT+0800","22:48:00","0","Dividend Reinvest",,,
+"40","AVES","Avantis Emerging Markets Value ",,"PCX","Firstrade 帳戶","USD","1","49.995","0","2024-11-08 GMT+0800","23:44:00","0","Buy",,,
+"41","AVES","Avantis Emerging Markets Value ",,"PCX","Firstrade 帳戶","USD","0.84878","46.8792","0","2024-12-19 GMT+0800","00:37:00","0","Dividend Reinvest",,,
+"42","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD",,,,,,,,,,
+"43","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","86","25.77","0","2024-02-20 GMT+0800","22:47:00",,"Buy",,,
+"44","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","0.33739","26.4385","0","2024-03-15 GMT+0800","00:24:00","0","Dividend Reinvest",,,
+"45","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","1.06738","24.8083","0","2024-06-21 GMT+0800","22:37:00","0","Dividend Reinvest",,,
+"46","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","0.10463","25.041","0","2024-09-13 GMT+0800","00:11:00","0","Dividend Reinvest",,,
+"47","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","13","24.67","0","2024-11-08 GMT+0800","23:42:00","0","Buy",,,
+"48","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","0.69103","24.0945","0","2024-12-31 GMT+0800","00:44:00","0","Dividend Reinvest",,,
+"49","IVAL","Alpha Architect International Q",,"NGM","Firstrade 帳戶","USD","0.18288","25.59","0","2025-03-14 GMT+0800","00:45:00","0","Dividend Reinvest",,,
+"50","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD",,,,,,,,,,
+"51","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","176","58.25","0","2024-02-20 GMT+0800","22:48:00",,"Buy",,,
+"52","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","0.46209","59.5992","0","2024-03-20 GMT+0800","00:21:00","0","Dividend Reinvest",,,
+"53","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","0.98989","60.3299","0","2024-06-25 GMT+0800","22:44:00","0","Dividend Reinvest",,,
+"54","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","0.52951","63.87","0","2024-09-24 GMT+0800","00:14:00","0","Dividend Reinvest",,,
+"55","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","9","62.1899","0","2024-11-08 GMT+0800","23:43:00","0","Buy",,,
+"56","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","2.22069","59.2293","0","2024-12-24 GMT+0800","00:52:00","0","Dividend Reinvest",,,
+"57","VXUS","Vanguard Total International St",,"NGM","Firstrade 帳戶","USD","0.39587","66.86","0","2025-03-25 GMT+0800","00:52:00","0","Dividend Reinvest",,,
+"58","AVDV","Avantis International Small Cap",,"PCX","Firstrade 帳戶","USD",,,,,,,,,,
+"59","AVDV","Avantis International Small Cap",,"PCX","Firstrade 帳戶","USD","36","61.5","0","2024-02-20 GMT+0800","22:49:00",,"Buy",,,
+"60","AVDV","Avantis International Small Cap",,"PCX","Firstrade 帳戶","USD","0.46133","64.6604","0","2024-06-26 GMT+0800","22:49:00","0","Dividend Reinvest",,,
+"61","AVDV","Avantis International Small Cap",,"PCX","Firstrade 帳戶","USD","0.64585","64.04","0","2024-12-19 GMT+0800","00:35:00","0","Dividend Reinvest",,,
+"71","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD",,,,,,,,,,
+"72","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","10.45569","102.34","3.21","2022-02-22 GMT+0800","23:49:00",,"Buy",,,
+"73","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.48145","96.69","1.59","2022-03-07 GMT+0800","23:51:00",,"Buy",,,
+"74","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.07409","98.54","0.9","2022-04-18 GMT+0800","23:56:00",,"Buy",,,
+"75","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.55696","89.98","0.9","2022-05-16 GMT+0800","23:58:00",,"Buy",,,
+"76","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.91647","84.51","0.9","2022-06-16 GMT+0800","00:03:00",,"Buy",,,
+"77","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.7844","86.43","0.89","2022-07-18 GMT+0800","00:05:00",,"Buy",,,
+"78","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.31278","94.11","0.9","2022-08-16 GMT+0800","00:06:00",,"Buy",,,
+"79","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.78908","85.5","0.89","2022-09-16 GMT+0800","00:08:00",,"Buy",,,
+"80","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","6.21969","80.39","0.9","2022-10-17 GMT+0800","00:09:00",,"Buy",,,
+"81","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.64399","88.59","0.9","2022-11-16 GMT+0800","00:11:00",,"Buy",,,
+"82","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.74167","87.08","0.9","2022-12-16 GMT+0800","00:12:00",,"Buy",,,
+"83","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.48127","91.22","0.9","2023-01-17 GMT+0800","00:13:00",,"Buy",,,
+"84","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.40483","92.51","0.9","2023-02-16 GMT+0800","00:14:00",,"Buy",,,
+"85","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.6942","87.81","0.9","2023-03-20 GMT+0800","00:17:00",,"Buy",,,
+"86","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.37231","93.07","0.9","2023-04-17 GMT+0800","00:18:00",,"Buy",,,
+"87","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.38759","92.81","0.9","2023-05-16 GMT+0800","00:19:00",,"Buy",,,
+"88","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.27594","94.77","0.9","2023-06-23 GMT+0800","00:20:00",,"Buy",,,
+"89","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.06443","98.73","0.9","2023-07-17 GMT+0800","00:21:00",,"Buy",,,
+"90","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.19536","96.24","0.9","2023-08-16 GMT+0800","00:22:00",,"Buy",,,
+"91","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","6.37336","97.28","1","2023-09-11 GMT+0800","00:23:00",,"Buy",,,
+"92","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.44566","89.98","0.88","2023-10-26 GMT+0800","00:25:00",,"Buy",,,
+"93","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.76262","98.69","0.84","2023-11-29 GMT+0800","00:26:00",,"Buy",,,
+"94","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.68571","102.44","0.86","2023-12-26 GMT+0800","00:27:00",,"Buy",,,
+"95","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","5.31392","101.62","0.97","2024-01-19 GMT+0800","00:28:00",,"Buy",,,
+"96","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.464","107.53","0.86","2024-02-26 GMT+0800","00:30:00",,"Buy",,,
+"97","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.32593","108.65","0.84","2024-03-11 GMT+0800","13:03:00","0","Buy",,,
+"98","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.65738","107.36","0.9","2024-04-26 GMT+0800","18:13:00","0","Buy",,,
+"99","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.18753","109.85","0.82","2024-05-09 GMT+0800","22:50:00","0","Buy",,,
+"100","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.08626","112.54","0.82","2024-06-06 GMT+0800","20:50:00","0","Buy",,,
+"101","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.90303","106.06","0.93","2024-08-05 GMT+0800","14:05:00","0","Buy",,,
+"102","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.017","117","0.84","2024-08-29 GMT+0800","21:50:00","0","Buy",,,
+"103","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.91134","120.15","0.46","2024-09-26 GMT+0800","00:17:00","0","Buy",,,
+"104","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.35803","119.32","0.52","2024-10-28 GMT+0800","19:47:00","0","Buy",,,
+"105","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.79383","121.25","0.46","2024-11-29 GMT+0800","11:12:00","0","Buy",,,
+"106","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.84909","119.51","0.46","2024-12-26 GMT+0800","23:02:00","0","Buy",,,
+"107","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.65002","120.43","0.56","2025-01-21 GMT+0800","15:08:00","0","Buy",,,
+"108","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.7634","122.23","0.46","2025-02-06 GMT+0800","15:10:00","0","Buy",,,
+"109","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.85293","119.39","0.46","2025-03-06 GMT+0800","15:11:00","0","Buy",,,
+"110","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.8581","102.92","0.5","2025-04-09 GMT+0800","15:12:00","0","Buy",,,
+"111","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.12713","121.15","0.5","2025-05-23 GMT+0800","15:13:00","0","Buy",,,
+"112","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.98947","125.33","0.5","2025-06-06 GMT+0800","15:14:00","0","Buy",,,
+"113","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","4.71553","129.36","0.61","2025-07-03 GMT+0800","15:15:00","0","Buy",,,
+"114","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.86101","129.5","0.03","2025-08-04 GMT+0800","15:16:00","0","Buy",,,
+"115","VT","Vanguard Total World Stock Inde",,"PCX","美股VT三人組","USD","3.63259","134.89","0.01","2025-09-08 GMT+0800","15:17:00","0","Buy",,,
+"117","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD",,,,,,,,,,
+"118","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.12285","89.5","0.34","2022-12-16 GMT+0800","01:48:00",,"Buy",,,
+"119","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.08287","91.22","0.34","2023-01-17 GMT+0800","01:50:00",,"Buy",,,
+"120","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.27003","92.51","0.37","2023-02-16 GMT+0800","01:52:00",,"Buy",,,
+"121","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.30024","86.95","0.36","2023-03-16 GMT+0800","01:53:00",,"Buy",,,
+"122","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.14892","93.07","0.36","2023-04-17 GMT+0800","01:54:00",,"Buy",,,
+"123","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.04729","92.81","0.34","2023-05-16 GMT+0800","01:56:00",,"Buy",,,
+"124","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.93188","98.35","0.34","2023-06-16 GMT+0800","01:57:00",,"Buy",,,
+"125","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.91239","99.35","0.34","2023-07-24 GMT+0800","01:58:00",,"Buy",,,
+"126","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.98812","95.57","0.34","2023-08-23 GMT+0800","01:59:00",,"Buy",,,
+"127","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.05592","97.28","0.36","2023-09-11 GMT+0800","02:00:00",,"Buy",,,
+"128","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","2.11159","89.98","0.34","2023-10-26 GMT+0800","02:02:00",,"Buy",,,
+"129","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.92532","98.69","0.34","2023-11-29 GMT+0800","02:03:00",,"Buy",,,
+"130","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.85476","102.44","0.34","2023-12-26 GMT+0800","02:04:00",,"Buy",,,
+"131","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.86972","101.62","0.34","2024-01-19 GMT+0800","02:05:00",,"Buy",,,
+"132","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.88756","105.96","0.36","2024-02-20 GMT+0800","02:06:00",,"Buy",,,
+"133","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.82282","109.72","0.36","2024-03-25 GMT+0800","20:48:00","0","Buy",,,
+"134","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.73659","109.41","0.34","2024-04-03 GMT+0800","09:53:00","0","Buy",,,
+"135","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.72963","109.85","0.34","2024-05-09 GMT+0800","22:48:00","0","Buy",,,
+"136","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.68781","112.54","0.34","2024-06-06 GMT+0800","20:52:00","0","Buy",,,
+"137","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.88575","106.06","0.36","2024-08-05 GMT+0800","13:56:00","0","Buy",,,
+"138","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.53843","117","0.32","2024-08-29 GMT+0800","21:47:00","0","Buy",,,
+"139","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.58118","120.15","0.18","2024-09-26 GMT+0800","00:18:00","0","Buy",,,
+"140","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.67617","119.32","0.2","2024-10-28 GMT+0800","19:50:00","0","Buy",,,
+"141","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.48455","121.25","0.18","2024-11-29 GMT+0800","11:14:00","0","Buy",,,
+"142","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","1.58985","119.51","0.19","2024-12-26 GMT+0800","23:04:00","0","Buy",,,
+"143","VT","Vanguard Total World Stock Inde",,"PCX","舒雅VT雙人組","USD","0","119.37","0","2025-01-07 GMT+0800","00:12:00","0","Sell All","FIFO",,
+"145","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD",,,,,,,,,,
+"146","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","78","86.59","1","2024-03-06 GMT+0800","20:54:00",,"Buy",,,
+"147","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","79","88.91","1","2024-04-19 GMT+0800","09:51:00","0","Buy",,,
+"148","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","325","94.32","4","2024-05-09 GMT+0800","21:42:00","0","Buy",,,
+"149","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","74","101.99","1","2024-06-06 GMT+0800","20:24:00","0","Buy",,,
+"150","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","85","109.67","1","2024-07-03 GMT+0800","01:37:00","0","Buy",,,
+"151","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","76","95.99","1","2024-08-05 GMT+0800","10:21:00","0","Buy",,,
+"152","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","502","0","0","2024-08-09 GMT+0800","15:17:00","0","Dividend","FIFO",,
+"153","006208.TW","Fubon Asset Management Co Ltd F",,"TAI","飛台股","TWD","0","107.2","185","2024-08-16 GMT+0800","12:20:00","0","Sell All","FIFO",,
+"158","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD",,,,,,,,,,
+"159","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","48","155.52","1","2024-03-13 GMT+0800","20:14:00","0","Buy",,,
+"160","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","47","151.91","1","2024-04-23 GMT+0800","23:22:00","0","Buy",,,
+"161","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","180","160.96","4","2024-05-09 GMT+0800","21:40:00","0","Buy",,,
+"162","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","46","173.63","1","2024-06-11 GMT+0800","20:22:00","0","Buy",,,
+"163","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","49","197.18","1","2024-07-15 GMT+0800","20:14:00","0","Buy",,,
+"164","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","44","162.89","1","2024-08-05 GMT+0800","10:19:00","0","Buy",,,
+"165","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","370","0","0","2024-08-09 GMT+0800","13:30:00","0","Dividend","FIFO",,
+"166","0050.TW","Yuanta Securities Inv Trust Co ",,"TAI","寶的台股","TWD","414","182.8","182","2024-08-17 GMT+0800","13:31:00","0","Sell All","FIFO",,
+`;
+
+        // --- Helper Functions ---
+        const parseCSV = (csvText) => {
+            if (!csvText) return [];
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+            const re = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i];
+                if (!line.trim()) continue;
+                const values = line.split(re).map(val => val.replace(/^"|"$/g, '').trim());
+                const entry = {};
+                headers.forEach((header, index) => {
+                    entry[header] = values[index];
+                });
+                if (entry['Transaction Date'] && entry['Symbol']) {
+                    data.push(entry);
+                }
+            }
+            return data;
+        };
+
+        const calculateXIRR = (transactions, guess = 0.1) => {
+            if (transactions.length < 2) return 0;
+            const xirrEquation = (rate, trans) => {
+                return trans.reduce((sum, t) => {
+                    const days = (t.date - trans[0].date) / (1000 * 60 * 60 * 24);
+                    return sum + t.amount / Math.pow(1 + rate, days / 365);
+                }, 0);
+            };
+            const xirrDerivative = (rate, trans) => {
+                return trans.reduce((sum, t) => {
+                    const days = (t.date - trans[0].date) / (1000 * 60 * 60 * 24);
+                    return sum - (days / 365) * t.amount / Math.pow(1 + rate, days / 365 + 1);
+                }, 0);
+            };
+            let rate = guess;
+            const maxIterations = 50;
+            const tolerance = 1e-6;
+            for (let i = 0; i < maxIterations; i++) {
+                const fValue = xirrEquation(rate, transactions);
+                const fDerivative = xirrDerivative(rate, transactions);
+                const newRate = rate - fValue / fDerivative;
+                if (Math.abs(newRate - rate) < tolerance) {
+                    return newRate;
+                }
+                rate = newRate;
+            }
+            return rate;
+        };
+
+        const calculateMaxDrawdown = (chartData) => {
+            let maxDrawdown = 0;
+            let peak = -Infinity;
+            for (let point of chartData) {
+                if (point.value > peak) {
+                    peak = point.value;
+                }
+                const drawdown = (peak - point.value) / peak;
+                if (drawdown > maxDrawdown) {
+                    maxDrawdown = drawdown;
+                }
+            }
+            return maxDrawdown * 100;
+        };
+
+        const calculateVolatility = (chartData) => {
+            if (chartData.length < 2) return 0;
+            const returns = [];
+            for (let i = 1; i < chartData.length; i++) {
+                const prev = chartData[i-1].value;
+                const curr = chartData[i].value;
+                if (prev > 0) {
+                    returns.push((curr - prev) / prev);
+                }
+            }
+            const mean = returns.reduce((a, b) => a + b, 0) / returns.length;
+            const variance = returns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / returns.length;
+            return Math.sqrt(variance) * Math.sqrt(12) * 100; 
+        };
+
+        const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#6366f1'];
+
+        // --- Components ---
+        const MetricCard = ({ title, value, subValue, trend, currency }) => {
+            const isUp = trend === 'up';
+            const isDown = trend === 'down';
+            const colorClass = isUp ? 'text-red-600' : isDown ? 'text-green-600' : 'text-gray-600';
+            const badgeClass = isUp ? 'bg-red-100 text-red-700' : isDown ? 'bg-green-100 text-green-700' : '';
+
+            return (
+                <div className="pdf-section bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex justify-between items-start mb-2">
+                        <p className="text-gray-500 text-sm font-medium">{title}</p>
+                        {trend && (
+                           <div className={`px-2 py-0.5 rounded text-xs font-bold ${badgeClass}`}>
+                             {isUp ? '▲' : isDown ? '▼' : ''}
+                           </div>
+                        )}
+                    </div>
+                    <div className="flex flex-col">
+                         <h3 className="text-2xl font-bold text-gray-900 tracking-tight">{value}</h3>
+                    </div>
+                    {subValue && (
+                        <div className={`mt-2 text-sm flex items-center font-medium ${colorClass}`}>
+                            {subValue}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const PasteModal = ({ isOpen, onClose, onPaste }) => {
+            const [text, setText] = useState("");
+            const { X } = Icons;
+            
+            if (!isOpen) return null;
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl flex flex-col max-h-[90vh]">
+                        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                            <h3 className="text-lg font-bold text-gray-900">貼上 CSV 資料</h3>
+                            <button type="button" onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <div className="p-6 flex-1 overflow-hidden">
+                            <textarea 
+                                className="w-full h-64 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-xs resize-none"
+                                placeholder="請在此貼上 CSV 內容 (包含標題列)..."
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                            />
+                        </div>
+                        <div className="p-6 border-t border-gray-200 bg-gray-50 flex justify-end gap-3 rounded-b-xl">
+                            <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100">取消</button>
+                            <button 
+                                type="button"
+                                onClick={() => { onPaste(text); onClose(); setText(""); }} 
+                                disabled={!text.trim()}
+                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                匯入資料
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const EmptyState = ({ onImport, onPaste, onLoadDemo }) => {
+            const { Briefcase, Upload, Clipboard } = Icons;
+            return (
+                <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 max-w-lg w-full text-center border border-gray-100">
+                        <div className="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <Briefcase size={40} className="text-blue-600" />
+                        </div>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-3">投資組合儀表板</h1>
+                        <p className="text-gray-500 mb-8 text-lg">
+                            請匯入您的交易紀錄 CSV 檔案，<br/>系統將自動為您生成深度績效分析報告。
+                        </p>
+                        
+                        <div className="space-y-4">
+                            <button type="button" onClick={onImport} className="w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+                                <Upload size={20} />
+                                匯入 CSV 檔案
+                            </button>
+                            <button type="button" onClick={onPaste} className="w-full flex items-center justify-center gap-3 px-6 py-4 text-base font-semibold text-gray-700 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 transition-all">
+                                <Clipboard size={20} />
+                                貼上 CSV 文字
+                            </button>
+                            <div className="relative py-2">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-gray-200"></div>
+                                </div>
+                                <div className="relative flex justify-center text-sm">
+                                    <span className="px-2 bg-white text-gray-400">或是</span>
+                                </div>
+                            </div>
+                            <button type="button" onClick={onLoadDemo} className="text-sm text-gray-500 hover:text-blue-600 font-medium transition-colors">
+                                載入範例資料體驗看看
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [rawData, setRawData] = useState(null); 
+            const [selectedPortfolio, setSelectedPortfolio] = useState("美股VT三人組");
+            const [timeRange, setTimeRange] = useState("ALL");
+            const [currentPage, setCurrentPage] = useState(1);
+            const [priceOverrides, setPriceOverrides] = useState({});
+            const [editingSymbol, setEditingSymbol] = useState(null);
+            const [editValue, setEditValue] = useState("");
+            const [isPasteModalOpen, setIsPasteModalOpen] = useState(false);
+            const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+            const [exchangeRate, setExchangeRate] = useState(32.5); // 匯率狀態
+            
+            const fileInputRef = useRef(null);
+
+            const { 
+                Briefcase, Upload, Clipboard, Printer, Download, Loader2, 
+                TrendingUp, TrendingDown, Activity, Calendar, Layers, 
+                Check, X, Edit2, RefreshCw, ChevronLeft, ChevronRight, PieChartIcon: PieIcon,
+                Settings, Trophy
+            } = Icons;
+
+            const itemsPerPage = 10;
+
+            const portfolioDataResult = useMemo(() => {
+                if (!rawData) return null;
+                const allData = parseCSV(rawData);
+                let portfolioData = allData.filter(d => d.Portfolio === selectedPortfolio);
+                portfolioData.sort((a, b) => new Date(a['Transaction Date']) - new Date(b['Transaction Date']));
+
+                let netInvested = 0; // Out-of-pocket cash only
+                let costBasis = 0;   // Accounting cost (includes DRIP)
+                let chartPoints = [];
+                const holdingsMap = {}; 
+                let mainCurrency = 'USD';
+                let firstInvestDate = null;
+                const xirrCashFlows = []; 
+                let totalBuys = 0; // Count buys
+
+                portfolioData.forEach(tx => {
+                    const type = tx.Type;
+                    const shares = parseFloat(tx['Shares Owned'] || 0);
+                    const price = parseFloat(tx['Cost Per Share'] || 0);
+                    const commission = parseFloat(tx.Commission || 0);
+                    const dateStr = tx['Transaction Date'].split(' ')[0]; 
+                    const dateObj = new Date(tx['Transaction Date']);
+                    const symbol = tx.Symbol;
+                    
+                    mainCurrency = tx.Currency || 'USD';
+                    if (!firstInvestDate && (type === 'Buy' || type === 'Dividend Reinvest')) firstInvestDate = dateObj;
+
+                    if (!holdingsMap[symbol]) {
+                        holdingsMap[symbol] = { shares: 0, costBasis: 0, netInvested: 0, name: tx.Name, lastPriceDate: null };
+                    }
+
+                    if (type === 'Buy' || type === 'Dividend Reinvest' || type === 'Dividend') {
+                        if (shares > 0) {
+                            const txnCost = (shares * price) + commission;
+                            
+                            // Cost Basis always increases (Tax view)
+                            costBasis += txnCost;
+                            holdingsMap[symbol].costBasis += txnCost;
+                            
+                            // Net Invested increases ONLY on 'Buy' (Cash view)
+                            if (type === 'Buy') {
+                                netInvested += txnCost;
+                                holdingsMap[symbol].netInvested += txnCost;
+                                
+                                xirrCashFlows.push({ amount: -txnCost, date: dateObj });
+                                totalBuys++;
+                            }
+                            
+                            holdingsMap[symbol].shares += shares;
+                        }
+                    } else if (type.includes('Sell')) {
+                        let sharesSold = shares;
+                        if (type === 'Sell All') {
+                            if (shares === 0) sharesSold = holdingsMap[symbol].shares;
+                        }
+                        if (sharesSold > 0) {
+                            const preSellShares = holdingsMap[symbol].shares;
+                            const sellRatio = sharesSold / preSellShares;
+
+                            // Reduce Basis and Net Invested proportionally
+                            const costBasisRemoved = holdingsMap[symbol].costBasis * sellRatio;
+                            const netInvestedRemoved = holdingsMap[symbol].netInvested * sellRatio;
+                            
+                            costBasis -= costBasisRemoved;
+                            netInvested -= netInvestedRemoved;
+
+                            holdingsMap[symbol].costBasis -= costBasisRemoved;
+                            holdingsMap[symbol].netInvested -= netInvestedRemoved;
+                            holdingsMap[symbol].shares -= sharesSold;
+                            
+                            // Sell proceeds
+                            const sellAmount = sharesSold * price - commission;
+                            xirrCashFlows.push({ amount: sellAmount, date: dateObj });
+                        }
+                    }
+
+                    if (symbol.toUpperCase().includes('CASH')) {
+                        holdingsMap[symbol].currentPrice = 1.0;
+                        holdingsMap[symbol].lastPriceDate = dateStr;
+                    } else if (price > 0) {
+                        holdingsMap[symbol].currentPrice = price;
+                        holdingsMap[symbol].lastPriceDate = dateStr;
+                    }
+                    
+                    // Chart Value calculation
+                    let currentTotalValue = 0;
+                    Object.keys(holdingsMap).forEach(sym => {
+                        currentTotalValue += holdingsMap[sym].shares * holdingsMap[sym].currentPrice;
+                    });
+
+                    chartPoints.push({
+                        date: dateStr,
+                        rawDate: dateObj,
+                        invested: netInvested, // Use Net Invested for Chart to show real capital growth
+                        value: currentTotalValue
+                    });
+                });
+
+                const now = new Date();
+                let filteredChartData = chartPoints;
+
+                if (timeRange === 'YTD') {
+                    const startOfYear = new Date(now.getFullYear(), 0, 1);
+                    filteredChartData = chartPoints.filter(p => p.rawDate >= startOfYear);
+                } else if (timeRange === '1Y') {
+                    const oneYearAgo = new Date();
+                    oneYearAgo.setFullYear(now.getFullYear() - 1);
+                    filteredChartData = chartPoints.filter(p => p.rawDate >= oneYearAgo);
+                } else if (timeRange === '3Y') {
+                    const threeYearsAgo = new Date();
+                    threeYearsAgo.setFullYear(now.getFullYear() - 3);
+                    filteredChartData = chartPoints.filter(p => p.rawDate >= threeYearsAgo);
+                } else if (timeRange === '5Y') {
+                    const fiveYearsAgo = new Date();
+                    fiveYearsAgo.setFullYear(now.getFullYear() - 5);
+                    filteredChartData = chartPoints.filter(p => p.rawDate >= fiveYearsAgo);
+                } else if (timeRange === '10Y') {
+                    const tenYearsAgo = new Date();
+                    tenYearsAgo.setFullYear(now.getFullYear() - 10);
+                    filteredChartData = chartPoints.filter(p => p.rawDate >= tenYearsAgo);
+                }
+
+                let totalValue = 0;
+                let totalHeldShares = 0;
+
+                const holdingsArray = Object.keys(holdingsMap).map(sym => {
+                    const h = holdingsMap[sym];
+                    const finalPrice = priceOverrides[sym] !== undefined ? parseFloat(priceOverrides[sym]) : h.currentPrice;
+                    const isOverridden = priceOverrides[sym] !== undefined;
+
+                    const val = h.shares * finalPrice;
+                    totalValue += val;
+                    totalHeldShares += h.shares;
+                    
+                    // Return based on Net Invested (Cash on Cash)
+                    const totalRet = val - h.netInvested;
+                    const retPcnt = h.netInvested > 0 ? (totalRet / h.netInvested) * 100 : 0;
+
+                    return {
+                        symbol: sym,
+                        name: h.name,
+                        shares: h.shares,
+                        price: finalPrice,
+                        lastPriceDate: isOverridden ? '自訂價格' : h.lastPriceDate,
+                        value: val,
+                        netInvested: h.netInvested,
+                        costBasis: h.costBasis,
+                        return: totalRet,
+                        returnPcnt: retPcnt,
+                        isOverridden
+                    };
+                }).filter(h => h.shares > 0.001); 
+
+                const pieData = holdingsArray.map((h, index) => ({
+                    name: h.symbol,
+                    value: h.value,
+                    color: COLORS[index % COLORS.length]
+                })).sort((a,b) => b.value - a.value);
+
+                let xirrValue = 0;
+                if (xirrCashFlows.length > 0) {
+                    const finalDate = chartPoints[chartPoints.length-1]?.rawDate || new Date();
+                    xirrCashFlows.push({ amount: totalValue, date: finalDate });
+                    const xirrDecimal = calculateXIRR(xirrCashFlows);
+                    xirrValue = xirrDecimal * 100;
+                }
+
+                const maxDrawdown = calculateMaxDrawdown(chartPoints);
+                const volatility = calculateVolatility(chartPoints);
+                const riskFreeRate = 3; 
+                const sharpeRatio = volatility > 0 ? (xirrValue - riskFreeRate) / volatility : 0;
+
+                const winningHoldings = holdingsArray.filter(h => h.return >= 0).length;
+                const winRate = holdingsArray.length > 0 ? (winningHoldings / holdingsArray.length) * 100 : 0;
+                
+                const bestPerformer = holdingsArray.length > 0 
+                    ? holdingsArray.reduce((prev, curr) => (prev.returnPcnt > curr.returnPcnt) ? prev : curr) 
+                    : null;
+                const worstPerformer = holdingsArray.length > 0 
+                    ? holdingsArray.reduce((prev, curr) => (prev.returnPcnt < curr.returnPcnt) ? prev : curr) 
+                    : null;
+
+                const avgInvestAmt = totalBuys > 0 ? netInvested / totalBuys : 0;
+
+                const summary = {
+                    totalValue: totalValue,
+                    totalCost: netInvested, // Display Net Invested as "Cost" for ROI
+                    totalReturn: totalValue - netInvested,
+                    returnPcnt: netInvested > 0 ? ((totalValue - netInvested) / netInvested) * 100 : 0,
+                    currency: mainCurrency,
+                    totalShares: totalHeldShares,
+                    avgCost: totalHeldShares > 0 ? costBasis / totalHeldShares : 0, // Avg Cost still uses Cost Basis (Tax view)
+                    annualizedReturn: xirrValue,
+                    maxDrawdown,
+                    volatility,
+                    sharpeRatio,
+                    winRate,
+                    bestPerformer,
+                    worstPerformer,
+                    avgInvestAmt,
+                    txCount: portfolioData.length
+                };
+
+                return {
+                    summary,
+                    chartData: filteredChartData,
+                    holdings: holdingsArray,
+                    transactions: portfolioData,
+                    pieData
+                };
+            }, [selectedPortfolio, rawData, timeRange, priceOverrides, exchangeRate]); 
+
+            const { summary, chartData, holdings, transactions, pieData } = portfolioDataResult || {
+                summary: {}, chartData: [], holdings: [], transactions: [], pieData: []
+            };
+
+            const portfolios = useMemo(() => {
+                const all = parseCSV(rawData);
+                return [...new Set(all.map(d => d.Portfolio).filter(Boolean))];
+            }, [rawData]);
+
+            const formatMoney = (amount, currency, primary = false) => {
+                const isUSD = currency === 'USD';
+                const twdAmount = isUSD ? amount * exchangeRate : amount;
+                
+                const twdString = 'NT' + new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', minimumFractionDigits: 0 }).format(twdAmount).replace('NT', ''); 
+                const srcString = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency, minimumFractionDigits: 0 }).format(amount);
+                const currencyName = currency === 'USD' ? '美金' : currency;
+
+                if (primary) return twdString;
+                if (currency === 'TWD') return ''; 
+                return `${currencyName}: ${srcString}`; 
+            };
+
+            const handleFileUpload = (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        setRawData(e.target.result);
+                        setPriceOverrides({});
+                    };
+                    reader.readAsText(file);
+                }
+            };
+
+            const handlePasteData = (text) => {
+                if (text && text.trim()) {
+                    setRawData(text);
+                    setPriceOverrides({});
+                }
+            };
+
+            const handleLoadDemo = () => {
+                setRawData(DEFAULT_CSV_DATA);
+                setSelectedPortfolio("美股VT三人組");
+                setPriceOverrides({});
+            };
+
+            const handleDownloadPDF = async () => {
+                if (isGeneratingPdf) return;
+                
+                if (!window.html2canvas || !window.jspdf) {
+                    alert("PDF 模組尚未載入完成或發生錯誤，請稍後再試。");
+                    return;
+                }
+                
+                setIsGeneratingPdf(true);
+                
+                await new Promise(r => setTimeout(r, 500));
+
+                try {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = 210;
+                    const pdfHeight = 297;
+                    const margin = 10;
+                    let currentHeight = margin;
+
+                    // Helper to add element to PDF
+                    const addElementToPdf = async (elementId) => {
+                        const element = document.getElementById(elementId);
+                        if (!element) return;
+
+                        const canvas = await window.html2canvas(element, { scale: 2, useCORS: true, logging: false });
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgProps = pdf.getImageProperties(imgData);
+                        const imgHeight = (imgProps.height * (pdfWidth - 2 * margin)) / imgProps.width;
+
+                        // Check if new page needed
+                        if (currentHeight + imgHeight > pdfHeight - margin) {
+                            pdf.addPage();
+                            currentHeight = margin;
+                        }
+
+                        pdf.addImage(imgData, 'PNG', margin, currentHeight, pdfWidth - 2 * margin, imgHeight);
+                        currentHeight += imgHeight + 5; // Add spacing
+                    };
+
+                    // Capture sections individually
+                    await addElementToPdf('pdf-header');
+                    await addElementToPdf('pdf-kpi');
+                    await addElementToPdf('pdf-risk');
+                    await addElementToPdf('pdf-charts');
+                    await addElementToPdf('pdf-holdings');
+                    
+                    const now = new Date();
+                    const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                    const safeName = selectedPortfolio.replace(/[^a-z0-9\u4e00-\u9fa5]/gi, '_'); 
+                    pdf.save(`${dateStr}_${safeName}_report.pdf`);
+
+                } catch (error) {
+                    console.error("PDF Generation Error:", error);
+                    alert("PDF 生成失敗: " + error.message);
+                } finally {
+                    setIsGeneratingPdf(false);
+                }
+            };
+
+            useEffect(() => {
+                if (portfolios.length > 0 && !portfolios.includes(selectedPortfolio)) {
+                    setSelectedPortfolio(portfolios[0]);
+                }
+            }, [portfolios, selectedPortfolio]);
+
+            const reversedTransactions = useMemo(() => [...transactions].reverse(), [transactions]);
+            const currentTransactions = reversedTransactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+            const totalPages = Math.ceil(reversedTransactions.length / itemsPerPage);
+
+            if (!rawData) {
+                return (
+                    <React.Fragment>
+                        <PasteModal isOpen={isPasteModalOpen} onClose={() => setIsPasteModalOpen(false)} onPaste={handlePasteData} />
+                        <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".csv" className="hidden" />
+                        <EmptyState onImport={() => fileInputRef.current.click()} onPaste={() => setIsPasteModalOpen(true)} onLoadDemo={handleLoadDemo} />
+                    </React.Fragment>
+                );
+            }
+
+            return (
+                <div className="min-h-screen bg-gray-50 text-gray-900 font-sans pb-12">
+                    <PasteModal isOpen={isPasteModalOpen} onClose={() => setIsPasteModalOpen(false)} onPaste={handlePasteData} />
+
+                    {/* Navbar */}
+                    <nav className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm no-print">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex items-center justify-between h-16">
+                                <div className="flex items-center gap-2 cursor-pointer" onClick={() => setRawData(null)} title="返回首頁">
+                                    <div className="bg-blue-600 p-1.5 rounded-lg">
+                                        <Briefcase size={20} className="text-white" />
+                                    </div>
+                                    <span className="font-bold text-xl tracking-tight text-gray-900">Portfolio<span className="text-blue-600">Viz</span></span>
+                                </div>
+                                
+                                <div className="flex items-center gap-3">
+                                    {/* 匯率設定 */}
+                                    <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+                                        <span className="text-sm font-bold text-gray-500">USD/TWD</span>
+                                        <input 
+                                            type="number" 
+                                            value={exchangeRate}
+                                            onChange={(e) => setExchangeRate(parseFloat(e.target.value))}
+                                            className="w-16 bg-transparent text-sm font-mono font-bold text-blue-600 focus:outline-none text-right"
+                                        />
+                                    </div>
+
+                                    <button type="button" onClick={() => setIsPasteModalOpen(true)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hidden sm:flex">
+                                        <Clipboard size={16} />
+                                        <span>貼上</span>
+                                    </button>
+
+                                    <button type="button" onClick={() => fileInputRef.current.click()} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hidden sm:flex">
+                                        <Upload size={16} />
+                                        <span>匯入</span>
+                                    </button>
+                                    <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".csv" className="hidden" />
+
+                                    <button type="button" onClick={handleDownloadPDF} disabled={isGeneratingPdf} className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed min-w-[110px] justify-center">
+                                        {isGeneratingPdf ? <Loader2 size={16} className="animate-spin"/> : <Download size={16} />}
+                                        <span>{isGeneratingPdf ? "生成中..." : "下載 PDF"}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+
+                    <main id="dashboard-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-gray-50">
+                        {/* Header Section */}
+                        <div id="pdf-header" className="pdf-section flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h1 className="text-3xl font-extrabold text-gray-900">{selectedPortfolio}</h1>
+                                    <div className="no-print">
+                                        <select 
+                                            value={selectedPortfolio} 
+                                            onChange={(e) => { setSelectedPortfolio(e.target.value); setCurrentPage(1); setPriceOverrides({}); }}
+                                            className="bg-gray-100 text-sm font-medium px-2 py-1 rounded border border-gray-300 cursor-pointer outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            {portfolios.map(p => <option key={p} value={p}>{p}</option>)}
+                                        </select>
+                                    </div>
+                                </div>
+                                <p className="text-gray-500 text-sm">投資組合深度分析報告 • 結算日 {new Date().toLocaleDateString()}</p>
+                            </div>
+                            <div className="flex gap-2 no-print">
+                                <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100">定期定額</span>
+                                <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-100">長期持有</span>
+                            </div>
+                        </div>
+
+                        {/* Primary KPIs */}
+                        <div id="pdf-kpi" className="pdf-section grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <MetricCard 
+                                title="目前市值 (Market Value)" 
+                                value={formatMoney(summary.totalValue, summary.currency, true)}
+                                subValue={formatMoney(summary.totalValue, summary.currency, false)}
+                                trend={summary.returnPcnt >= 0 ? 'up' : 'down'}
+                            />
+                            <MetricCard 
+                                title="淨投入本金 (Net Invested)" 
+                                value={formatMoney(summary.totalCost, summary.currency, true)}
+                                subValue={formatMoney(summary.totalCost, summary.currency, false)}
+                                trend="neutral"
+                            />
+                            <MetricCard 
+                                title="總報酬 (Total Return)" 
+                                value={formatMoney(summary.totalReturn, summary.currency, true)}
+                                subValue={`${summary.returnPcnt > 0 ? '+' : ''}${summary.returnPcnt.toFixed(2)}% (總報酬率)`}
+                                trend={summary.totalReturn >= 0 ? 'up' : 'down'}
+                            />
+                            <MetricCard 
+                                title="內部報酬率 (XIRR)" 
+                                value={`${summary.annualizedReturn.toFixed(2)}%`}
+                                subValue="年化資金效率"
+                                trend={summary.annualizedReturn > 0 ? 'up' : 'down'}
+                            />
+                        </div>
+
+                        {/* Risk & Advanced Metrics */}
+                        <div id="pdf-risk" className="pdf-section bg-blue-50 rounded-xl p-6 border border-blue-100">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-blue-900 font-bold flex items-center gap-2">
+                                    <Activity size={20} /> 進階風險指標 (Risk Metrics)
+                                </h3>
+                                <div className="flex items-center gap-2 text-blue-700 text-xs font-mono bg-blue-100 px-2 py-1 rounded">
+                                    <span>匯率基準: {exchangeRate}</span>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 border-b border-blue-200 pb-6">
+                                <div className="flex flex-col">
+                                    <span className="text-blue-600 text-sm font-medium">最大回撤 (Max Drawdown)</span>
+                                    <span className="text-2xl font-bold text-gray-900">-{summary.maxDrawdown.toFixed(2)}%</span>
+                                    <span className="text-xs text-gray-500">歷史資產高點回落的最大幅度</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-blue-600 text-sm font-medium">波動率 (Volatility)</span>
+                                    <span className="text-2xl font-bold text-gray-900">{summary.volatility.toFixed(2)}%</span>
+                                    <span className="text-xs text-gray-500">年化資產變動標準差 (估算)</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-blue-600 text-sm font-medium">夏普比率 (Sharpe Ratio)</span>
+                                    <span className="text-2xl font-bold text-gray-900">{summary.sharpeRatio.toFixed(2)}</span>
+                                    <span className="text-xs text-gray-500">每承擔一單位風險獲得的超額報酬</span>
+                                </div>
+                            </div>
+                            
+                            {/* New Investment Metrics */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div>
+                                    <span className="text-blue-600 text-xs font-medium block">獲利勝率 (Win Rate)</span>
+                                    <span className="text-lg font-bold text-gray-800">{summary.winRate.toFixed(1)}%</span>
+                                </div>
+                                <div>
+                                    <span className="text-blue-600 text-xs font-medium block">平均投入 (Avg Invest)</span>
+                                    <span className="text-lg font-bold text-gray-800">{formatMoney(summary.avgInvestAmt, summary.currency, true).replace('NT', '')}</span>
+                                </div>
+                                <div>
+                                    <span className="text-blue-600 text-xs font-medium block">最佳表現 (Best)</span>
+                                    <span className="text-lg font-bold text-red-600 truncate block" title={summary.bestPerformer?.name}>
+                                        {summary.bestPerformer ? summary.bestPerformer.symbol : '-'}
+                                        <span className="text-xs ml-1">({summary.bestPerformer?.returnPcnt.toFixed(0)}%)</span>
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-blue-600 text-xs font-medium block">最差表現 (Worst)</span>
+                                    <span className="text-lg font-bold text-green-600 truncate block" title={summary.worstPerformer?.name}>
+                                        {summary.worstPerformer ? summary.worstPerformer.symbol : '-'}
+                                        <span className="text-xs ml-1">({summary.worstPerformer?.returnPcnt.toFixed(0)}%)</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Charts Row */}
+                        <div id="pdf-charts" className="pdf-section grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div className="lg:col-span-2 bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+                                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                        <TrendingUp size={20} className="text-blue-600" />
+                                        資產成長趨勢
+                                    </h3>
+                                    <div className="flex bg-gray-100 rounded-lg p-1 no-print overflow-x-auto">
+                                        {['YTD', '1Y', '3Y', '5Y', '10Y', 'ALL'].map((range) => (
+                                            <button
+                                                type="button"
+                                                key={range}
+                                                onClick={() => setTimeRange(range)}
+                                                className={`px-3 py-1 text-xs font-medium rounded-md transition-all whitespace-nowrap ${
+                                                    timeRange === range 
+                                                    ? 'bg-white text-gray-900 shadow-sm' 
+                                                    : 'text-gray-500 hover:text-gray-700'
+                                                }`}
+                                            >
+                                                {range === 'YTD' ? '今年' : range === 'ALL' ? '全部' : range.replace('Y', '年')}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                
+                                <div className="h-[300px] w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                            <defs>
+                                                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                                </linearGradient>
+                                            </defs>
+                                            <XAxis 
+                                                dataKey="date" 
+                                                stroke="#9ca3af" 
+                                                tick={{fill: '#6b7280', fontSize: 12}}
+                                                tickFormatter={(str) => str.substring(0, 7)}
+                                                minTickGap={40}
+                                            />
+                                            <YAxis 
+                                                stroke="#9ca3af" 
+                                                tick={{fill: '#6b7280', fontSize: 12}}
+                                                tickFormatter={(val) => `${val/1000}k`}
+                                            />
+                                            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" vertical={false} />
+                                            <Tooltip 
+                                                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb', color: '#111827', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                                                itemStyle={{ color: '#374151' }}
+                                                formatter={(value) => formatMoney(value, summary.currency, false)}
+                                            />
+                                            <Legend />
+                                            <Area type="monotone" dataKey="value" name="市值 (Value)" stroke="#3b82f6" strokeWidth={2} fillOpacity={1} fill="url(#colorValue)" />
+                                            <Area type="monotone" dataKey="invested" name="淨成本 (Net Invested)" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" fillOpacity={0} />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+
+                            <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm flex flex-col">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <PieIcon size={20} className="text-indigo-600" />
+                                    資產配置
+                                </h3>
+                                <div className="flex-1 min-h-[200px] relative">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={pieData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={50}
+                                                outerRadius={70}
+                                                paddingAngle={5}
+                                                dataKey="value"
+                                            >
+                                                {pieData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip formatter={(value) => formatMoney(value, summary.currency, false)} />
+                                            <Legend layout="vertical" verticalAlign="middle" align="right" wrapperStyle={{ fontSize: '11px' }} />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Detailed Holdings Table */}
+                        <div id="pdf-holdings" className="pdf-section bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                            <div className="p-6 border-b border-gray-200">
+                                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <Layers size={20} className="text-purple-600" />
+                                    個別資產明細 (Holdings)
+                                </h3>
+                                <p className="text-xs text-gray-500 mt-1 no-print">
+                                    點擊價格旁的編輯圖示可手動更新最新市價。
+                                </p>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-gray-50 text-gray-500 font-semibold border-b border-gray-200">
+                                        <tr>
+                                            <th className="px-6 py-3">代號</th>
+                                            <th className="px-6 py-3 text-right">股數</th>
+                                            <th className="px-6 py-3 text-right">均價 (原幣)</th>
+                                            <th className="px-6 py-3 text-right">現價 (原幣)</th>
+                                            <th className="px-6 py-3 text-right">總市值 (TWD)</th>
+                                            <th className="px-6 py-3 text-right">報酬率</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {holdings.map((h) => (
+                                            <tr key={h.symbol} className="hover:bg-gray-50 transition-colors">
+                                                <td className="px-6 py-4 font-bold text-gray-900">{h.symbol}</td>
+                                                <td className="px-6 py-4 text-right font-mono">{h.shares.toFixed(2)}</td>
+                                                <td className="px-6 py-4 text-right font-mono text-gray-600">
+                                                    {formatMoney(h.costBasis / h.shares, summary.currency, false)}
+                                                </td>
+                                                <td className="px-6 py-4 text-right font-mono">
+                                                    {editingSymbol === h.symbol ? (
+                                                        <div className="flex items-center justify-end gap-1">
+                                                            <input 
+                                                                type="number" 
+                                                                value={editValue} 
+                                                                onChange={(e) => setEditValue(e.target.value)}
+                                                                className="w-20 px-1 py-0.5 border border-blue-400 rounded text-right"
+                                                                autoFocus
+                                                            />
+                                                            <button type="button" onClick={() => {
+                                                                if (editValue && !isNaN(editValue)) {
+                                                                    setPriceOverrides(prev => ({...prev, [h.symbol]: parseFloat(editValue)}));
+                                                                }
+                                                                setEditingSymbol(null);
+                                                            }} className="text-green-600"><Check size={14}/></button>
+                                                            <button type="button" onClick={() => setEditingSymbol(null)} className="text-red-500"><X size={14}/></button>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="flex items-center justify-end gap-2 group">
+                                                            <span className={h.isOverridden ? "text-blue-600 font-bold" : ""}>
+                                                                {formatMoney(h.price, summary.currency, false)}
+                                                            </span>
+                                                            <button onClick={() => { setEditingSymbol(h.symbol); setEditValue(h.price); }} className="no-print text-gray-400 hover:text-blue-600 opacity-0 group-hover:opacity-100">
+                                                                <Edit2 size={14} />
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                <td className="px-6 py-4 text-right font-bold font-mono">
+                                                    {formatMoney(h.value, summary.currency, true)}
+                                                </td>
+                                                <td className="px-6 py-4 text-right font-mono">
+                                                    <span className={`px-2 py-1 rounded text-xs font-bold ${h.returnPcnt >= 0 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                                                        {h.returnPcnt > 0 ? '+' : ''}{h.returnPcnt.toFixed(2)}%
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Transaction History (Simplified for PDF) */}
+                        <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden no-print">
+                            <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                                <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                    <Calendar size={20} className="text-orange-500" /> 交易紀錄 
+                                    <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">共 {summary.txCount} 筆</span>
+                                </h3>
+                                <div className="flex items-center gap-2 no-print">
+                                    <button type="button" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="p-1 rounded hover:bg-gray-100 disabled:opacity-50"><ChevronLeft size={16} /></button>
+                                    <span className="text-sm text-gray-600">頁 {currentPage} / {totalPages}</span>
+                                    <button type="button" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="p-1 rounded hover:bg-gray-100 disabled:opacity-50"><ChevronRight size={16} /></button>
+                                </div>
+                            </div>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm">
+                                    <thead className="bg-gray-50 text-gray-500 font-semibold">
+                                        <tr>
+                                            <th className="px-6 py-3">日期</th>
+                                            <th className="px-6 py-3">代號</th>
+                                            <th className="px-6 py-3">類型</th>
+                                            <th className="px-6 py-3 text-right">股數</th>
+                                            <th className="px-6 py-3 text-right">單價</th>
+                                            <th className="px-6 py-3 text-right">總額</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {currentTransactions.map((tx, i) => (
+                                            <tr key={i} className="hover:bg-gray-50">
+                                                <td className="px-6 py-3">{tx['Transaction Date'].split(' ')[0]}</td>
+                                                <td className="px-6 py-3 font-bold">{tx.Symbol}</td>
+                                                <td className="px-6 py-3">
+                                                    <span className={`px-2 py-1 rounded text-xs ${tx.Type === 'Buy' ? 'bg-red-100 text-red-700' : tx.Type.includes('Sell') ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>{tx.Type}</span>
+                                                </td>
+                                                <td className="px-6 py-3 text-right font-mono">{parseFloat(tx['Shares Owned']).toFixed(2)}</td>
+                                                <td className="px-6 py-3 text-right font-mono">${parseFloat(tx['Cost Per Share']).toFixed(2)}</td>
+                                                <td className="px-6 py-3 text-right font-mono">${(parseFloat(tx['Shares Owned']) * parseFloat(tx['Cost Per Share'])).toFixed(2)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
