@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business English: Purchase Order & Delivery Update</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        teal: { 600: '#0d9488', 500: '#14b8a6' },
+                        orange: { 500: '#f97316', 600: '#ea580c' },
+                        slate: { 850: '#1e293b' } 
+                    },
+                    fontFamily: {
+                        sans: ['"Roboto"', '"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Merriweather"', 'serif'],
+                    },
+                    lineHeight: {
+                        'loose': '2.8',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Noto+Sans+TC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans TC', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+
+        /* Section Card Style */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        /* ----------------------------------------------------
+           STYLE: Trans-Bike Consistent Chunking
+           ---------------------------------------------------- */
+        
+        .highlight-box {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s ease;
+        }
+        
+        .highlight-box:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        }
+
+        .sentence-chunk {
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            padding: 0 2px;
+            position: relative;
+            vertical-align: bottom;
+        }
+
+        /* Tag Labels */
+        .tag-label {
+            display: block;
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap; 
+            letter-spacing: 0.025em;
+        }
+        
+        /* The Text Content */
+        .chunk-text {
+            font-family: 'Merriweather', serif;
+            font-size: 1.125rem;
+            color: #1f2937;
+            padding-bottom: 2px;
+        }
+
+        /* Grammar Tags Styling */
+        .tag-s .tag-label { color: #2563eb; } 
+        .tag-s .chunk-text { border-bottom: 3px solid #93c5fd; } 
+
+        .tag-v .tag-label { color: #dc2626; } 
+        .tag-v .chunk-text { border-bottom: 3px solid #fca5a5; } 
+
+        .tag-o .tag-label { color: #16a34a; } 
+        .tag-o .chunk-text { border-bottom: 3px solid #86efac; } 
+
+        .tag-c .tag-label { color: #ea580c; } 
+        .tag-c .chunk-text { border-bottom: 3px solid #fdba74; } 
+
+        .tag-mod .tag-label { color: #ca8a04; } 
+        .tag-mod .chunk-text { border-bottom: 3px solid #fde047; } 
+
+        .tag-prep .tag-label { color: #9333ea; } 
+        .tag-prep .chunk-text { border-bottom: 3px solid #d8b4fe; } 
+
+        .tag-conn .tag-label { color: #4b5563; } 
+        .tag-conn .chunk-text { border-bottom: 3px solid #cbd5e1; } 
+
+
+        /* Translation Box */
+        .translation-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #94a3b8;
+            border-radius: 0 8px 8px 0;
+            padding: 10px 14px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            color: #475569;
+            font-size: 1rem;
+            display: flex;
+            align-items: flex-start;
+            line-height: 1.6;
+        }
+
+        /* Grammar Note */
+        .grammar-note {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 12px 16px;
+            margin-top: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.95rem;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .grammar-note ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+        
+        .grammar-note li {
+            margin-bottom: 4px;
+        }
+
+        /* Audio Button */
+        .audio-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        .audio-btn:active { transform: scale(0.95); }
+
+        .audio-btn-small {
+            width: 26px;
+            height: 26px;
+            font-size: 0.75rem; 
+            margin-left: 6px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            color: #64748b;
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            vertical-align: middle;
+        }
+        .audio-btn-small:hover {
+            color: #4f46e5;
+            border-color: #818cf8;
+            background-color: #eef2ff;
+        }
+        
+        .audio-btn-large {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #eff6ff;
+            color: #4f46e5;
+        }
+        .audio-btn-large:hover {
+            background-color: #e0e7ff;
+        }
+
+        /* Vocab Styles */
+        .vocab-level {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            border: 1px solid transparent;
+        }
+        .level-gold { background-color: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+        .level-blue { background-color: #eff6ff; color: #1d4ed8; border-color: #dbeafe; }
+        .level-green { background-color: #f0fdf4; color: #15803d; border-color: #dcfce7; }
+
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto pb-20">
+
+    <!-- Header -->
+    <header class="mb-10 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-3 tracking-tight">
+            Delivery Update & Purchase Order
+        </h1>
+        <p class="text-xl text-slate-500 font-medium">Business English Interactive Analysis</p>
+    </header>
+
+    <!-- SECTION 1: ORIGINAL TEXT -->
+    <section class="section-card" id="original-text">
+        <div class="bg-indigo-600 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-file-alt mr-3 opacity-80"></i> Original Text Reading
+            </h2>
+            <button onclick="speakText(document.getElementById('full-content').innerText)" class="bg-white/20 hover:bg-white/30 text-white px-4 py-1.5 rounded-full text-sm font-medium transition flex items-center backdrop-blur-sm border border-white/30">
+                <i class="fas fa-play mr-2 text-xs"></i> Play All
+            </button>
+        </div>
+        
+        <div class="p-6 md:p-10 font-serif text-lg leading-relaxed text-slate-700 space-y-6" id="full-content">
+            
+            <!-- PO Part -->
+            <div class="bg-slate-50 p-4 rounded border border-slate-200 text-sm md:text-base">
+                <p class="font-bold">Purchase Order #BME2–36561, Date: April 4</p>
+                <div class="grid md:grid-cols-2 gap-4 mt-2">
+                    <div>
+                        <p class="font-bold underline">Supplier</p>
+                        <p>ETR Computing Corp.</p>
+                        <p>416 B, 418 Garrett St, Charlottesville, VA 22902</p>
+                        <p>sales@etrcomputing.com</p>
+                    </div>
+                    <div>
+                        <p class="font-bold underline">Buyer Information</p>
+                        <p>The Boxley Machinery & Equipment Co. Inc</p>
+                        <p>206 W Main St, Louisa, VA 23093</p>
+                        <p>lilianlee@gmail.com</p>
+                    </div>
+                </div>
+                
+                <table class="w-full mt-4 border border-slate-300 text-left">
+                    <thead class="bg-slate-200">
+                        <tr>
+                            <th class="p-2 border">Item</th>
+                            <th class="p-2 border text-center">QTY</th>
+                            <th class="p-2 border text-right">Unit Price</th>
+                            <th class="p-2 border text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="p-2 border">Notebook M13-5320-R18</td><td class="p-2 border text-center">5</td><td class="p-2 border text-right">$1,000</td><td class="p-2 border text-right">$5,000</td></tr>
+                        <tr><td class="p-2 border">Notebook K14-5425-R17</td><td class="p-2 border text-center">5</td><td class="p-2 border text-right">$1,200</td><td class="p-2 border text-right">$6,000</td></tr>
+                        <tr><td class="p-2 border">Notebook P16-5620-R26</td><td class="p-2 border text-center">10</td><td class="p-2 border text-right">$1,800</td><td class="p-2 border text-right">$18,000</td></tr>
+                        <tr><td class="p-2 border">Notebook G15-5530-R17</td><td class="p-2 border text-center">5</td><td class="p-2 border text-right">$2,100</td><td class="p-2 border text-right">$10,500</td></tr>
+                        <tr class="font-bold"><td class="p-2 border" colspan="3" >Total:</td><td class="p-2 border text-right">$39,500</td></tr>
+                    </tbody>
+                </table>
+
+                <div class="mt-4 space-y-2">
+                    <p class="font-bold underline">Shipping</p>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Shipping Address:</strong> The Boxley Machinery & Equipment Co. Inc, 206 W Main St, Louisa,VA 23093</li>
+                        <li><strong>Shipping Method:</strong> Please arrange for the items to be shipped viaFedEx.</li>
+                        <li><strong>Estimated Delivery Date:</strong> The buyer requests that the items be delivered within 5 business days from the date of sending this purchase order.</li>
+                    </ul>
+                    
+                    <p class="font-bold underline mt-2">Payment</p>
+                    <ul class="list-disc pl-5">
+                        <li><strong>Payment Terms:</strong> The buyer agrees to pay the total amount of $39,500 in full upon receipt of the invoice.</li>
+                        <li><strong>Payment Due Date:</strong> The buyer will make the payment within 14 days from the date of receiving the invoice.</li>
+                        <li><strong>Late Payment Charge:</strong> In case of late payment, the buyer acknowledges that they may be subject to a late payment charge of 5% of the total invoice amount per month or a flat fee of $500, whichever is higher, as per the supplier's terms and conditions.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="border-slate-200 my-8">
+
+            <!-- Email Part -->
+            <div>
+                <p>Date: April 5</p>
+                <p class="mt-2"><span class="font-bold text-slate-900">Subject:</span> Delivery Update for Purchase Order #BME2–36561</p>
+                <p class="mt-4">Dear Lilian Lee,</p>
+                
+                <p class="mt-4">Regarding your recent purchase order, dated April 4, we regret to inform you that we cannot deliver all the items within 5 business days. However, we propose shipping a partial quantity by the 6th business day to accommodate your urgent needs. This way, you can receive a portion of the order sooner while we work on fulfilling the rest. We kindly request your approval for this revised delivery plan. Once approved, we will ship the available items to The Boxley Machinery & Equipment Co. Inc, located at 206 W Main St, Louisa, VA 23093, and provide an invoice accordingly. The remaining items will be shipped promptly thereafter.</p>
+                
+                <p class="mt-4">We apologize for any inconvenience caused and value our partnership with The Boxley Machinery & Equipment Co. Inc. Please confirm your agreement by April 6. Feel free to reach out to us at sales@etrcomputing.com with any questions. Thank you for your understanding.</p>
+                
+                <div class="mt-8">
+                    <p>Sincerely,</p>
+                    <br>
+                    <p>Peterson Chen</p>
+                    <p>CEO, ETR Computing Corp.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEGEND -->
+    <div class="sticky top-2 z-50 bg-white/95 backdrop-blur shadow-sm border border-slate-200 rounded-lg p-3 mb-8 flex flex-wrap gap-3 justify-center text-xs md:text-sm select-none">
+        <div class="flex items-center"><div class="w-3 h-3 bg-blue-500 rounded-full mr-1"></div><span class="font-bold text-blue-700">S 主詞</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-red-500 rounded-full mr-1"></div><span class="font-bold text-red-700">V 動詞</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-green-500 rounded-full mr-1"></div><span class="font-bold text-green-700">O 受詞</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-yellow-500 rounded-full mr-1"></div><span class="font-bold text-yellow-700">Mod 修飾/補語</span></div>
+        <div class="flex items-center"><div class="w-3 h-3 bg-purple-500 rounded-full mr-1"></div><span class="font-bold text-purple-700">Prep 介系詞</span></div>
+    </div>
+
+    <!-- SECTION 2: SENTENCE STRUCTURE ANALYSIS -->
+    <section class="section-card" id="structure-analysis">
+        <div class="bg-rose-500 px-6 py-4 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-project-diagram mr-3 opacity-80"></i> 
+                Full Sentence Structure Analysis
+            </h2>
+        </div>
+
+        <div class="p-6 md:p-10">
+            
+            <!-- Sentence: Shipping Method (PO) -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Mod (Polite)</span><span class="chunk-text">Please</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">arrange</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O (Inf Phr)</span><span class="chunk-text">for the items to be shipped via FedEx.</span>
+                    </span>
+                    <button onclick="speakText('Please arrange for the items to be shipped via FedEx.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>請安排透過 FedEx 運送這些物品。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>arrange for sth to be + Vpp</strong>：安排某事被...。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence: Estimated Delivery (PO) -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">The buyer</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">requests</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">Noun Clause</span><span class="chunk-text">that the items be delivered within 5 business days from the date of sending this purchase order.</span>
+                    </span>
+                    <button onclick="speakText('The buyer requests that the items be delivered within 5 business days from the date of sending this purchase order.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>買方要求物品需在發送此採購訂單後的 5 個工作日內送達。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>request that ... (should) be delivered</strong>：虛擬語氣，be 動詞使用原形。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence: Payment Terms (PO) -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">The buyer</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">agrees to pay</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">the total amount of $39,500</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv Phr (Modifies 'pay')</span><span class="chunk-text">in full</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Prep Phr (Modifies 'pay')</span><span class="chunk-text">upon receipt of the invoice.</span>
+                    </span>
+                    <button onclick="speakText('The buyer agrees to pay the total amount of $39,500 in full upon receipt of the invoice.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>買方同意在收到發票時全額支付總金額 39,500 美元。</span>
+                </div>
+            </div>
+
+            <!-- Sentence: Late Payment (PO) -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Prep Phr (Modifies 'acknowledges')</span><span class="chunk-text">In case of late payment,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">the buyer</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">acknowledges</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O (Noun Clause)</span><span class="chunk-text">that they may be subject to a late payment charge</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adj Phr (Modifies 'charge')</span><span class="chunk-text">of 5% of the total invoice amount per month or a flat fee of $500,</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adj Clause (Modifies 'charge/fee')</span><span class="chunk-text">whichever is higher,</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Prep Phr (Modifies 'subject')</span><span class="chunk-text">as per the supplier's terms and conditions.</span>
+                    </span>
+                    <button onclick="speakText('In case of late payment, the buyer acknowledges that they may be subject to a late payment charge of 5% of the total invoice amount per month or a flat fee of $500, whichever is higher, as per the supplier\'s terms and conditions.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>如果逾期付款，買方承認可能需支付滯納金，金額為發票總額的 5% 或 500 美元固定費用（以較高者為準），具體依供應商條款而定。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>In case of + N</strong>：以防...；萬一...。</li>
+                        <li><strong>be subject to</strong>：易受...影響；須服從...。</li>
+                        <li><strong>whichever is higher</strong>：簡化的關係子句 (Reduced Relative Clause)，修飾前方的兩種費用選項。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 1 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr (Modifies 'inform')</span><span class="chunk-text">Regarding your recent purchase order, dated April 4,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">we</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">regret to inform</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">you</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">Noun Clause (DO)</span><span class="chunk-text">that we cannot deliver all the items within 5 business days.</span>
+                    </span>
+                    <button onclick="speakText('Regarding your recent purchase order, dated April 4, we regret to inform you that we cannot deliver all the items within 5 business days.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>關於您最近日期為 4 月 4 日的採購訂單，我們很遺憾地通知您，我們無法在 5 個工作日內交付所有物品。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>Regret to + V</strong>：遺憾地(通知/宣佈)某壞消息。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 2 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv (Connector)</span><span class="chunk-text">However,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">we</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">propose</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O (Gerund Phr)</span><span class="chunk-text">shipping a partial quantity</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Prep Phr (Modifies 'shipping')</span><span class="chunk-text">by the 6th business day</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Inf Phr (Modifies 'propose')</span><span class="chunk-text">to accommodate your urgent needs.</span>
+                    </span>
+                    <button onclick="speakText('However, we propose shipping a partial quantity by the 6th business day to accommodate your urgent needs.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>然而，我們建議在第 6 個工作日前運送部分數量，以滿足您的緊急需求。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>Propose + V-ing</strong>：建議做某事。此處 shipping 為動名詞當受詞。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 3 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv Phr (Modifies 'receive')</span><span class="chunk-text">This way,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">you</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">can receive</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">a portion of the order</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv (Modifies 'receive')</span><span class="chunk-text">sooner</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv Clause (Modifies 'receive')</span><span class="chunk-text">while we work on fulfilling the rest.</span>
+                    </span>
+                    <button onclick="speakText('This way, you can receive a portion of the order sooner while we work on fulfilling the rest.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>這樣一來，您就可以更快收到部分訂單，同時我們也會繼續處理剩餘的部分。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 4 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">We</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv (Modifies 'request')</span><span class="chunk-text">kindly</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">request</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">your approval for this revised delivery plan.</span>
+                    </span>
+                    <button onclick="speakText('We kindly request your approval for this revised delivery plan.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>我們懇請您批准這個修訂後的交貨計畫。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 5 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv Clause (Modifies 'ship')</span><span class="chunk-text">Once approved,</span>
+                    </span>
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">we</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">will ship</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">the available items</span>
+                    </span>
+                    <span class="sentence-chunk tag-prep">
+                        <span class="tag-label">Prep Phr (Modifies 'ship')</span><span class="chunk-text">to The Boxley Machinery & Equipment Co. Inc, located at 206 W Main St, Louisa, VA 23093,</span>
+                    </span>
+                    <span class="sentence-chunk tag-conn">
+                        <span class="tag-label">Conj</span><span class="chunk-text">and</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">provide</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">an invoice</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv (Modifies 'provide')</span><span class="chunk-text">accordingly.</span>
+                    </span>
+                    <button onclick="speakText('Once approved, we will ship the available items to The Boxley Machinery & Equipment Co. Inc, located at 206 W Main St, Louisa, VA 23093, and provide an invoice accordingly.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>一旦獲得批准，我們將把現有物品運送至 The Boxley Machinery...，並相應地提供發票。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>Once approved</strong>：連詞(Once) + 過去分詞(approved) 的省略句，還原為 "Once it is approved"。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 6 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">The remaining items</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Passive)</span><span class="chunk-text">will be shipped</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Adv (Modifies 'shipped')</span><span class="chunk-text">promptly thereafter.</span>
+                    </span>
+                    <button onclick="speakText('The remaining items will be shipped promptly thereafter.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>剩餘的物品將隨後立即發貨。</span>
+                </div>
+            </div>
+
+            <!-- Sentence 7 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-s">
+                        <span class="tag-label">S</span><span class="chunk-text">We</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">apologize for</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">any inconvenience caused</span>
+                    </span>
+                    <span class="sentence-chunk tag-conn">
+                        <span class="tag-label">Conj</span><span class="chunk-text">and</span>
+                    </span>
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V</span><span class="chunk-text">value</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">our partnership with The Boxley Machinery & Equipment Co. Inc.</span>
+                    </span>
+                    <button onclick="speakText('We apologize for any inconvenience caused and value our partnership with The Boxley Machinery & Equipment Co. Inc.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>對於造成的任何不便，我們深表歉意，並重視我們與 Boxley Machinery 的合作關係。</span>
+                </div>
+                <div class="grammar-note">
+                    <strong><i class="fas fa-lightbulb text-yellow-600 mr-2"></i>文法亮點</strong>
+                    <ul>
+                        <li><strong>inconvenience caused</strong>：caused 是過去分詞，後位修飾 inconvenience (造成的不便)。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sentence 8 -->
+            <div class="highlight-box">
+                <div class="mb-2 text-base md:text-lg leading-loose font-serif text-gray-800">
+                    <span class="sentence-chunk tag-v">
+                        <span class="tag-label">V (Imp)</span><span class="chunk-text">Please confirm</span>
+                    </span>
+                    <span class="sentence-chunk tag-o">
+                        <span class="tag-label">O</span><span class="chunk-text">your agreement</span>
+                    </span>
+                    <span class="sentence-chunk tag-mod">
+                        <span class="tag-label">Prep Phr (Modifies 'confirm')</span><span class="chunk-text">by April 6.</span>
+                    </span>
+                    <button onclick="speakText('Please confirm your agreement by April 6.')" class="audio-btn audio-btn-small"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="translation-box">
+                    <i class="fas fa-language text-gray-400 mt-1 mr-3"></i>
+                    <span>請在 4 月 6 日前確認您的同意。</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 3: VOCABULARY -->
+    <section class="section-card" id="vocabulary">
+        <div class="bg-teal-600 px-6 py-4">
+            <h2 class="text-xl font-bold text-white flex items-center">
+                <i class="fas fa-tags mr-3 opacity-80"></i> 
+                TOEIC Core Vocabulary & Phrases
+            </h2>
+        </div>
+        
+        <div class="p-6 md:p-10 grid grid-cols-1 md:grid-cols-2 gap-4" id="vocab-grid">
+            <!-- JS Generated content -->
+        </div>
+    </section>
+
+    <footer class="mt-16 text-center text-slate-400 text-sm pb-12">
+        <p>Generated by AI Teaching Assistant &copy; 2024</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- TEXT TO SPEECH OPTIMIZATION ---
+        const synth = window.speechSynthesis;
+        let voices = [];
+
+        // Ensure voices are loaded (crucial for Chrome/Android)
+        function loadVoices() {
+            voices = synth.getVoices();
+        }
+        
+        loadVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function speakText(text) {
+            if (synth.speaking) synth.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 1; // 1.0 is more natural than 0.9 for modern engines
+            utterance.pitch = 1;
+            
+            // Priority list for better sounding voices
+            const preferredVoices = [
+                'Google US English', // Chrome/Android
+                'Samantha',          // macOS/iOS
+                'Microsoft Zira',    // Windows
+                'Microsoft David'    // Windows
+            ];
+
+            let selectedVoice = null;
+
+            // Try to find a preferred voice
+            for (const name of preferredVoices) {
+                selectedVoice = voices.find(voice => voice.name.includes(name));
+                if (selectedVoice) break;
+            }
+
+            // Fallback to any en-US voice if no preferred voice found
+            if (!selectedVoice) {
+                selectedVoice = voices.find(voice => voice.lang === 'en-US');
+            }
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            synth.speak(utterance);
+        }
+
+        // --- VOCABULARY DATA ---
+        const vocabList = [
+            { word: "purchase order", pos: "n.", ipa: "/ˈpɝː.tʃəs ˈɔːr.dɚ/", level: "Blue", def: "採購訂單", example: "Please send the purchase order by Friday.", trans: "請在週五前發送採購訂單。" },
+            { word: "supplier", pos: "n.", ipa: "/səˈplaɪ.ɚ/", level: "Blue", def: "供應商", example: "We need to find a new supplier for parts.", trans: "我們需要尋找新的零件供應商。" },
+            { word: "machinery", pos: "n.", ipa: "/məˈʃiː.nɚ.i/", level: "Blue", def: "機械；機器", example: "The factory has new machinery.", trans: "工廠有新的機械。" },
+            { word: "equipment", pos: "n.", ipa: "/ɪˈkwɪp.mənt/", level: "Blue", def: "設備；器材", example: "Safety equipment is mandatory.", trans: "安全設備是強制性的。" },
+            { word: "quantity", pos: "n.", ipa: "/ˈkwɑːn.t̬ə.t̬i/", level: "Blue", def: "數量", example: "The quantity of items is correct.", trans: "物品的數量是正確的。" },
+            { word: "unit price", pos: "n.", ipa: "/ˈjuː.nɪt praɪs/", level: "Blue", def: "單價", example: "The unit price has increased.", trans: "單價已經上漲。" },
+            { word: "shipping address", pos: "n.", ipa: "/ˈʃɪp.ɪŋ ˈæd.res/", level: "Green", def: "送貨地址", example: "Please confirm your shipping address.", trans: "請確認您的送貨地址。" },
+            { word: "estimated", pos: "adj.", ipa: "/ˈes.tə.meɪ.t̬ɪd/", level: "Blue", def: "估計的；預估的", example: "The estimated arrival time is 5 PM.", trans: "預計到達時間是下午五點。" },
+            { word: "receipt", pos: "n.", ipa: "/rɪˈsiːt/", level: "Blue", def: "收到；收據", example: "Payment is due upon receipt of invoice.", trans: "收到發票時需付款。" },
+            { word: "invoice", pos: "n.", ipa: "/ˈɪn.vɔɪs/", level: "Blue", def: "發票；請款單", example: "We will send the invoice tomorrow.", trans: "我們明天會寄送發票。" },
+            { word: "due date", pos: "n.", ipa: "/duː deɪt/", level: "Green", def: "到期日", example: "The due date is next Monday.", trans: "到期日是下週一。" },
+            { word: "late payment charge", pos: "n.", ipa: "/leɪt ˈpeɪ.mənt tʃɑːrdʒ/", level: "Blue", def: "滯納金；逾期罰款", example: "Avoid the late payment charge by paying on time.", trans: "準時付款以避免滯納金。" },
+            { word: "acknowledge", pos: "v.", ipa: "/əkˈnɑː.lɪdʒ/", level: "Gold", def: "承認；確認收到", example: "Please acknowledge receipt of this email.", trans: "請確認收到這封郵件。" },
+            { word: "subject to", pos: "phr.", ipa: "/ˈsʌb.dʒekt tuː/", level: "Gold", def: "受...支配；易受...影響", example: "Prices are subject to change.", trans: "價格可能會變動。" },
+            { word: "regarding", pos: "prep.", ipa: "/rɪˈɡɑːr.dɪŋ/", level: "Blue", def: "關於", example: "I have a question regarding your proposal.", trans: "我有一個關於你提案的問題。" },
+            { word: "regret", pos: "v.", ipa: "/rɪˈɡret/", level: "Blue", def: "遺憾；後悔", example: "We regret to inform you of the delay.", trans: "我們很遺憾地通知您延遲的消息。" },
+            { word: "inform", pos: "v.", ipa: "/ɪnˈfɔːrm/", level: "Green", def: "通知；告知", example: "Please inform us of any changes.", trans: "若有任何變更請通知我們。" },
+            { word: "deliver", pos: "v.", ipa: "/dɪˈlɪv.ɚ/", level: "Green", def: "運送；交付", example: "We deliver within 24 hours.", trans: "我們在 24 小時內送貨。" },
+            { word: "propose", pos: "v.", ipa: "/prəˈpoʊz/", level: "Blue", def: "提議；建議", example: "I propose we meet at 3 PM.", trans: "我建議我們下午三點見面。" },
+            { word: "partial", pos: "adj.", ipa: "/ˈpɑːr.ʃəl/", level: "Gold", def: "部分的；局部的", example: "We made a partial payment.", trans: "我們支付了部分款項。" },
+            { word: "accommodate", pos: "v.", ipa: "/əˈkɑː.mə.deɪt/", level: "Gold", def: "配合；容納；滿足", example: "We try to accommodate all requests.", trans: "我們試著滿足所有要求。" },
+            { word: "urgent", pos: "adj.", ipa: "/ˈɝː.dʒənt/", level: "Green", def: "緊急的", example: "This is an urgent matter.", trans: "這是一件緊急的事情。" },
+            { word: "portion", pos: "n.", ipa: "/ˈpɔːr.ʃən/", level: "Blue", def: "部分", example: "A large portion of the budget is spent.", trans: "預算的一大部分已經花費。" },
+            { word: "fulfill", pos: "v.", ipa: "/fʊlˈfɪl/", level: "Gold", def: "履行；完成；滿足", example: "We must fulfill our contract obligations.", trans: "我們必須履行合約義務。" },
+            { word: "approval", pos: "n.", ipa: "/əˈpruː.vəl/", level: "Blue", def: "批准；認可", example: "The project needs final approval.", trans: "專案需要最終批准。" },
+            { word: "revised", pos: "adj.", ipa: "/rɪˈvaɪzd/", level: "Blue", def: "修訂過的；修改過的", example: "Here is the revised schedule.", trans: "這是修訂後的時間表。" },
+            { word: "accordingly", pos: "adv.", ipa: "/əˈkɔːr.dɪŋ.li/", level: "Gold", def: "相應地；照著", example: "Please plan accordingly.", trans: "請相應地進行計畫。" },
+            { word: "promptly", pos: "adv.", ipa: "/ˈprɑːmpt.li/", level: "Blue", def: "迅速地；準時地", example: "She arrived promptly at 9 AM.", trans: "她準時在早上九點到達。" },
+            { word: "thereafter", pos: "adv.", ipa: "/ˌðerˈæf.tɚ/", level: "Gold", def: "之後；此後", example: "He left the company shortly thereafter.", trans: "此後不久他便離開了公司。" },
+            { word: "apologize", pos: "v.", ipa: "/əˈpɑː.lə.dʒaɪz/", level: "Green", def: "道歉", example: "I apologize for the mistake.", trans: "我為這個錯誤道歉。" },
+            { word: "inconvenience", pos: "n.", ipa: "/ˌɪn.kənˈviː.ni.əns/", level: "Blue", def: "不便", example: "We regret the inconvenience.", trans: "我們對造成的不便感到抱歉。" },
+            { word: "value", pos: "v.", ipa: "/ˈvæl.juː/", level: "Green", def: "重視；估價", example: "We value your feedback.", trans: "我們重視您的回饋。" },
+            { word: "partnership", pos: "n.", ipa: "/ˈpɑːrt.nɚ.ʃɪp/", level: "Blue", def: "合作關係；夥伴關係", example: "They have a strong partnership.", trans: "他們有穩固的合作關係。" },
+            { word: "confirm", pos: "v.", ipa: "/kənˈfɝːm/", level: "Green", def: "確認", example: "Please confirm your attendance.", trans: "請確認您的出席。" },
+            { word: "agreement", pos: "n.", ipa: "/əˈɡriː.mənt/", level: "Blue", def: "同意；協議", example: "We signed the agreement.", trans: "我們簽署了協議。" }
+        ];
+
+        const vocabGrid = document.getElementById('vocab-grid');
+        
+        vocabList.forEach((item, index) => {
+            const levelClass = item.level === 'Gold' ? 'level-gold' : (item.level === 'Blue' ? 'level-blue' : 'level-green');
+            const toeicLabel = item.level === 'Gold' ? 'TOEIC 800+' : (item.level === 'Blue' ? 'TOEIC 600+' : 'TOEIC 450+');
+            
+            // Escape single quotes for the onclick handler
+            const safeExample = item.example.replace(/'/g, "\\'");
+            const safeWord = item.word.replace(/'/g, "\\'");
+
+            const card = document.createElement('div');
+            card.className = 'bg-white rounded-xl p-6 shadow-sm border border-gray-100 relative group hover:shadow-md transition';
+            card.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="overflow-hidden w-full mr-2">
+                        <div class="flex items-center overflow-x-auto no-scrollbar">
+                            <span class="text-teal-600 font-bold text-sm mr-2 shrink-0">${index + 1}.</span>
+                            <span class="text-lg font-bold text-slate-800 whitespace-nowrap">${item.word}</span>
+                        </div>
+                    </div>
+                    <button onclick="speakText('${safeWord}')" class="audio-btn audio-btn-large shrink-0 ml-2" title="Play Word"><i class="fas fa-volume-up"></i></button>
+                </div>
+                <div class="text-xs text-slate-400 font-mono mt-1 mb-2 block pl-1">[${item.ipa}]</div>
+                
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <span class="bg-gray-100 text-gray-600 text-xs px-2 py-0.5 rounded font-medium">${item.pos}</span>
+                    <span class="${levelClass} text-xs font-bold px-2 py-0.5 rounded border">${toeicLabel}</span>
+                    <span class="text-gray-700 font-medium">${item.def}</span>
+                </div>
+                
+                <div class="bg-gray-50 p-3 rounded-lg text-sm border-l-2 border-teal-500 mt-2 group/ex">
+                    <div class="flex justify-between items-start">
+                        <p class="text-slate-700 mb-1 font-medium">${item.example}</p>
+                        <button onclick="speakText('${safeExample}')" class="text-slate-400 hover:text-teal-600 ml-2 mt-0.5 transition-colors shrink-0" title="Play Sentence">
+                            <i class="fas fa-volume-up text-sm"></i>
+                        </button>
+                    </div>
+                    <p class="text-slate-500">(${item.trans})</p>
+                </div>
+            `;
+            vocabGrid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
